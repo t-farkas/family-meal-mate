@@ -17,7 +17,19 @@ spring:
     contexts: POSTGRES
 springdoc:
   swagger-ui:
-    path: /swagger
     operations-sorter: method
   api-docs:
-    path: /documentation
+    version: OPENAPI_3_0
+
+
+open-api:
+  version: 1.0
+  title: Family Meal Mate API
+  description: >
+    REST API for managing households, family members, recipes, meal plans, 
+    and shopping lists. Users can register, create households, add members, 
+    plan meals, and generate shopping lists.
+
+jwt:
+  secret: S7$gV^9p4w!D@q2Jm#Tz8H%lR3uE&c1Y*K6nW0bF$P5sA9rQd
+  expiration: 86400000

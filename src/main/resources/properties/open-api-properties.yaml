@@ -1,9 +1,0 @@
-open-api:
-  group: family-meal-mate
-  base-package: com.farkas.familymealmate.presentation.rest
-  version: 1.0
-  title: Family Meal Mate API
-  description: >
-    REST API for managing households, family members, recipes, meal plans, 
-    and shopping lists. Users can register, create households, add members, 
-    plan meals, and generate shopping lists.
