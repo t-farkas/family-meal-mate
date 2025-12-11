@@ -22,4 +22,8 @@ public class UserEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToOne
+    @JoinColumn(name = "family_member_id", nullable = false)
+    private FamilyMemberEntity familyMember;
+
 }

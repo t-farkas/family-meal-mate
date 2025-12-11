@@ -6,4 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
     <include file="db/changelog/changes/01-create-user.xml"/>
+    <include file="db/changelog/changes/02-create-family-member.xml"/>
+    <include file="db/changelog/changes/03-create-family-member-allergies.xml"/>
+    <include file="db/changelog/changes/04-add-family-member-to-user.xml"/>
 </databaseChangeLog>
