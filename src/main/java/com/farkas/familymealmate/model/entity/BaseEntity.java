@@ -1,4 +1,4 @@
-package com.farkas.familymealmate.entity;
+package com.farkas.familymealmate.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

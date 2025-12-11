@@ -1,4 +1,4 @@
-package com.farkas.familymealmate.common.configuration.openapi;
+package com.farkas.familymealmate.configuration.openapi;
 
 import lombok.Getter;
 import lombok.Setter;

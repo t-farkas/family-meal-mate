@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.security;
 
-import com.farkas.familymealmate.entity.UserEntity;
+import com.farkas.familymealmate.model.entity.UserEntity;
 import lombok.Getter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;

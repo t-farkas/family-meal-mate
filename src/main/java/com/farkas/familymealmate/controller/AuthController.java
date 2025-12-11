@@ -1,9 +1,9 @@
 package com.farkas.familymealmate.controller;
 
-import com.farkas.familymealmate.dto.BaseResponse;
-import com.farkas.familymealmate.dto.auth.LoginRequest;
-import com.farkas.familymealmate.dto.auth.LoginResponse;
-import com.farkas.familymealmate.dto.auth.RegisterRequest;
+import com.farkas.familymealmate.model.dto.BaseResponse;
+import com.farkas.familymealmate.model.dto.auth.LoginRequest;
+import com.farkas.familymealmate.model.dto.auth.LoginResponse;
+import com.farkas.familymealmate.model.dto.auth.RegisterRequest;
 import com.farkas.familymealmate.security.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

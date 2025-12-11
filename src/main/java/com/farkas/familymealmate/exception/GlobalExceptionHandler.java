@@ -1,7 +1,6 @@
-package com.farkas.familymealmate.common.advice;
+package com.farkas.familymealmate.exception;
 
-import com.farkas.familymealmate.common.exception.ServiceException;
-import com.farkas.familymealmate.dto.error.ErrorDTO;
+import com.farkas.familymealmate.model.dto.error.ErrorDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

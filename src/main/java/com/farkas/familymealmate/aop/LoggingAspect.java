@@ -1,6 +1,6 @@
-package com.farkas.familymealmate.common.logging;
+package com.farkas.familymealmate.aop;
 
-import com.farkas.familymealmate.common.exception.ServiceException;
+import com.farkas.familymealmate.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;

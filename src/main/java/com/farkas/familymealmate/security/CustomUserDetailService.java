@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.security;
 
-import com.farkas.familymealmate.entity.UserEntity;
+import com.farkas.familymealmate.model.entity.UserEntity;
 import com.farkas.familymealmate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

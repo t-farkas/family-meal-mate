@@ -1,10 +1,10 @@
 package com.farkas.familymealmate.security;
 
-import com.farkas.familymealmate.common.enums.Role;
-import com.farkas.familymealmate.dto.auth.LoginRequest;
-import com.farkas.familymealmate.dto.auth.LoginResponse;
-import com.farkas.familymealmate.dto.auth.RegisterRequest;
-import com.farkas.familymealmate.entity.UserEntity;
+import com.farkas.familymealmate.model.enums.Role;
+import com.farkas.familymealmate.model.dto.auth.LoginRequest;
+import com.farkas.familymealmate.model.dto.auth.LoginResponse;
+import com.farkas.familymealmate.model.dto.auth.RegisterRequest;
+import com.farkas.familymealmate.model.entity.UserEntity;
 import com.farkas.familymealmate.repository.UserRepository;
 import com.farkas.familymealmate.security.jwt.JwtService;
 import jakarta.transaction.Transactional;

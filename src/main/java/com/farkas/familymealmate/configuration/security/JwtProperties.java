@@ -1,4 +1,4 @@
-package com.farkas.familymealmate.common.configuration.security;
+package com.farkas.familymealmate.configuration.security;
 
 import lombok.Getter;
 import lombok.Setter;

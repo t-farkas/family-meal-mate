@@ -1,4 +1,4 @@
-package com.farkas.familymealmate.common.exception;
+package com.farkas.familymealmate.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

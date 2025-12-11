@@ -1,4 +1,4 @@
-package com.farkas.familymealmate.common.configuration.openapi;
+package com.farkas.familymealmate.configuration.openapi;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.security.jwt;
 
-import com.farkas.familymealmate.common.configuration.security.JwtProperties;
+import com.farkas.familymealmate.configuration.security.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
