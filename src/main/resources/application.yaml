@@ -1,0 +1,23 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/familymealmate
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+  jpa:
+    database: postgresql
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    change-log: classpath:db/changelog/changelog-master.xml
+    enabled: true
+    contexts: POSTGRES
+springdoc:
+  swagger-ui:
+    path: /swagger
+    operations-sorter: method
+  api-docs:
+    path: /documentation
