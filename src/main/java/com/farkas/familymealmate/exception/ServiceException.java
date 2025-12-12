@@ -1,24 +1,21 @@
 package com.farkas.familymealmate.exception;
 
+import com.farkas.familymealmate.model.enums.ErrorCode;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 public class ServiceException extends RuntimeException {
 
-    private String errorCode;
-    private HttpStatus httpStatus;
+    private final ErrorCode errorCode;
 
-    public ServiceException(String message, String errorCode, HttpStatus httpStatus) {
+    public ServiceException(String message, ErrorCode errorCode) {
         super(message);
         this.errorCode = errorCode;
-        this.httpStatus = httpStatus;
     }
 
-    public ServiceException(String message, Throwable cause, String errorCode, HttpStatus httpStatus) {
+    public ServiceException(String message, Throwable cause, ErrorCode errorCode) {
         super(message, cause);
         this.errorCode = errorCode;
-        this.httpStatus = httpStatus;
 
     }
 }

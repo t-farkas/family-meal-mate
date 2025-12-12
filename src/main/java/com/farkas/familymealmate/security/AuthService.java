@@ -32,7 +32,7 @@ public class AuthService {
 
     public void register(RegisterRequest request) {
 
-        FamilyMemberEntity familyMemberEntity = familyMemberService.createFamilyMember(request);
+        FamilyMemberEntity familyMemberEntity = familyMemberService.createFamilyMember(request.getFamilyMemberCreateRequest());
         UserEntity userEntity = getUserEntity(request, familyMemberEntity);
         userRepository.save(userEntity);
     }

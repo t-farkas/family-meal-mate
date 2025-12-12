@@ -2,15 +2,18 @@ package com.farkas.familymealmate.model.entity;
 
 import com.farkas.familymealmate.model.enums.AllergyType;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.Set;
 
+@Data
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Getter
-@Setter
 @Table(name = "family_member")
 public class FamilyMemberEntity extends BaseEntity {
 

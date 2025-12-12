@@ -1,6 +1,8 @@
 package com.farkas.familymealmate.configuration.security;
 
+import com.farkas.familymealmate.security.CustomUserDetailService;
 import com.farkas.familymealmate.security.jwt.JwtAuthFilter;
+import com.farkas.familymealmate.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +27,9 @@ public class SecurityConfig {
     private static final String SWAGGER_HTML = "/swagger-ui.html";
     private static final String SWAGGER_DOCS = "/documentation";
     private static final String SWAGGER_DOCS_CONFIG = "/documentation/swagger-config";
-    private final JwtAuthFilter jwtAuthFilter;
+
+    private final CustomUserDetailService customUserDetailService;
+    private final JwtService jwtService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -35,6 +39,11 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
+    }
+
+    @Bean
+    public JwtAuthFilter jwtAuthFilter() {
+        return new JwtAuthFilter(customUserDetailService, jwtService);
     }
 
     @Bean
@@ -53,7 +62,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

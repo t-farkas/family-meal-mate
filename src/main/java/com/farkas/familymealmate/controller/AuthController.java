@@ -5,6 +5,7 @@ import com.farkas.familymealmate.model.dto.auth.LoginRequest;
 import com.farkas.familymealmate.model.dto.auth.LoginResponse;
 import com.farkas.familymealmate.model.dto.auth.RegisterRequest;
 import com.farkas.familymealmate.security.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,13 +21,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<BaseResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<BaseResponse> register(@RequestBody @Valid RegisterRequest request) {
         authService.register(request);
         return ResponseEntity.ok(new BaseResponse("User created successfully"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
         LoginResponse loginResponse = authService.login(request);
         return ResponseEntity.ok(loginResponse);
     }

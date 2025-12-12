@@ -7,7 +7,6 @@ import com.farkas.familymealmate.model.entity.FamilyMemberEntity;
 
 public interface FamilyMemberService {
 
-    FamilyMemberEntity createFamilyMember(RegisterRequest request);
-    void createFamilyMember(FamilyMemberCreateRequest request);
+    FamilyMemberEntity createFamilyMember(FamilyMemberCreateRequest request);
     FamilyMemberDto getFamilyMember(Long id);
 }

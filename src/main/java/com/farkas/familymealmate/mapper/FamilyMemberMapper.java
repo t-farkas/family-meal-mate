@@ -5,8 +5,9 @@ import com.farkas.familymealmate.model.dto.familymember.FamilyMemberDto;
 import com.farkas.familymealmate.model.dto.auth.RegisterRequest;
 import com.farkas.familymealmate.model.entity.FamilyMemberEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface FamilyMemberMapper {
 
     FamilyMemberEntity toEntity(RegisterRequest request);
