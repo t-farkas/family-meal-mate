@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="create-recipe" author="t-farkas">
+        <createTable tableName="recipe">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)" />
+            <column name="description" type="VARCHAR(1000)"/>
+            <column name="total_time" type="INT" />
+            <column name="serves" type="INT" />
+            <column name="household_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_recipe_household" references="household(id)"/>
+            </column>
+            <column name="created_by_id" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_recipe_createdby" references="family_member(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-recipe-instructions" author="t-farkas">
+        <createTable tableName="recipe_instructions">
+            <column name="recipe_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_instr_recipe" references="recipe(id)"/>
+            </column>
+            <column name="step_number" type="INT"/>
+            <column name="instruction" type="VARCHAR(1000)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-recipe-notes" author="t-farkas">
+        <createTable tableName="recipe_notes">
+            <column name="recipe_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_note_recipe" references="recipe(id)"/>
+            </column>
+            <column name="note" type="VARCHAR(1000)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-recipe-tag" author="t-farkas">
+        <createTable tableName="tag">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-tag" author="t-farkas">
+        <createTable tableName="recipe_tag">
+            <column name="recipe_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_recipe_tag_recipe" references="recipe(id)"/>
+            </column>
+            <column name="tag_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_recipe_tag_tag" references="tag(id)"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint
+                tableName="recipe_tag"
+                columnNames="recipe_id, tag_id"
+                constraintName="uk_recipe_tag"/>
+    </changeSet>
+
+</databaseChangeLog>

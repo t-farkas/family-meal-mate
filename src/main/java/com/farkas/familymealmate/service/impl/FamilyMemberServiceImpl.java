@@ -3,7 +3,7 @@ package com.farkas.familymealmate.service.impl;
 import com.farkas.familymealmate.exception.ServiceException;
 import com.farkas.familymealmate.mapper.FamilyMemberMapper;
 import com.farkas.familymealmate.model.dto.familymember.FamilyMemberCreateRequest;
-import com.farkas.familymealmate.model.dto.familymember.FamilyMemberDto;
+import com.farkas.familymealmate.model.dto.familymember.FamilyMemberDetailsDto;
 import com.farkas.familymealmate.model.entity.FamilyMemberEntity;
 import com.farkas.familymealmate.model.entity.HouseholdEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
@@ -30,13 +30,13 @@ public class FamilyMemberServiceImpl implements com.farkas.familymealmate.servic
     }
 
     @Override
-    public FamilyMemberDto addFamilyMember(FamilyMemberCreateRequest request) {
+    public FamilyMemberDetailsDto addFamilyMember(FamilyMemberCreateRequest request) {
         FamilyMemberEntity familyMember = createFamilyMember(request, currentUserService.getCurrentHousehold());
         return mapper.toDto(familyMember);
     }
 
     @Override
-    public FamilyMemberDto getFamilyMember(Long id) {
+    public FamilyMemberDetailsDto getFamilyMember(Long id) {
         FamilyMemberEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ServiceException(
                         ErrorCode.FAMILY_MEMBER_NOT_FOUND.format(id),

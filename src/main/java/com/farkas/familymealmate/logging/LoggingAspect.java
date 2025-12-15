@@ -1,4 +1,4 @@
-package com.farkas.familymealmate.aop;
+package com.farkas.familymealmate.logging;
 
 import com.farkas.familymealmate.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;

@@ -1,0 +1,59 @@
+package com.farkas.familymealmate.controller;
+
+import com.farkas.familymealmate.model.dto.BaseResponse;
+import com.farkas.familymealmate.model.dto.recipe.RecipeCreateRequest;
+import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
+import com.farkas.familymealmate.model.dto.recipe.RecipeListDto;
+import com.farkas.familymealmate.service.RecipeService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Set;
+
+@RestController
+@RequestMapping("/api/recipe")
+@RequiredArgsConstructor
+public class RecipeController {
+
+    private final RecipeService service;
+
+    @PostMapping
+    public ResponseEntity<BaseResponse> createRecipe(@RequestBody @Valid RecipeCreateRequest request) {
+
+        service.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new BaseResponse("Successfully created a recipe"));
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<RecipeDetailsDto> getRecipe(@PathVariable Long id) {
+
+        RecipeDetailsDto recipe = service.get(id);
+        return ResponseEntity.ok(recipe);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<RecipeListDto>> getRecipes(
+            @RequestParam (required = false)Set<Long> tagIds) {
+
+        List<RecipeListDto> recipes = hasTags(tagIds) ? service.list() : service.list(tagIds);
+        return ResponseEntity.ok(recipes);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<BaseResponse> delete(@PathVariable Long id) {
+
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    private boolean hasTags(Set<Long> tags) {
+        return tags == null || tags.isEmpty();
+    }
+
+}
+

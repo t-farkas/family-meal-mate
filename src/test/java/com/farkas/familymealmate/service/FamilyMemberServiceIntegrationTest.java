@@ -2,7 +2,7 @@ package com.farkas.familymealmate.service;
 
 import com.farkas.familymealmate.exception.ServiceException;
 import com.farkas.familymealmate.model.dto.auth.RegisterRequest;
-import com.farkas.familymealmate.model.dto.familymember.FamilyMemberDto;
+import com.farkas.familymealmate.model.dto.familymember.FamilyMemberDetailsDto;
 import com.farkas.familymealmate.model.entity.UserEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.repository.UserRepository;
@@ -72,7 +72,7 @@ public class FamilyMemberServiceIntegrationTest {
 
         AuthenticationUtil.authenticateAs(new CustomUserDetails(user1));
 
-        FamilyMemberDto familyMember = familyMemberService.getFamilyMember(user2.getFamilyMember().getId());
+        FamilyMemberDetailsDto familyMember = familyMemberService.getFamilyMember(user2.getFamilyMember().getId());
         assertThat(familyMember).isNotNull();
         assertThat(familyMember.getName()).isEqualTo(request2.getFamilyMemberCreateRequest().getName());
 
@@ -86,7 +86,7 @@ public class FamilyMemberServiceIntegrationTest {
         UserEntity user1 = userRepository.findByEmail(request1.getEmail()).orElseThrow();
 
         AuthenticationUtil.authenticateAs(new CustomUserDetails(user1));
-        FamilyMemberDto member = familyMemberService.addFamilyMember(TestFamilyMembers.JANE.createRequest());
+        FamilyMemberDetailsDto member = familyMemberService.addFamilyMember(TestFamilyMembers.JANE.createRequest());
 
         assertThat(member).isNotNull();
         assertThat(member.getHousehold().getId()).isEqualTo(user1.getFamilyMember().getHousehold().getId());

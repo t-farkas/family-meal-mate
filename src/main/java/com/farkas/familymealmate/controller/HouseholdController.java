@@ -1,6 +1,5 @@
 package com.farkas.familymealmate.controller;
 
-import com.farkas.familymealmate.exception.ServiceException;
 import com.farkas.familymealmate.model.dto.household.HouseholdDto;
 import com.farkas.familymealmate.service.HouseholdService;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +15,8 @@ public class HouseholdController {
 
     private final HouseholdService householdService;
 
-    @GetMapping("/get/current")
-    public ResponseEntity<HouseholdDto> getCurrentHousehold() throws ServiceException {
+    @GetMapping("/current")
+    public ResponseEntity<HouseholdDto> getCurrentHousehold() {
         HouseholdDto currentHousehold = householdService.getCurrentHousehold();
         return ResponseEntity.ok(currentHousehold);
     }

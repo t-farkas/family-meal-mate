@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
     FAMILY_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "Family member not found with id: %d"),
+    RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Recipe not found with id: %d"),
     HOUSEHOLD_NOT_FOUND(HttpStatus.NOT_FOUND, "Household not found with joinId: %s"),
+    TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "Tag not found with id: %s"),
     MISSING_HOUSEHOLD_DETAILS(HttpStatus.BAD_REQUEST, "Household not found with joinId: %s"),
     NO_AUTHORIZATION(HttpStatus.FORBIDDEN, "Either householdJoinId or householdName must be provided"),
     ;

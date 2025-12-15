@@ -12,7 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class FamilyMemberDto {
+public class FamilyMemberDetailsDto {
 
     private Long id;
     private String name;
