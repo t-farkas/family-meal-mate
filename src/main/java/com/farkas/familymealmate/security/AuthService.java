@@ -1,14 +1,18 @@
 package com.farkas.familymealmate.security;
 
+import com.farkas.familymealmate.exception.ServiceException;
 import com.farkas.familymealmate.model.dto.auth.LoginRequest;
 import com.farkas.familymealmate.model.dto.auth.LoginResponse;
 import com.farkas.familymealmate.model.dto.auth.RegisterRequest;
 import com.farkas.familymealmate.model.entity.FamilyMemberEntity;
+import com.farkas.familymealmate.model.entity.HouseholdEntity;
 import com.farkas.familymealmate.model.entity.UserEntity;
+import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.model.enums.Role;
 import com.farkas.familymealmate.repository.UserRepository;
 import com.farkas.familymealmate.security.jwt.JwtService;
 import com.farkas.familymealmate.service.FamilyMemberService;
+import com.farkas.familymealmate.service.HouseholdService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,31 +23,32 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class AuthService {
 
     private final UserRepository userRepository;
     private final FamilyMemberService familyMemberService;
+    private final HouseholdService householdService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailService userDetailService;
     private final JwtService jwtService;
 
-
+    @Transactional
     public void register(RegisterRequest request) {
 
-        FamilyMemberEntity familyMemberEntity = familyMemberService.createFamilyMember(request.getFamilyMemberCreateRequest());
+        HouseholdEntity houseHold;
+
+        if (noHouseholdDetailsProvied(request)) {
+            throw new ServiceException(ErrorCode.MISSING_HOUSEHOLD_DETAILS.getTemplate(), ErrorCode.MISSING_HOUSEHOLD_DETAILS);
+        } else if (shouldJoinHousehold(request)) {
+            houseHold = householdService.findByJoinId(request.getHouseholdJoinId());
+        } else {
+            houseHold = householdService.createHouseHold(request.getHouseholdName());
+        }
+
+        FamilyMemberEntity familyMemberEntity = familyMemberService.createFamilyMember(request.getFamilyMemberCreateRequest(), houseHold);
         UserEntity userEntity = getUserEntity(request, familyMemberEntity);
         userRepository.save(userEntity);
-    }
-
-    private UserEntity getUserEntity(RegisterRequest request, FamilyMemberEntity familyMemberEntity) {
-        return UserEntity.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
-                .familyMember(familyMemberEntity)
-                .build();
     }
 
     public LoginResponse login(LoginRequest request) {
@@ -56,4 +61,24 @@ public class AuthService {
 
         return new LoginResponse(token);
     }
+
+    private boolean noHouseholdDetailsProvied(RegisterRequest request) {
+        return ((request.getHouseholdJoinId() == null || request.getHouseholdJoinId().isBlank())
+                && (request.getHouseholdName() == null || request.getHouseholdName().isBlank()));
+    }
+
+    private boolean shouldJoinHousehold(RegisterRequest request) {
+        String joinId = request.getHouseholdJoinId();
+        return joinId != null && !joinId.isBlank();
+    }
+
+    private UserEntity getUserEntity(RegisterRequest request, FamilyMemberEntity familyMemberEntity) {
+        return UserEntity.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.USER)
+                .familyMember(familyMemberEntity)
+                .build();
+    }
+
 }

@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.controller;
 
-import com.farkas.familymealmate.util.AuthTestData;
+import com.farkas.familymealmate.testdata.user.TestUsers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,7 +30,7 @@ public class AuthSecurityIntegrationTest {
     void registerShouldReturn200() throws Exception {
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(AuthTestData.validRegisterRequest())))
+                        .content(objectMapper.writeValueAsString(TestUsers.TIM.registerNewHousehold("Tim's household"))))
                 .andExpect(status().isOk());
     }
 
@@ -38,20 +38,24 @@ public class AuthSecurityIntegrationTest {
     void loginWithValidCredentialsReturnsJwt() throws Exception {
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AuthTestData.validRegisterRequest())));
+                .content(objectMapper.writeValueAsString(TestUsers.TIM.registerNewHousehold("Tim's household"))));
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(AuthTestData.validLoginRequest())))
+                        .content(objectMapper.writeValueAsString(TestUsers.TIM.login())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").isNotEmpty());
     }
 
     @Test
     void loginWithInvalidCredentialsReturns403() throws Exception {
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(TestUsers.TIM.registerNewHousehold("Tim's household"))));
+
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(AuthTestData.invalidLoginRequest())))
+                        .content(objectMapper.writeValueAsString(TestUsers.TIM.loginInvalid())))
                 .andExpect(status().isForbidden());
     }
 

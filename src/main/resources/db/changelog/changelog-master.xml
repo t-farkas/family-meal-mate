@@ -9,4 +9,6 @@
     <include file="db/changelog/changes/02-create-family-member.xml"/>
     <include file="db/changelog/changes/03-create-family-member-allergies.xml"/>
     <include file="db/changelog/changes/04-add-family-member-to-user.xml"/>
+    <include file="db/changelog/changes/05-create-household.xml"/>
+    <include file="db/changelog/changes/06-add-household-to-family-member.xml"/>
 </databaseChangeLog>

@@ -1,5 +1,6 @@
 package com.farkas.familymealmate.model.dto.familymember;
 
+import com.farkas.familymealmate.model.dto.household.HouseholdDto;
 import com.farkas.familymealmate.model.enums.AllergyType;
 import lombok.*;
 
@@ -17,4 +18,5 @@ public class FamilyMemberDto {
     private String name;
     private LocalDate dateOfBirth;
     private Set<AllergyType> allergies;
+    private HouseholdDto household;
 }

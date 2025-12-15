@@ -9,7 +9,8 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
+@ToString(exclude = "household")
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,5 +29,9 @@ public class FamilyMemberEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "allergies")
     private Set<AllergyType> allergies;
+
+    @ManyToOne
+    @JoinColumn(name = "household_id", nullable = false)
+    private HouseholdEntity household;
 
 }

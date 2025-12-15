@@ -18,14 +18,13 @@ public class FamilyMemberController {
 
     private final FamilyMemberService service;
 
-    @PostMapping("/create")
-    public ResponseEntity<BaseResponse> createFamilyMember(@RequestBody @Valid FamilyMemberCreateRequest request) throws ServiceException {
+    @PostMapping("/add")
+    public ResponseEntity<BaseResponse> addFamilyMember(@RequestBody @Valid FamilyMemberCreateRequest request) throws ServiceException {
 
-        service.createFamilyMember(request);
+        service.addFamilyMember(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new BaseResponse("Successfully created family member"));
+                .body(new BaseResponse("Successfully added family member"));
     }
-
 
     @GetMapping("/get/{id}")
     public ResponseEntity<FamilyMemberDto> getFamilyMember(@PathVariable Long id) throws ServiceException {

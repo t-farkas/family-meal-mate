@@ -20,6 +20,9 @@ public class RegisterRequest {
     @NotBlank(message = "{auth.password.notblank}")
     private String password;
 
+    private String householdJoinId;
+    private String householdName;
+
     @NotNull(message = "{auth.familymember.notnull}")
     @Valid
     private FamilyMemberCreateRequest familyMemberCreateRequest;
