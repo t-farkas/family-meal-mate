@@ -13,4 +13,6 @@
     <include file="db/changelog/changes/06-add-household-to-family-member.xml"/>
     <include file="db/changelog/changes/07-create-recipe.xml"/>
     <include file="/db/changelog/changes/08-add-recipe-missing-constraints.xml"/>
+    <include file="/db/changelog/changes/09-create-ingredient.xml"/>
+    <include file="/db/changelog/changes/10-create-recipe-ingredient.xml"/>
 </databaseChangeLog>

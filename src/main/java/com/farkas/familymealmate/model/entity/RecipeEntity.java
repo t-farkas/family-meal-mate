@@ -42,9 +42,10 @@ public class RecipeEntity extends BaseEntity {
     @JoinTable(
             name = "recipe_tag",
             joinColumns = @JoinColumn(name = "recipe_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
-
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<TagEntity> tags;
+
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RecipeIngredientEntity> ingredients;
 
 }
