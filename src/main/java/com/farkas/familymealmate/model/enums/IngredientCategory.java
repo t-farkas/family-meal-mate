@@ -2,10 +2,9 @@ package com.farkas.familymealmate.model.enums;
 
 public enum IngredientCategory {
     PRODUCE,
-    MEAT,
+    PROTEIN,
     FISH_AND_SEAFOOD,
     DAIRY,
-    EGGS,
     BAKERY,
     GRAINS_AND_PASTA,
     BAKING,
@@ -16,5 +15,6 @@ public enum IngredientCategory {
     SAUCES_AND_CONDIMENTS,
     SWEETS_AND_SNACKS,
     BEVERAGES,
+    NUTS,
     OTHER
 }
