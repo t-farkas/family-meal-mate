@@ -7,5 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FamilyMemberListDto {
+    private Long id;
     private String name;
 }

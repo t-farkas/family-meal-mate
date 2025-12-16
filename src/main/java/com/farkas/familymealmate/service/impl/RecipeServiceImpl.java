@@ -32,10 +32,11 @@ public class RecipeServiceImpl implements RecipeService {
     private final TagRepository tagRepository;
 
     @Override
-    public void create(RecipeCreateRequest recipeCreateRequest) {
+    public RecipeDetailsDto create(RecipeCreateRequest recipeCreateRequest) {
 
         RecipeEntity recipe = getRecipeEntity(recipeCreateRequest);
-        recipeRepository.save(recipe);
+        RecipeEntity saved = recipeRepository.save(recipe);
+        return recipeMapper.toRecipeDetails(saved);
     }
 
     @Override
@@ -78,13 +79,23 @@ public class RecipeServiceImpl implements RecipeService {
         recipe.setCreatedBy(currentUserService.getCurrentFamilyMember());
         recipe.setHousehold(currentUserService.getCurrentHousehold());
 
-        Set<TagEntity> tags = recipeCreateRequest.getTagIds().stream()
+        Set<TagEntity> tags = getTags(recipeCreateRequest);
+        recipe.setTags(tags);
+        return recipe;
+    }
+
+    private Set<TagEntity> getTags(RecipeCreateRequest recipeCreateRequest) {
+        Set<Long> tagIds = recipeCreateRequest.getTagIds();
+
+        if (tagIds == null || tagIds.isEmpty()) {
+            return null;
+        }
+
+        return tagIds.stream()
                 .map(tagId -> tagRepository.findById(tagId)
                         .orElseThrow(() -> new ServiceException(
                                 ErrorCode.TAG_NOT_FOUND.format(tagId),
                                 ErrorCode.TAG_NOT_FOUND)))
                 .collect(Collectors.toSet());
-        recipe.setTags(tags);
-        return recipe;
     }
 }

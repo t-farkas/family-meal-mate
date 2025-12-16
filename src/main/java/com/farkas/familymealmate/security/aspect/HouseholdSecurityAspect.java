@@ -33,7 +33,7 @@ public class HouseholdSecurityAspect {
                 () -> new ServiceException(ErrorCode.RECIPE_NOT_FOUND.format(recipeId), ErrorCode.RECIPE_NOT_FOUND));
 
         if (!recipeEntity.getHousehold().getId().equals(currentUserService.getCurrentHousehold().getId())) {
-            throw new ServiceException(ErrorCode.NO_AUTHORIZATION.getTemplate(), ErrorCode.NO_AUTHORIZATION);
+            throw new ServiceException(ErrorCode.NO_AUTHORIZATION.format(recipeId), ErrorCode.NO_AUTHORIZATION);
         }
 
         return joinPoint.proceed();

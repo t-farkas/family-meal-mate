@@ -3,7 +3,6 @@ package com.farkas.familymealmate.model.dto.recipe;
 import com.farkas.familymealmate.model.dto.familymember.FamilyMemberListDto;
 import com.farkas.familymealmate.model.dto.household.HouseholdMemberDto;
 import com.farkas.familymealmate.model.dto.recipe.tag.TagDto;
-import com.farkas.familymealmate.model.entity.TagEntity;
 import lombok.*;
 
 import java.util.List;
@@ -15,6 +14,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class RecipeDetailsDto {
+
+    private Long id;
     private String title;
     private String description;
     private Integer totalTime;

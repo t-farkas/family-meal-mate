@@ -9,7 +9,7 @@ import java.util.Set;
 
 public interface RecipeService {
 
-    void create(RecipeCreateRequest recipeCreateRequest);
+    RecipeDetailsDto create(RecipeCreateRequest recipeCreateRequest);
     List<RecipeListDto> list();
     List<RecipeListDto> list(Set<Long> tagIds);
     RecipeDetailsDto get(Long id);

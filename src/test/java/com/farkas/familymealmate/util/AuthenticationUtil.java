@@ -16,4 +16,5 @@ public class AuthenticationUtil {
     public static void clear() {
         SecurityContextHolder.clearContext();
     }
+
 }

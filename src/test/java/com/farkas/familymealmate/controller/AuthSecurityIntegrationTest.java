@@ -30,7 +30,7 @@ public class AuthSecurityIntegrationTest {
     void registerShouldReturn200() throws Exception {
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(TestUsers.TIM.registerNewHousehold("Tim's household"))))
+                        .content(objectMapper.writeValueAsString(TestUsers.TIM.registerNewHousehold())))
                 .andExpect(status().isOk());
     }
 
@@ -38,7 +38,7 @@ public class AuthSecurityIntegrationTest {
     void loginWithValidCredentialsReturnsJwt() throws Exception {
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestUsers.TIM.registerNewHousehold("Tim's household"))));
+                .content(objectMapper.writeValueAsString(TestUsers.TIM.registerNewHousehold())));
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -51,7 +51,7 @@ public class AuthSecurityIntegrationTest {
     void loginWithInvalidCredentialsReturns403() throws Exception {
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestUsers.TIM.registerNewHousehold("Tim's household"))));
+                .content(objectMapper.writeValueAsString(TestUsers.TIM.registerNewHousehold())));
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)

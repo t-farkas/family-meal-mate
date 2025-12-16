@@ -22,11 +22,10 @@ public class RecipeController {
     private final RecipeService service;
 
     @PostMapping
-    public ResponseEntity<BaseResponse> createRecipe(@RequestBody @Valid RecipeCreateRequest request) {
+    public ResponseEntity<RecipeDetailsDto> createRecipe(@RequestBody @Valid RecipeCreateRequest request) {
 
-        service.create(request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new BaseResponse("Successfully created a recipe"));
+        RecipeDetailsDto recipeDetailsDto = service.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(recipeDetailsDto);
     }
 
     @GetMapping("{id}")
@@ -38,7 +37,7 @@ public class RecipeController {
 
     @GetMapping
     public ResponseEntity<List<RecipeListDto>> getRecipes(
-            @RequestParam (required = false)Set<Long> tagIds) {
+            @RequestParam(required = false) Set<Long> tagIds) {
 
         List<RecipeListDto> recipes = hasTags(tagIds) ? service.list() : service.list(tagIds);
         return ResponseEntity.ok(recipes);

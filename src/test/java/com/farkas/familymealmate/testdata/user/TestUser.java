@@ -13,9 +13,9 @@ public record TestUser(
         LocalDate dateOfBirth
 ) {
 
-    public RegisterRequest registerNewHousehold(String householdName) {
+    public RegisterRequest registerNewHousehold() {
         RegisterRequest request = baseRegisterRequest();
-        request.setHouseholdName(householdName);
+        request.setHouseholdName(name + "'s household");
         return request;
     }
 

@@ -1,5 +1,7 @@
 package com.farkas.familymealmate.model.dto.recipe;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 import java.util.List;
@@ -11,11 +13,15 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class RecipeCreateRequest {
+
+    @NotBlank(message = "{recipe.title.notblank}")
     private String title;
     private String description;
     private Integer totalTime;
     private Integer serves;
-    private List<String> instructions;
+
+    @NotEmpty(message = "{recipe.instructions.notempty}")
+    private List< @NotBlank String> instructions;
     private List<String> notes;
     private Set<Long> tagIds;
 

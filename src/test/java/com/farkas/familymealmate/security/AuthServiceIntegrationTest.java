@@ -38,7 +38,7 @@ public class AuthServiceIntegrationTest {
 
     @Test
     void registerCreatesNewHouseholdWithFamilyMember() {
-        RegisterRequest registerRequest = TestUsers.TIM.registerNewHousehold("Tim's household");
+        RegisterRequest registerRequest = TestUsers.TIM.registerNewHousehold();
         authService.register(registerRequest);
 
         List<HouseholdEntity> households = householdRepository.findAll();
@@ -61,7 +61,7 @@ public class AuthServiceIntegrationTest {
 
     @Test
     void registerJoinsHousehold() {
-        RegisterRequest registerRequest = TestUsers.TIM.registerNewHousehold("Tim's household");
+        RegisterRequest registerRequest = TestUsers.TIM.registerNewHousehold();
         authService.register(registerRequest);
         List<HouseholdEntity> householdsFirstReg = householdRepository.findAll();
         assertThat(householdsFirstReg.size()).isEqualTo(1);
@@ -80,7 +80,7 @@ public class AuthServiceIntegrationTest {
 
     @Test
     void registerIncorrectJoinId() {
-        RegisterRequest registerRequest = TestUsers.BERTHA.registerNewHousehold("Bertha's household");
+        RegisterRequest registerRequest = TestUsers.BERTHA.registerNewHousehold();
         authService.register(registerRequest);
 
         RegisterRequest registerRequestJoinId = TestUsers.JOHN.registerExistingHousehold("ABCD");
