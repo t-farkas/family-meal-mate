@@ -3,6 +3,7 @@ package com.farkas.familymealmate.service;
 import com.farkas.familymealmate.exception.ServiceException;
 import com.farkas.familymealmate.model.dto.recipe.RecipeCreateRequest;
 import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
+import com.farkas.familymealmate.model.dto.recipe.RecipeFilterRequest;
 import com.farkas.familymealmate.model.dto.recipe.RecipeListDto;
 import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientCreateRequestDto;
 import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientDto;
@@ -88,7 +89,7 @@ public class RecipeServiceIntegrationTest {
         HouseholdEntity household = user1.getFamilyMember().getHousehold();
 
         userFactory.authenticate(user1);
-        List<RecipeListDto> recipes = recipeService.list();
+        List<RecipeListDto> recipes = recipeService.list(new RecipeFilterRequest()).getContent();
         recipes.forEach(recipe -> {
             RecipeDetailsDto recipeDetailsDto = recipeService.get(recipe.getId());
             assertThat(recipeDetailsDto.getHousehold().getName()).isEqualTo(household.getName());

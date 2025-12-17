@@ -2,8 +2,10 @@ package com.farkas.familymealmate.service.impl;
 
 import com.farkas.familymealmate.exception.ServiceException;
 import com.farkas.familymealmate.mapper.RecipeMapper;
+import com.farkas.familymealmate.model.dto.PagingResponse;
 import com.farkas.familymealmate.model.dto.recipe.RecipeCreateRequest;
 import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
+import com.farkas.familymealmate.model.dto.recipe.RecipeFilterRequest;
 import com.farkas.familymealmate.model.dto.recipe.RecipeListDto;
 import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientCreateRequestDto;
 import com.farkas.familymealmate.model.entity.IngredientEntity;
@@ -14,10 +16,15 @@ import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.repository.IngredientRepository;
 import com.farkas.familymealmate.repository.RecipeRepository;
 import com.farkas.familymealmate.repository.TagRepository;
+import com.farkas.familymealmate.repository.specification.RecipeSpecificationBuilder;
 import com.farkas.familymealmate.security.CurrentUserService;
 import com.farkas.familymealmate.security.annotation.CheckHouseholdAccess;
 import com.farkas.familymealmate.service.RecipeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,19 +53,22 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<RecipeListDto> list() {
-        Long householdId = currentUserService.getCurrentHousehold().getId();
-        List<RecipeEntity> recipes = recipeRepository.findAllByHouseholdId(householdId);
+    public PagingResponse<RecipeListDto> list(RecipeFilterRequest request) {
 
-        return recipeMapper.toDtoList(recipes);
-    }
+        Specification<RecipeEntity> spec = new RecipeSpecificationBuilder()
+                .byHousehold(currentUserService.getCurrentHousehold().getId())
+                .byIngredientIds(request.getIngredientIds())
+                .byName(request.getName())
+                .byTagIds(request.getTagIds())
+                .build();
 
-    @Override
-    public List<RecipeListDto> list(Set<Long> tagIds) {
-        Long householdId = currentUserService.getCurrentHousehold().getId();
-        List<RecipeEntity> recipes = recipeRepository.findAllByHouseholdIdAndTagIds(householdId, tagIds);
+        Pageable pageable = PageRequest.of(request.getPage(), request.getPageSize());
 
-        return recipeMapper.toDtoList(recipes);
+        Page<RecipeEntity> recipePage = recipeRepository.findAll(spec, pageable);
+        List<RecipeListDto> recipeDtoList = recipeMapper.toDtoList(recipePage.getContent());
+
+        return new PagingResponse<>(recipeDtoList, recipePage.getTotalElements(), recipePage.getTotalPages(), recipePage.getNumber(), recipePage.getSize());
+
     }
 
     @Override

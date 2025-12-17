@@ -1,18 +1,18 @@
 package com.farkas.familymealmate.controller;
 
 import com.farkas.familymealmate.model.dto.BaseResponse;
+import com.farkas.familymealmate.model.dto.PagingResponse;
 import com.farkas.familymealmate.model.dto.recipe.RecipeCreateRequest;
 import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
+import com.farkas.familymealmate.model.dto.recipe.RecipeFilterRequest;
 import com.farkas.familymealmate.model.dto.recipe.RecipeListDto;
 import com.farkas.familymealmate.service.RecipeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/recipe")
@@ -36,11 +36,9 @@ public class RecipeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RecipeListDto>> getRecipes(
-            @RequestParam(required = false) Set<Long> tagIds) {
-
-        List<RecipeListDto> recipes = hasTags(tagIds) ? service.list() : service.list(tagIds);
-        return ResponseEntity.ok(recipes);
+    public ResponseEntity<PagingResponse<RecipeListDto>> getRecipes(@ParameterObject RecipeFilterRequest request) {
+        PagingResponse<RecipeListDto> list = service.list(request);
+        return ResponseEntity.ok(list);
     }
 
     @DeleteMapping("/{id}")
@@ -48,10 +46,6 @@ public class RecipeController {
 
         service.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-    private boolean hasTags(Set<Long> tags) {
-        return tags == null || tags.isEmpty();
     }
 
 }
