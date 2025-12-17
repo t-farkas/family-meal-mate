@@ -3,7 +3,7 @@ package com.farkas.familymealmate.model.dto.recipe;
 import com.farkas.familymealmate.model.dto.familymember.FamilyMemberListDto;
 import com.farkas.familymealmate.model.dto.household.HouseholdMemberDto;
 import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientDto;
-import com.farkas.familymealmate.model.dto.recipe.tag.TagDto;
+import com.farkas.familymealmate.model.enums.AllergyType;
 import lombok.*;
 
 import java.util.List;
@@ -26,5 +26,6 @@ public class RecipeDetailsDto {
     private List<String> notes;
     private HouseholdMemberDto household;
     private FamilyMemberListDto createdBy;
-    private Set<TagDto> tags;
+    private Set<String> tags;
+    private Set <AllergyType> allergies;
 }

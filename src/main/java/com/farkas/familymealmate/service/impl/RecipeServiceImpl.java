@@ -72,7 +72,6 @@ public class RecipeServiceImpl implements RecipeService {
     @CheckHouseholdAccess
     public void delete(Long id) {
         RecipeEntity recipe = getRecipe(id);
-//        recipe.getIngredients().clear();
         recipeRepository.delete(recipe);
     }
 

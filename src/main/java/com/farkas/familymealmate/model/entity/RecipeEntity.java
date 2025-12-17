@@ -1,22 +1,20 @@
 package com.farkas.familymealmate.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Data
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-@SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity(name = "Recipe")
 @Table(name = "recipe")
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class RecipeEntity extends BaseEntity {
 
     private String title;
@@ -48,4 +46,31 @@ public class RecipeEntity extends BaseEntity {
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeIngredientEntity> ingredients;
 
+    public List<String> getInstructions() {
+        if (instructions == null) {
+            instructions = new ArrayList<>();
+        }
+        return instructions;
+    }
+
+    public List<String> getNotes() {
+        if (notes == null) {
+            instructions = new ArrayList<>();
+        }
+        return notes;
+    }
+
+    public Set<TagEntity> getTags() {
+        if (tags == null) {
+            tags = new HashSet<>();
+        }
+        return tags;
+    }
+
+    public List<RecipeIngredientEntity> getIngredients() {
+        if (ingredients == null) {
+            ingredients = new ArrayList<>();
+        }
+        return ingredients;
+    }
 }

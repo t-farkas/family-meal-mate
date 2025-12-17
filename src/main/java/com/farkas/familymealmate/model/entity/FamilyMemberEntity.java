@@ -2,20 +2,19 @@ package com.farkas.familymealmate.model.entity;
 
 import com.farkas.familymealmate.model.enums.AllergyType;
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
-@Data
-@ToString(exclude = "household")
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-@SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "family_member")
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class FamilyMemberEntity extends BaseEntity {
 
     @Column(name = "name")
@@ -34,4 +33,10 @@ public class FamilyMemberEntity extends BaseEntity {
     @JoinColumn(name = "household_id", nullable = false)
     private HouseholdEntity household;
 
+    public Set<AllergyType> getAllergies() {
+        if (allergies == null) {
+            allergies = new HashSet<>();
+        }
+        return allergies;
+    }
 }

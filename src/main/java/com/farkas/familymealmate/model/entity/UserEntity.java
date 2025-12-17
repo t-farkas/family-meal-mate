@@ -3,15 +3,12 @@ package com.farkas.familymealmate.model.entity;
 import com.farkas.familymealmate.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
-@Data
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-@SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "users")
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class UserEntity extends BaseEntity {
 
     @Column(unique = true, nullable = false)

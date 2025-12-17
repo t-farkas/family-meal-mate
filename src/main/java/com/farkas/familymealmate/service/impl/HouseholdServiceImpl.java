@@ -26,10 +26,9 @@ public class HouseholdServiceImpl implements HouseholdService {
 
     @Override
     public HouseholdEntity createHouseHold(String householdName) {
-        HouseholdEntity entity = HouseholdEntity.builder()
-                .name(householdName)
-                .joinId(joinIdGenerator.generateUniqueJoinId())
-                .build();
+        HouseholdEntity entity = new HouseholdEntity();
+        entity.setName(householdName);
+        entity.setJoinId(joinIdGenerator.generateUniqueJoinId());
 
         return householdRepository.save(entity);
     }

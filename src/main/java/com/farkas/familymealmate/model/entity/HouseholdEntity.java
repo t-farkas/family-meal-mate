@@ -1,22 +1,17 @@
 package com.farkas.familymealmate.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
-@Data
-@ToString(exclude = "members")
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-@SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Entity
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Table(name = "household")
 public class HouseholdEntity extends BaseEntity {
 
@@ -25,4 +20,11 @@ public class HouseholdEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "household", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<FamilyMemberEntity> members;
+
+    public Set<FamilyMemberEntity> getMembers() {
+        if (members == null) {
+            members = new HashSet<>();
+        }
+        return members;
+    }
 }

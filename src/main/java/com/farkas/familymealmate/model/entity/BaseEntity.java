@@ -2,15 +2,12 @@ package com.farkas.familymealmate.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 @MappedSuperclass
-@Data
-@SuperBuilder
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BaseEntity {
 
     @Id

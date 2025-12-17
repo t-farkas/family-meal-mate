@@ -3,18 +3,18 @@ package com.farkas.familymealmate.model.entity;
 import com.farkas.familymealmate.model.enums.AllergyType;
 import com.farkas.familymealmate.model.enums.IngredientCategory;
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
-@Data
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-@SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Entity(name = "Ingredient")
 @Table(name = "ingredient")
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class IngredientEntity extends BaseEntity {
 
     @Column(nullable = false)
@@ -30,4 +30,10 @@ public class IngredientEntity extends BaseEntity {
     @Column(name = "allergy")
     private Set<AllergyType> allergies;
 
+    public Set<AllergyType> getAllergies() {
+        if (allergies == null) {
+            allergies = new HashSet<>();
+        }
+        return allergies;
+    }
 }

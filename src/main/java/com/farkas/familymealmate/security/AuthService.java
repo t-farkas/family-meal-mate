@@ -73,12 +73,12 @@ public class AuthService {
     }
 
     private UserEntity getUserEntity(RegisterRequest request, FamilyMemberEntity familyMemberEntity) {
-        return UserEntity.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
-                .familyMember(familyMemberEntity)
-                .build();
+        UserEntity user = new UserEntity();
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(Role.USER);
+        user.setFamilyMember(familyMemberEntity);
+        return user;
     }
 
 }

@@ -3,21 +3,15 @@ package com.farkas.familymealmate.model.entity;
 import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
 import com.farkas.familymealmate.model.enums.QualitativeMeasurement;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 
 import java.math.BigDecimal;
 
-@Data
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-@SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Entity(name = "RecipeIngredient")
 @Table(name = "recipe_ingredient")
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class RecipeIngredientEntity extends BaseEntity {
 
     @ManyToOne
