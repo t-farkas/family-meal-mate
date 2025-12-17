@@ -9,5 +9,6 @@ public enum AllergyType {
     WHEAT,
     SOY,
     SESAME,
-    MUSTARD
+    MUSTARD,
+    GLUTEN
 }

@@ -20,6 +20,7 @@ public class IngredientEntity extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 100)
     private IngredientCategory category;
 

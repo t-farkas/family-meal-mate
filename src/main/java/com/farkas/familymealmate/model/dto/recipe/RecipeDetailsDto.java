@@ -2,6 +2,7 @@ package com.farkas.familymealmate.model.dto.recipe;
 
 import com.farkas.familymealmate.model.dto.familymember.FamilyMemberListDto;
 import com.farkas.familymealmate.model.dto.household.HouseholdMemberDto;
+import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientDto;
 import com.farkas.familymealmate.model.dto.recipe.tag.TagDto;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class RecipeDetailsDto {
     private Integer totalTime;
     private Integer serves;
     private List<String> instructions;
+    private List<RecipeIngredientDto> ingredients;
     private List<String> notes;
     private HouseholdMemberDto household;
     private FamilyMemberListDto createdBy;

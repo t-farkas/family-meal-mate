@@ -1,5 +1,7 @@
 package com.farkas.familymealmate.model.dto.recipe;
 
+import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientCreateRequestDto;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
@@ -22,6 +24,10 @@ public class RecipeCreateRequest {
 
     @NotEmpty(message = "{recipe.instructions.notempty}")
     private List< @NotBlank String> instructions;
+
+    @NotEmpty(message = "{recipe.ingredients.notempty}")
+    private List<@Valid RecipeIngredientCreateRequestDto> ingredients;
+
     private List<String> notes;
     private Set<Long> tagIds;
 

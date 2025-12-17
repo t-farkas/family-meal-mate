@@ -71,7 +71,7 @@ public class FamilyMemberServiceIntegrationTest {
         FamilyMemberDetailsDto member = familyMemberService.addFamilyMember(TestFamilyMembers.JANE.createRequest());
 
         assertThat(member).isNotNull();
-        assertThat(member.getHousehold().getId()).isEqualTo(user1.getFamilyMember().getHousehold().getId());
+        assertThat(member.getHousehold().getName()).isEqualTo(user1.getFamilyMember().getHousehold().getName());
 
     }
 

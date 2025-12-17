@@ -24,22 +24,16 @@ public class IngredientDataLoader implements ApplicationRunner {
 
     private final IngredientRepository ingredientRepository;
 
-    private static Set<AllergyType> getAllergyTypes(String allergiesColumn) {
-        return Arrays.stream(allergiesColumn.split(","))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .map(String::toUpperCase)
-                .map(AllergyType::valueOf)
-                .collect(Collectors.toSet());
-    }
-
     @Override
     public void run(ApplicationArguments args) {
-        ingredientRepository.deleteAll();
+        if (ingredientRepository.count() == 0) {
+            loadIngredients();
+        }
+    }
 
+    private void loadIngredients() {
         List<IngredientEntity> ingredients = CsvReaderUtil.readCsvFile("/data/ingredients.csv", ",", getRowMapper());
         ingredientRepository.saveAll(ingredients);
-
         log.info("Loaded " + ingredients.size() + " ingredients");
     }
 
@@ -55,6 +49,15 @@ public class IngredientDataLoader implements ApplicationRunner {
 
             return ingredient;
         };
+    }
+
+    private Set<AllergyType> getAllergyTypes(String allergiesColumn) {
+        return Arrays.stream(allergiesColumn.split("\\|"))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(String::toUpperCase)
+                .map(AllergyType::valueOf)
+                .collect(Collectors.toSet());
     }
 
 }

@@ -12,7 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HouseholdDto {
-    private Long id;
     private String name;
     private String joinId;
     private List<HouseholdMemberDto> members;

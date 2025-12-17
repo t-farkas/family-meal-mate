@@ -10,7 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HouseholdMemberDto {
-    private Long id;
     private String name;
 
 }

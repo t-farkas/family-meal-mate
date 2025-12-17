@@ -5,9 +5,13 @@ import com.farkas.familymealmate.mapper.RecipeMapper;
 import com.farkas.familymealmate.model.dto.recipe.RecipeCreateRequest;
 import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
 import com.farkas.familymealmate.model.dto.recipe.RecipeListDto;
+import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientCreateRequestDto;
+import com.farkas.familymealmate.model.entity.IngredientEntity;
 import com.farkas.familymealmate.model.entity.RecipeEntity;
+import com.farkas.familymealmate.model.entity.RecipeIngredientEntity;
 import com.farkas.familymealmate.model.entity.TagEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
+import com.farkas.familymealmate.repository.IngredientRepository;
 import com.farkas.familymealmate.repository.RecipeRepository;
 import com.farkas.familymealmate.repository.TagRepository;
 import com.farkas.familymealmate.security.CurrentUserService;
@@ -17,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,9 +32,10 @@ import java.util.stream.Collectors;
 public class RecipeServiceImpl implements RecipeService {
 
     private final RecipeRepository recipeRepository;
+    private final TagRepository tagRepository;
+    private final IngredientRepository ingredientRepository;
     private final CurrentUserService currentUserService;
     private final RecipeMapper recipeMapper;
-    private final TagRepository tagRepository;
 
     @Override
     public RecipeDetailsDto create(RecipeCreateRequest recipeCreateRequest) {
@@ -66,6 +72,7 @@ public class RecipeServiceImpl implements RecipeService {
     @CheckHouseholdAccess
     public void delete(Long id) {
         RecipeEntity recipe = getRecipe(id);
+//        recipe.getIngredients().clear();
         recipeRepository.delete(recipe);
     }
 
@@ -79,13 +86,54 @@ public class RecipeServiceImpl implements RecipeService {
         recipe.setCreatedBy(currentUserService.getCurrentFamilyMember());
         recipe.setHousehold(currentUserService.getCurrentHousehold());
 
-        Set<TagEntity> tags = getTags(recipeCreateRequest);
-        recipe.setTags(tags);
+        recipe.setTags(getTags(recipeCreateRequest.getTagIds()));
+        recipe.setIngredients(getIngredients(recipeCreateRequest.getIngredients(), recipe));
         return recipe;
     }
 
-    private Set<TagEntity> getTags(RecipeCreateRequest recipeCreateRequest) {
-        Set<Long> tagIds = recipeCreateRequest.getTagIds();
+    private List<RecipeIngredientEntity> getIngredients(List<RecipeIngredientCreateRequestDto> ingredients, RecipeEntity recipe) {
+        List<RecipeIngredientEntity> recipeIngredients = new ArrayList<>();
+
+        ingredients.forEach(ingredient -> {
+            RecipeIngredientEntity recipeIngredient = new RecipeIngredientEntity();
+            setMeasurements(ingredient, recipeIngredient);
+            recipeIngredient.setRecipe(recipe);
+            IngredientEntity ingredientEntity = getIngredientEntity(ingredient);
+            recipeIngredient.setIngredient(ingredientEntity);
+            recipeIngredients.add(recipeIngredient);
+
+        });
+
+        return recipeIngredients;
+    }
+
+    private IngredientEntity getIngredientEntity(RecipeIngredientCreateRequestDto ingredient) {
+        return ingredientRepository.findById(ingredient.getIngredientId()).orElseThrow(
+                () -> new ServiceException(ErrorCode.INGREDIENT_NOT_FOUND.format(ingredient.getIngredientId()),
+                        ErrorCode.INGREDIENT_NOT_FOUND));
+    }
+
+    private void setMeasurements(RecipeIngredientCreateRequestDto ingredient, RecipeIngredientEntity recipeIngredientEntity) {
+        if (isQualitative(ingredient)) {
+            recipeIngredientEntity.setQualitativeMeasurement(ingredient.getQualitativeMeasurement());
+        } else if (isQuantitative(ingredient)) {
+            recipeIngredientEntity.setQuantity(ingredient.getQuantity());
+            recipeIngredientEntity.setQuantitativeMeasurement(ingredient.getQuantitativeMeasurement());
+        } else {
+            throw new ServiceException(ErrorCode.INVALID_INGREDIENT_MEASUREMENT.getTemplate(),
+                    ErrorCode.INVALID_INGREDIENT_MEASUREMENT);
+        }
+    }
+
+    private boolean isQuantitative(RecipeIngredientCreateRequestDto ingredient) {
+        return ingredient.getQuantity() != null && ingredient.getQuantitativeMeasurement() != null;
+    }
+
+    private boolean isQualitative(RecipeIngredientCreateRequestDto ingredient) {
+        return !isQuantitative(ingredient) && ingredient.getQualitativeMeasurement() != null;
+    }
+
+    private Set<TagEntity> getTags(Set<Long> tagIds) {
 
         if (tagIds == null || tagIds.isEmpty()) {
             return null;
