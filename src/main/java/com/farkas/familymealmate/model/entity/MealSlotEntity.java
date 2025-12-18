@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.DayOfWeek;
 
 @Getter
 @Setter
@@ -17,8 +17,9 @@ public class MealSlotEntity extends BaseEntity {
 
     private String note;
 
-    @Column(nullable = false)
-    private LocalDate date;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "day_of_week", nullable = false, length = 10)
+    private DayOfWeek day;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "meal_type", nullable = false, length = 50)

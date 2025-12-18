@@ -134,7 +134,7 @@ public class MealPlanServiceImpl implements MealPlanService {
                     MealSlotEntity entity = entityMap.get(slot.id());
                     entity.setRecipe(recipeService.getEntity(slot.recipeId()));
                     entity.setNote(slot.note());
-                    entity.setDate(slot.date());
+                    entity.setDay(slot.day());
                     entity.setMealType(slot.mealType());
                 });
 
@@ -147,7 +147,7 @@ public class MealPlanServiceImpl implements MealPlanService {
                     MealSlotEntity entity = new MealSlotEntity();
                     entity.setMealPlan(mealPlan);
                     entity.setMealType(slot.mealType());
-                    entity.setDate(slot.date());
+                    entity.setDay(slot.day());
                     entity.setNote(slot.note());
                     entity.setRecipe(recipeService.getEntity(slot.recipeId()));
 
