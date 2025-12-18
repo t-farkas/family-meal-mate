@@ -6,6 +6,7 @@ import com.farkas.familymealmate.model.dto.mealplan.MealSlotDetailsDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealSlotUpdateRequest;
 import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
 import com.farkas.familymealmate.model.entity.UserEntity;
+import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.testdata.mealplan.TestMealSlot;
 import com.farkas.familymealmate.testdata.recipe.TestRecipes;
 import com.farkas.familymealmate.testdata.user.TestUserFactory;
@@ -42,14 +43,14 @@ public class MealPlanEditIntegrationTest {
         MealPlanUpdateRequest mealPlanRequest = getMealPlanUpdateRequest();
 
         mealPlanService.createMealPlans();
-        MealPlanDetailsDto mealPlan = mealPlanService.editCurrentWeek(mealPlanRequest);
+        MealPlanDetailsDto mealPlan = mealPlanService.editMealPlan(mealPlanRequest);
 
         assertThat(mealPlan.mealSlots()).hasSize(3);
         assertThat(mealPlan.mealSlots()).extracting(MealSlotDetailsDto::note)
                 .contains(SPAGHETTI_NOTE, OATMEAL_NOTE, OMLETTE_NOTE);
 
         MealPlanUpdateRequest updatedRequest = getUpdatedRequest(mealPlanRequest);
-        mealPlan = mealPlanService.editCurrentWeek(updatedRequest);
+        mealPlan = mealPlanService.editMealPlan(updatedRequest);
 
         assertThat(mealPlan.mealSlots()).hasSize(2);
         assertThat(mealPlan.mealSlots()).extracting(MealSlotDetailsDto::note)
@@ -65,13 +66,13 @@ public class MealPlanEditIntegrationTest {
         MealSlotUpdateRequest omeletteSlot = new TestMealSlot(null, OMLETTE_NOTE, omelette.getId()).breakfast();
         MealSlotUpdateRequest oatmealSlot = new TestMealSlot(null, OATMEAL_NOTE, oatmeal.getId()).breakfast();
 
-        return new MealPlanUpdateRequest(List.of(spaghettiSlot, omeletteSlot, oatmealSlot));
+        return new MealPlanUpdateRequest(MealPlanWeek.CURRENT, List.of(spaghettiSlot, omeletteSlot, oatmealSlot));
     }
 
     private MealPlanUpdateRequest getUpdatedRequest(MealPlanUpdateRequest updateRequest) {
         MealSlotUpdateRequest spaghettiSlot = updateRequest.mealSlots().get(0);
         MealSlotUpdateRequest updatedSpaghettiSlot = new TestMealSlot(spaghettiSlot.id(), UPDATED_SPAGHETTI_NOTE, spaghettiSlot.recipeId()).lunch();
 
-        return new MealPlanUpdateRequest(List.of(updatedSpaghettiSlot, updateRequest.mealSlots().get(2)));
+        return new MealPlanUpdateRequest(MealPlanWeek.CURRENT,List.of(updatedSpaghettiSlot, updateRequest.mealSlots().get(2)));
     }
 }

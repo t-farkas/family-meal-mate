@@ -3,6 +3,7 @@ package com.farkas.familymealmate.controller;
 import com.farkas.familymealmate.model.dto.BaseResponse;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanDetailsDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
+import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.service.MealPlanService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,27 +27,15 @@ public class MealPlanController {
                 .body(new BaseResponse("Meal Plans created successfully"));
     }
 
-    @GetMapping("/current")
-    public ResponseEntity<MealPlanDetailsDto> getCurrentPlan() {
-        MealPlanDetailsDto mealPlan = service.getCurrentWeek();
+    @GetMapping
+    public ResponseEntity<MealPlanDetailsDto> getMealPlan( @RequestParam MealPlanWeek week) {
+        MealPlanDetailsDto mealPlan = service.getMealPlan(week);
         return ResponseEntity.ok(mealPlan);
     }
 
-    @GetMapping("/next")
-    public ResponseEntity<MealPlanDetailsDto> getNextPlan() {
-        MealPlanDetailsDto mealPlan = service.getNextWeek();
-        return ResponseEntity.ok(mealPlan);
-    }
-
-    @PutMapping("/current")
-    public ResponseEntity<MealPlanDetailsDto> updateCurrentPlan(@RequestBody @Valid MealPlanUpdateRequest mealPlan) {
-        MealPlanDetailsDto mealPlanDetailsDto = service.editCurrentWeek(mealPlan);
-        return ResponseEntity.ok(mealPlanDetailsDto);
-    }
-
-    @PutMapping("/next")
-    public ResponseEntity<MealPlanDetailsDto> updateNextPlan(@RequestBody @Valid MealPlanUpdateRequest mealPlan) {
-        MealPlanDetailsDto mealPlanDetailsDto = service.editNextWeek(mealPlan);
+    @PutMapping
+    public ResponseEntity<MealPlanDetailsDto> editMealPlan(@RequestBody @Valid MealPlanUpdateRequest mealPlan) {
+        MealPlanDetailsDto mealPlanDetailsDto = service.editMealPlan(mealPlan);
         return ResponseEntity.ok(mealPlanDetailsDto);
     }
 
@@ -56,9 +45,9 @@ public class MealPlanController {
         return ResponseEntity.ok(favourites);
     }
 
-    @PostMapping("/favourite/{id}")
-    public ResponseEntity<BaseResponse> markFavourite(@PathVariable Long id) {
-        service.markFavourite(id);
+    @PostMapping("/favourite")
+    public ResponseEntity<BaseResponse> markFavourite(@RequestParam MealPlanWeek week) {
+        service.markFavourite(week);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponse("Meal plan marked favourite successfully"));
     }

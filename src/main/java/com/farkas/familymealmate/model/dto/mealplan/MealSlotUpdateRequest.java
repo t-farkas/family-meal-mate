@@ -4,7 +4,6 @@ import com.farkas.familymealmate.model.enums.MealType;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 
 public record MealSlotUpdateRequest(
         Long id,

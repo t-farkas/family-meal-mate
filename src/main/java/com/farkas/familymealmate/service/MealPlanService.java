@@ -2,21 +2,18 @@ package com.farkas.familymealmate.service;
 
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanDetailsDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
+import com.farkas.familymealmate.model.enums.MealPlanWeek;
 
 import java.util.List;
 
 public interface MealPlanService {
     void createMealPlans();
 
-    MealPlanDetailsDto getCurrentWeek();
+    MealPlanDetailsDto getMealPlan(MealPlanWeek week);
 
-    MealPlanDetailsDto getNextWeek();
+    MealPlanDetailsDto editMealPlan(MealPlanUpdateRequest mealPlanRequest);
 
-    MealPlanDetailsDto editCurrentWeek(MealPlanUpdateRequest mealPlanRequest);
-
-    MealPlanDetailsDto editNextWeek(MealPlanUpdateRequest mealPlanRequest);
-
-    void markFavourite(Long id);
+    void markFavourite(MealPlanWeek week);
 
     void deleteFavourite(Long id);
 
