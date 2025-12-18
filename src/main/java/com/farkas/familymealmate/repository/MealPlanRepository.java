@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface MealPlanRepository extends JpaRepository<MealPlanEntity, Long> {
 
     Optional<MealPlanEntity> findByHouseholdIdAndWeekStart(Long householdId, LocalDate weekStart);
+    long deleteByWeekStartBefore(LocalDate lastAllowedWeek);
 }

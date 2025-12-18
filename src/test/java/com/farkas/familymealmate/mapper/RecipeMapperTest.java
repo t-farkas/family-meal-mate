@@ -8,7 +8,6 @@ import com.farkas.familymealmate.model.enums.AllergyType;
 import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
