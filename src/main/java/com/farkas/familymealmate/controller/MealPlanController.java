@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/mealplan")
 @RequiredArgsConstructor
@@ -46,5 +48,25 @@ public class MealPlanController {
     public ResponseEntity<MealPlanDetailsDto> updateNextPlan(@RequestBody @Valid MealPlanUpdateRequest mealPlan) {
         MealPlanDetailsDto mealPlanDetailsDto = service.editNextWeek(mealPlan);
         return ResponseEntity.ok(mealPlanDetailsDto);
+    }
+
+    @GetMapping("/favourite")
+    public ResponseEntity<List<MealPlanDetailsDto>> getFavourites() {
+        List<MealPlanDetailsDto> favourites = service.listFavourites();
+        return ResponseEntity.ok(favourites);
+    }
+
+    @PostMapping("/favourite/{id}")
+    public ResponseEntity<BaseResponse> markFavourite(@PathVariable Long id) {
+        service.markFavourite(id);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new BaseResponse("Meal plan marked favourite successfully"));
+    }
+
+    @DeleteMapping("/favourite/{id}")
+    public ResponseEntity<BaseResponse> delete(@PathVariable Long id) {
+
+        service.deleteFavourite(id);
+        return ResponseEntity.noContent().build();
     }
 }

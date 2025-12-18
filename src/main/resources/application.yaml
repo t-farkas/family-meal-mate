@@ -30,3 +30,6 @@ open-api:
 jwt:
   secret: S7$gV^9p4w!D@q2Jm#Tz8H%lR3uE&c1Y*K6nW0bF$P5sA9rQd
   expiration: 86400000
+
+mealplan:
+  max-favourites: 5

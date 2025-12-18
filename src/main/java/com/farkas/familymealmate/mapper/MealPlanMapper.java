@@ -5,11 +5,15 @@ import com.farkas.familymealmate.model.entity.MealPlanEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         uses = MealSlotMapper.class)
 public interface MealPlanMapper {
 
     MealPlanDetailsDto toDto(MealPlanEntity request);
+
+    List<MealPlanDetailsDto> toDtoList(List<MealPlanEntity> request);
 
 }
