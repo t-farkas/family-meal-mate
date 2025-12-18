@@ -14,11 +14,11 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class RecipeIngredientEntity extends BaseEntity {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id", nullable = false)
     private RecipeEntity recipe;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ingredient_id", nullable = false)
     private IngredientEntity ingredient;
 

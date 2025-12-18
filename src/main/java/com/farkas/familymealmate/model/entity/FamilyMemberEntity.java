@@ -29,7 +29,7 @@ public class FamilyMemberEntity extends BaseEntity {
     @Column(name = "allergies")
     private Set<AllergyType> allergies;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "household_id", nullable = false)
     private HouseholdEntity household;
 

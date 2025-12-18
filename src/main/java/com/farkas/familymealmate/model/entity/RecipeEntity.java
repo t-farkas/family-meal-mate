@@ -30,13 +30,13 @@ public class RecipeEntity extends BaseEntity {
     @Column(name = "note")
     private List<String> notes;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private HouseholdEntity household;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private FamilyMemberEntity createdBy;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "recipe_tag",
             joinColumns = @JoinColumn(name = "recipe_id"),
