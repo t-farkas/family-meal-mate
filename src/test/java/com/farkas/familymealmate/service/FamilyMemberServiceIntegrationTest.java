@@ -7,7 +7,7 @@ import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.testdata.familymember.TestFamilyMembers;
 import com.farkas.familymealmate.testdata.user.TestUserFactory;
 import com.farkas.familymealmate.testdata.user.TestUsers;
-import com.farkas.familymealmate.util.AuthenticationUtil;
+import com.farkas.familymealmate.testutil.AuthenticationUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

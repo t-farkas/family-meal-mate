@@ -15,7 +15,7 @@ import com.farkas.familymealmate.testdata.recipe.TestRecipes;
 import com.farkas.familymealmate.testdata.user.TestUser;
 import com.farkas.familymealmate.testdata.user.TestUserFactory;
 import com.farkas.familymealmate.testdata.user.TestUsers;
-import com.farkas.familymealmate.util.AuthenticationUtil;
+import com.farkas.familymealmate.testutil.AuthenticationUtil;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

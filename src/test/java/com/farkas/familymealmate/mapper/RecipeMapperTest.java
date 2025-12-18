@@ -17,7 +17,6 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
 public class RecipeMapperTest {
 
     private final RecipeMapper mapper = Mappers.getMapper(RecipeMapper.class);

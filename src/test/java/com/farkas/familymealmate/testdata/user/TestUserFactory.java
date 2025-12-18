@@ -5,7 +5,7 @@ import com.farkas.familymealmate.model.entity.UserEntity;
 import com.farkas.familymealmate.repository.UserRepository;
 import com.farkas.familymealmate.security.AuthService;
 import com.farkas.familymealmate.security.CustomUserDetails;
-import com.farkas.familymealmate.util.AuthenticationUtil;
+import com.farkas.familymealmate.testutil.AuthenticationUtil;
 import org.springframework.stereotype.Component;
 
 @Component
