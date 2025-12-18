@@ -3,19 +3,26 @@ package com.farkas.familymealmate.service.impl;
 import com.farkas.familymealmate.exception.ServiceException;
 import com.farkas.familymealmate.mapper.MealPlanMapper;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanDetailsDto;
+import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
+import com.farkas.familymealmate.model.dto.mealplan.MealSlotUpdateRequest;
 import com.farkas.familymealmate.model.entity.HouseholdEntity;
 import com.farkas.familymealmate.model.entity.MealPlanEntity;
+import com.farkas.familymealmate.model.entity.MealSlotEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.repository.MealPlanRepository;
 import com.farkas.familymealmate.security.CurrentUserService;
 import com.farkas.familymealmate.service.MealPlanService;
+import com.farkas.familymealmate.service.RecipeService;
 import com.farkas.familymealmate.util.MealPlanDateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +32,7 @@ public class MealPlanServiceImpl implements MealPlanService {
     private final CurrentUserService currentUserService;
     private final MealPlanRepository mealPlanRepository;
     private final MealPlanMapper mealPlanMapper;
+    private final RecipeService recipeService;
 
     @Override
     public void createMealPlans() {
@@ -46,19 +54,51 @@ public class MealPlanServiceImpl implements MealPlanService {
 
     @Override
     public MealPlanDetailsDto getCurrentWeek() {
-        HouseholdEntity currentHousehold = currentUserService.getCurrentHousehold();
-        LocalDate weekStart = MealPlanDateUtils.getCurrentWeekStart();
-        MealPlanEntity mealPlan = getMealPlanEntity(currentHousehold, weekStart);
+        MealPlanEntity mealPlan = getCurrentWeekMealPlanEntity();
         return mealPlanMapper.toDto(mealPlan);
 
     }
 
     @Override
     public MealPlanDetailsDto getNextWeek() {
+        MealPlanEntity mealPlan = getNextWeekMealPlanEntity();
+        return mealPlanMapper.toDto(mealPlan);
+    }
+
+    @Override
+    public MealPlanDetailsDto editCurrentWeek(MealPlanUpdateRequest mealPlanRequest) {
+        MealPlanEntity mealPlanEntity = getCurrentWeekMealPlanEntity();
+        return editMealPlan(mealPlanRequest, mealPlanEntity);
+    }
+
+    @Override
+    public MealPlanDetailsDto editNextWeek(MealPlanUpdateRequest mealPlanRequest) {
+        MealPlanEntity mealPlanEntity = getNextWeekMealPlanEntity();
+        return editMealPlan(mealPlanRequest, mealPlanEntity);
+    }
+
+    private MealPlanDetailsDto editMealPlan(MealPlanUpdateRequest mealPlanRequest, MealPlanEntity mealPlanEntity) {
+        List<MealSlotEntity> mealSlotEntities = mealPlanEntity.getMealSlots();
+        List<MealSlotUpdateRequest> mealSlots = mealPlanRequest.mealSlots();
+
+        deleteRemoved(mealSlotEntities, mealSlots);
+        updateExisting(mealSlotEntities, mealSlots);
+        mealSlotEntities.addAll(createNew(mealPlanEntity, mealSlots));
+
+        MealPlanEntity saved = mealPlanRepository.save(mealPlanEntity);
+        return mealPlanMapper.toDto(saved);
+    }
+
+    private MealPlanEntity getCurrentWeekMealPlanEntity() {
+        HouseholdEntity currentHousehold = currentUserService.getCurrentHousehold();
+        LocalDate weekStart = MealPlanDateUtils.getCurrentWeekStart();
+        return getMealPlanEntity(currentHousehold, weekStart);
+    }
+
+    private MealPlanEntity getNextWeekMealPlanEntity() {
         HouseholdEntity currentHousehold = currentUserService.getCurrentHousehold();
         LocalDate weekStart = MealPlanDateUtils.getNextWeekStart();
-        MealPlanEntity mealPlan = getMealPlanEntity(currentHousehold, weekStart);
-        return mealPlanMapper.toDto(mealPlan);
+        return getMealPlanEntity(currentHousehold, weekStart);
     }
 
     private MealPlanEntity getMealPlanEntity(HouseholdEntity currentHousehold, LocalDate weekStart) {
@@ -77,5 +117,41 @@ public class MealPlanServiceImpl implements MealPlanService {
         mealPlanEntity.setTemplate(false);
 
         mealPlanRepository.save(mealPlanEntity);
+    }
+
+    private void deleteRemoved(List<MealSlotEntity> mealSlotEntities, List<MealSlotUpdateRequest> mealSlots) {
+        List<Long> requestIds = mealSlots.stream().map(MealSlotUpdateRequest::id).toList();
+        mealSlotEntities.removeIf(entity -> !requestIds.contains(entity.getId()));
+    }
+
+    private void updateExisting(List<MealSlotEntity> mealSlotEntities, List<MealSlotUpdateRequest> mealSlots) {
+        Map<Long, MealSlotEntity> entityMap = mealSlotEntities.stream()
+                .collect(Collectors.toMap(MealSlotEntity::getId, entity -> entity));
+
+        mealSlots.stream()
+                .filter(slot -> slot.id() != null)
+                .forEach(slot -> {
+                    MealSlotEntity entity = entityMap.get(slot.id());
+                    entity.setRecipe(recipeService.getEntity(slot.recipeId()));
+                    entity.setNote(slot.note());
+                    entity.setDate(slot.date());
+                    entity.setMealType(slot.mealType());
+                });
+
+    }
+
+    private List<MealSlotEntity> createNew(MealPlanEntity mealPlan, List<MealSlotUpdateRequest> mealSlots) {
+        return mealSlots.stream()
+                .filter(slot -> slot.id() == null)
+                .map(slot -> {
+                    MealSlotEntity entity = new MealSlotEntity();
+                    entity.setMealPlan(mealPlan);
+                    entity.setMealType(slot.mealType());
+                    entity.setDate(slot.date());
+                    entity.setNote(slot.note());
+                    entity.setRecipe(recipeService.getEntity(slot.recipeId()));
+
+                    return entity;
+                }).collect(Collectors.toList());
     }
 }

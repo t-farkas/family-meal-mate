@@ -8,6 +8,8 @@ import com.farkas.familymealmate.model.entity.HouseholdEntity;
 public interface FamilyMemberService {
 
     FamilyMemberEntity createFamilyMember(FamilyMemberCreateRequest request, HouseholdEntity household);
+
     FamilyMemberDetailsDto addFamilyMember(FamilyMemberCreateRequest request);
+
     FamilyMemberDetailsDto getFamilyMember(Long id);
 }

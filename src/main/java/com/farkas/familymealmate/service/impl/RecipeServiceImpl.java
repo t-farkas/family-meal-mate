@@ -80,6 +80,12 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     @CheckHouseholdAccess
+    public RecipeEntity getEntity(Long id) {
+        return getRecipe(id);
+    }
+
+    @Override
+    @CheckHouseholdAccess
     public void delete(Long id) {
         RecipeEntity recipe = getRecipe(id);
         recipeRepository.delete(recipe);
