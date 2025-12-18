@@ -15,4 +15,5 @@
     <include file="/db/changelog/changes/08-add-recipe-missing-constraints.xml"/>
     <include file="/db/changelog/changes/09-create-ingredient.xml"/>
     <include file="/db/changelog/changes/10-create-recipe-ingredient.xml"/>
+    <include file="/db/changelog/changes/11-create-meal-plan.xml"/>
 </databaseChangeLog>
