@@ -1,0 +1,15 @@
+package com.farkas.familymealmate.mapper;
+
+import com.farkas.familymealmate.model.dto.mealplan.MealPlanDetailsDto;
+import com.farkas.familymealmate.model.entity.MealPlanEntity;
+import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
+
+@Mapper(componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        uses = MealSlotMapper.class)
+public interface MealPlanMapper {
+
+    MealPlanDetailsDto toDto(MealPlanEntity request);
+
+}
