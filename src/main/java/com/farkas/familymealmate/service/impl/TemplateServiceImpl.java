@@ -35,19 +35,19 @@ public class TemplateServiceImpl implements TemplateService {
     private int maxFavourites;
 
     @Override
-    public void createTemplate(TemplateCreateRequest request) {
+    public TemplateDto createTemplate(TemplateCreateRequest request) {
         HouseholdEntity household = currentUserService.getCurrentHousehold();
         checkTemplateCount(household);
         MealPlanEntity template = createTemplate(household, request);
 
-        save(template);
+        MealPlanEntity saved = save(template);
+        return mealPlanMapper.toTemplateDto(saved);
     }
 
     @Override
-    public void deleteFavourite(Long id) {
+    public void deleteTemplate(Long id) {
         MealPlanEntity mealPlan = getMealPlanEntity(id);
         if (mealPlan.isTemplate()) {
-            mealPlan.getMealSlots().clear();
             mealPlanRepository.deleteById(id);
         } else {
             throw new ServiceException(
@@ -56,7 +56,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public List<TemplateDto> listFavourites() {
+    public List<TemplateDto> listTemplates() {
         HouseholdEntity household = currentUserService.getCurrentHousehold();
         List<MealPlanEntity> favourites = mealPlanRepository.findAllByHouseholdIdAndTemplate(household.getId(), true);
         return mealPlanMapper.toTemplateDtoList(favourites);
@@ -120,9 +120,9 @@ public class TemplateServiceImpl implements TemplateService {
                 .orElseThrow(() -> new ServiceException(ErrorCode.MEAL_PLAN_NOT_FOUND.format("current"), ErrorCode.MEAL_PLAN_NOT_FOUND));
     }
 
-    private void save(MealPlanEntity template) {
+    private MealPlanEntity save(MealPlanEntity template) {
         try {
-            mealPlanRepository.save(template);
+            return mealPlanRepository.save(template);
         } catch (DataIntegrityViolationException e) {
             throw new ServiceException(
                     ErrorCode.TEMPLATE_NAME_ALREADY_EXISTS.format(template.getTemplateName()),

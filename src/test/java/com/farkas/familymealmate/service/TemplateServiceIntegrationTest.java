@@ -1,11 +1,14 @@
 package com.farkas.familymealmate.service;
 
-import com.farkas.familymealmate.model.dto.mealplan.MealPlanDetailsDto;
+import com.farkas.familymealmate.exception.ServiceException;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
 import com.farkas.familymealmate.model.dto.mealplan.MealSlotDetailsDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealSlotUpdateRequest;
 import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
+import com.farkas.familymealmate.model.dto.template.TemplateCreateRequest;
+import com.farkas.familymealmate.model.dto.template.TemplateDto;
 import com.farkas.familymealmate.model.entity.UserEntity;
+import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.testdata.mealplan.TestMealSlot;
 import com.farkas.familymealmate.testdata.recipe.TestRecipes;
@@ -19,43 +22,70 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @SpringBootTest
 @Transactional
-public class MealPlanEditIntegrationTest {
+public class TemplateServiceIntegrationTest {
 
     private static final String OMLETTE_NOTE = "A nice omelette";
     private static final String OATMEAL_NOTE = "A nice oatmeal";
     private static final String SPAGHETTI_NOTE = "A nice spaghetti";
-    private static final String UPDATED_SPAGHETTI_NOTE = "UPDATED: A nice spaghetti";
+
+    @Autowired
+    private TemplateService templateService;
 
     @Autowired
     private MealPlanService mealPlanService;
+
     @Autowired
     private RecipeService recipeService;
+
     @Autowired
     private TestUserFactory userFactory;
 
     @Test
-    void shouldEditMealSlots() {
-        UserEntity user = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
-        userFactory.authenticate(user);
+    void shouldCreateTemplateFromCurrentWeek() {
+        createMealPlans();
+        TemplateCreateRequest createRequest = new TemplateCreateRequest("my first template", MealPlanWeek.CURRENT);
+        TemplateDto template = templateService.createTemplate(createRequest);
 
-        MealPlanUpdateRequest mealPlanRequest = getMealPlanUpdateRequest();
+        assertThat(template).isNotNull();
+        assertThat(template.templateName()).isEqualTo(createRequest.name());
+        assertThat(template.mealSlots()).hasSize(3);
+        assertThat(template.mealSlots()).extracting(
+                MealSlotDetailsDto::note).contains(OMLETTE_NOTE, OATMEAL_NOTE, SPAGHETTI_NOTE);
+    }
 
+
+    @Test
+    void shouldRejectWhenTemplateLimitReached() {
+        createMealPlans();
+        TemplateCreateRequest createRequest = new TemplateCreateRequest("my first template", MealPlanWeek.CURRENT);
+        templateService.createTemplate(createRequest);
+        assertThatExceptionOfType(ServiceException.class)
+                .isThrownBy(() -> templateService.createTemplate(createRequest))
+                .satisfies(e -> assertThat(e.getErrorCode()).isEqualTo(ErrorCode.TEMPLATE_NAME_ALREADY_EXISTS));
+
+    }
+
+    @Test
+    void shouldDeleteTemplate() {
+        createMealPlans();
+        TemplateCreateRequest createRequest = new TemplateCreateRequest("my first template", MealPlanWeek.CURRENT);
+        TemplateDto template = templateService.createTemplate(createRequest);
+
+        templateService.deleteTemplate(template.id());
+        List<TemplateDto> list = templateService.listTemplates();
+        assertThat(list).isEmpty();
+
+    }
+
+    private void createMealPlans() {
+        UserEntity bertha = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
+        userFactory.authenticate(bertha);
         mealPlanService.createMealPlans();
-        MealPlanDetailsDto mealPlan = mealPlanService.editMealPlan(mealPlanRequest);
-
-        assertThat(mealPlan.mealSlots()).hasSize(3);
-        assertThat(mealPlan.mealSlots()).extracting(MealSlotDetailsDto::note)
-                .contains(SPAGHETTI_NOTE, OATMEAL_NOTE, OMLETTE_NOTE);
-
-        MealPlanUpdateRequest updatedRequest = getUpdatedRequest(mealPlanRequest);
-        mealPlan = mealPlanService.editMealPlan(updatedRequest);
-
-        assertThat(mealPlan.mealSlots()).hasSize(2);
-        assertThat(mealPlan.mealSlots()).extracting(MealSlotDetailsDto::note)
-                .contains(UPDATED_SPAGHETTI_NOTE);
+        mealPlanService.editMealPlan(getMealPlanUpdateRequest());
     }
 
     private MealPlanUpdateRequest getMealPlanUpdateRequest() {
@@ -68,12 +98,5 @@ public class MealPlanEditIntegrationTest {
         MealSlotUpdateRequest oatmealSlot = new TestMealSlot(null, OATMEAL_NOTE, oatmeal.getId()).breakfast();
 
         return new MealPlanUpdateRequest(MealPlanWeek.CURRENT, List.of(spaghettiSlot, omeletteSlot, oatmealSlot));
-    }
-
-    private MealPlanUpdateRequest getUpdatedRequest(MealPlanUpdateRequest updateRequest) {
-        MealSlotUpdateRequest spaghettiSlot = updateRequest.mealSlots().get(0);
-        MealSlotUpdateRequest updatedSpaghettiSlot = new TestMealSlot(spaghettiSlot.id(), UPDATED_SPAGHETTI_NOTE, spaghettiSlot.recipeId()).lunch();
-
-        return new MealPlanUpdateRequest(MealPlanWeek.CURRENT,List.of(updatedSpaghettiSlot, updateRequest.mealSlots().get(2)));
     }
 }

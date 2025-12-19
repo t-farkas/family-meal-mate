@@ -21,21 +21,20 @@ public class TemplateController {
 
     @GetMapping
     public ResponseEntity<List<TemplateDto>> getFavourites() {
-        List<TemplateDto> favourites = service.listFavourites();
+        List<TemplateDto> favourites = service.listTemplates();
         return ResponseEntity.ok(favourites);
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponse> createTemplate(@RequestBody TemplateCreateRequest request) {
-        service.createTemplate(request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new BaseResponse("Template successfully created"));
+    public ResponseEntity<TemplateDto> createTemplate(@RequestBody TemplateCreateRequest request) {
+        TemplateDto template = service.createTemplate(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(template);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> delete(@PathVariable Long id) {
 
-        service.deleteFavourite(id);
+        service.deleteTemplate(id);
         return ResponseEntity.noContent().build();
     }
 }

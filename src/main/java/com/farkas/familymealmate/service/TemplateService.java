@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface TemplateService {
 
-    void createTemplate(TemplateCreateRequest week);
+    TemplateDto createTemplate(TemplateCreateRequest week);
 
-    void deleteFavourite(Long id);
+    void deleteTemplate(Long id);
 
-    List<TemplateDto> listFavourites();
+    List<TemplateDto> listTemplates();
 }

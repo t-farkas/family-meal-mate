@@ -15,6 +15,8 @@ public interface MealPlanMapper {
 
     MealPlanDetailsDto toDto(MealPlanEntity request);
 
+    TemplateDto toTemplateDto(MealPlanEntity request);
+
     List<TemplateDto> toTemplateDtoList(List<MealPlanEntity> request);
 
 }
