@@ -22,6 +22,9 @@ public class MealPlanEntity extends BaseEntity {
     @Column(name = "is_template", nullable = false)
     private boolean template;
 
+    @Column(name = "template_name", length = 100)
+    private String templateName;
+
     @ManyToOne
     @JoinColumn(name = "household_id", nullable = false)
     private HouseholdEntity household;

@@ -17,4 +17,5 @@
     <include file="/db/changelog/changes/10-create-recipe-ingredient.xml"/>
     <include file="/db/changelog/changes/11-create-meal-plan.xml"/>
     <include file="/db/changelog/changes/12-mealslot_day_of_week_migration.xml"/>
+    <include file="/db/changelog/changes/13-add-template-name-to-meal-plan.xml"/>
 </databaseChangeLog>

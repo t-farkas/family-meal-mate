@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="add-template-name-to-meal-plan" author="t-farkas">
+        <addColumn tableName="meal_plan">
+            <column name="template_name" type="VARCHAR(100)"/>
+        </addColumn>
+
+        <addUniqueConstraint tableName="meal_plan"
+                             columnNames="household_id, template_name"
+                             constraintName="uk_household_template_name"/>
+    </changeSet>
+
+</databaseChangeLog>

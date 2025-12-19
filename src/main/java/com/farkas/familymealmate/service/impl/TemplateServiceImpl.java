@@ -2,7 +2,8 @@ package com.farkas.familymealmate.service.impl;
 
 import com.farkas.familymealmate.exception.ServiceException;
 import com.farkas.familymealmate.mapper.MealPlanMapper;
-import com.farkas.familymealmate.model.dto.mealplan.TemplateDto;
+import com.farkas.familymealmate.model.dto.template.TemplateCreateRequest;
+import com.farkas.familymealmate.model.dto.template.TemplateDto;
 import com.farkas.familymealmate.model.entity.HouseholdEntity;
 import com.farkas.familymealmate.model.entity.MealPlanEntity;
 import com.farkas.familymealmate.model.entity.MealSlotEntity;
@@ -14,6 +15,7 @@ import com.farkas.familymealmate.service.TemplateService;
 import com.farkas.familymealmate.util.MealPlanDateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,15 +35,12 @@ public class TemplateServiceImpl implements TemplateService {
     private int maxFavourites;
 
     @Override
-    public void markFavourite(MealPlanWeek week) {
+    public void createTemplate(TemplateCreateRequest request) {
         HouseholdEntity household = currentUserService.getCurrentHousehold();
-        checkFavouriteCount(household);
+        checkTemplateCount(household);
+        MealPlanEntity template = createTemplate(household, request);
 
-        LocalDate weekStart = getWeekStart(week);
-        MealPlanEntity mealPlanEntity = getMealPlanEntity(household, weekStart);
-
-        MealPlanEntity clone = cloneMealPlan(mealPlanEntity, household);
-        mealPlanRepository.save(clone);
+        save(template);
     }
 
     @Override
@@ -70,7 +69,7 @@ public class TemplateServiceImpl implements TemplateService {
         };
     }
 
-    private void checkFavouriteCount(HouseholdEntity household) {
+    private void checkTemplateCount(HouseholdEntity household) {
         long countFavourites = mealPlanRepository.countByHouseholdIdAndTemplate(household.getId(), true);
         if (countFavourites > maxFavourites) {
             throw new ServiceException(
@@ -83,11 +82,19 @@ public class TemplateServiceImpl implements TemplateService {
                 () -> new ServiceException(ErrorCode.MEAL_PLAN_NOT_FOUND.format(id.toString()), ErrorCode.MEAL_PLAN_NOT_FOUND));
     }
 
-    private MealPlanEntity cloneMealPlan(MealPlanEntity mealPlanEntity, HouseholdEntity household) {
+    private MealPlanEntity createTemplate(HouseholdEntity household, TemplateCreateRequest request) {
+        LocalDate weekStart = getWeekStart(request.week());
+        MealPlanEntity mealPlanEntity = getMealPlanEntity(household, weekStart);
+        MealPlanEntity template = cloneMealPlan(mealPlanEntity, household);
+        template.setTemplateName(request.name());
+        return template;
+    }
+
+    private MealPlanEntity cloneMealPlan(MealPlanEntity mealPlan, HouseholdEntity household) {
         MealPlanEntity clone = new MealPlanEntity();
         clone.setTemplate(true);
         clone.setHousehold(household);
-        cloneMealSlots(mealPlanEntity, clone);
+        cloneMealSlots(mealPlan, clone);
 
         return clone;
     }
@@ -111,6 +118,16 @@ public class TemplateServiceImpl implements TemplateService {
     private MealPlanEntity getMealPlanEntity(HouseholdEntity currentHousehold, LocalDate weekStart) {
         return mealPlanRepository.findByHouseholdIdAndWeekStart(currentHousehold.getId(), weekStart)
                 .orElseThrow(() -> new ServiceException(ErrorCode.MEAL_PLAN_NOT_FOUND.format("current"), ErrorCode.MEAL_PLAN_NOT_FOUND));
+    }
+
+    private void save(MealPlanEntity template) {
+        try {
+            mealPlanRepository.save(template);
+        } catch (DataIntegrityViolationException e) {
+            throw new ServiceException(
+                    ErrorCode.TEMPLATE_NAME_ALREADY_EXISTS.format(template.getTemplateName()),
+                    ErrorCode.TEMPLATE_NAME_ALREADY_EXISTS);
+        }
     }
 
 }
