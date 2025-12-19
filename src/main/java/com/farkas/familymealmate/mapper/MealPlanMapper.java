@@ -1,6 +1,7 @@
 package com.farkas.familymealmate.mapper;
 
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanDetailsDto;
+import com.farkas.familymealmate.model.dto.mealplan.TemplateDto;
 import com.farkas.familymealmate.model.entity.MealPlanEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -14,6 +15,6 @@ public interface MealPlanMapper {
 
     MealPlanDetailsDto toDto(MealPlanEntity request);
 
-    List<MealPlanDetailsDto> toDtoList(List<MealPlanEntity> request);
+    List<TemplateDto> toTemplateDtoList(List<MealPlanEntity> request);
 
 }

@@ -2,5 +2,5 @@ package com.farkas.familymealmate.model.dto.mealplan;
 
 import java.util.List;
 
-public record MealPlanDetailsDto(List<MealSlotDetailsDto> mealSlots) {
+public record TemplateDto(Long id, List<MealSlotDetailsDto> mealSlots) {
 }

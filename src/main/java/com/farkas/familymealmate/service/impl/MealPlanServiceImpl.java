@@ -16,7 +16,6 @@ import com.farkas.familymealmate.service.MealPlanService;
 import com.farkas.familymealmate.service.RecipeService;
 import com.farkas.familymealmate.util.MealPlanDateUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,9 +34,6 @@ public class MealPlanServiceImpl implements MealPlanService {
     private final MealPlanRepository mealPlanRepository;
     private final MealPlanMapper mealPlanMapper;
     private final RecipeService recipeService;
-
-    @Value("${mealplan.max-favourites:5}")
-    private int maxFavourites;
 
     @Override
     public void createMealPlans() {
@@ -76,80 +72,11 @@ public class MealPlanServiceImpl implements MealPlanService {
     }
 
 
-    @Override
-    public void markFavourite(MealPlanWeek week) {
-        HouseholdEntity household = currentUserService.getCurrentHousehold();
-        checkFavouriteCount(household);
-
-        LocalDate weekStart = getWeekStart(week);
-        MealPlanEntity mealPlanEntity = getMealPlanEntity(household, weekStart);
-
-        MealPlanEntity clone = cloneMealPlan(mealPlanEntity, household);
-        mealPlanRepository.save(clone);
-    }
-
-    @Override
-    public void deleteFavourite(Long id) {
-        MealPlanEntity mealPlan = getMealPlanEntity(id);
-        if (mealPlan.isTemplate()) {
-            mealPlan.getMealSlots().clear();
-            mealPlanRepository.deleteById(id);
-        } else {
-            throw new ServiceException(
-                    ErrorCode.MEAL_NOT_A_TEMPLATE.format(id), ErrorCode.MEAL_NOT_A_TEMPLATE);
-        }
-    }
-
-    @Override
-    public List<MealPlanDetailsDto> listFavourites() {
-        HouseholdEntity household = currentUserService.getCurrentHousehold();
-        List<MealPlanEntity> favourites = mealPlanRepository.findAllByHouseholdIdAndTemplate(household.getId(), true);
-        return mealPlanMapper.toDtoList(favourites);
-    }
-
     private LocalDate getWeekStart(MealPlanWeek week) {
         return switch (week) {
             case CURRENT -> MealPlanDateUtils.getCurrentWeekStart();
             case NEXT -> MealPlanDateUtils.getNextWeekStart();
         };
-    }
-
-    private void checkFavouriteCount(HouseholdEntity household) {
-        long countFavourites = mealPlanRepository.countByHouseholdIdAndTemplate(household.getId(), true);
-        if (countFavourites > maxFavourites) {
-            throw new ServiceException(
-                    ErrorCode.MAXIMUM_MEAL_PLAN_REACHED.getTemplate(), ErrorCode.MAXIMUM_MEAL_PLAN_REACHED);
-        }
-    }
-
-    private MealPlanEntity getMealPlanEntity(Long id) {
-        return mealPlanRepository.findById(id).orElseThrow(
-                () -> new ServiceException(ErrorCode.MEAL_PLAN_NOT_FOUND.format(id.toString()), ErrorCode.MEAL_PLAN_NOT_FOUND));
-    }
-
-    private MealPlanEntity cloneMealPlan(MealPlanEntity mealPlanEntity, HouseholdEntity household) {
-        MealPlanEntity clone = new MealPlanEntity();
-        clone.setTemplate(true);
-        clone.setHousehold(household);
-        cloneMealSlots(mealPlanEntity, clone);
-
-        return clone;
-    }
-
-    private void cloneMealSlots(MealPlanEntity mealPlanEntity, MealPlanEntity clone) {
-        List<MealSlotEntity> slots = mealPlanEntity.getMealSlots().stream()
-                .map(slot -> {
-                    MealSlotEntity cloneSlot = new MealSlotEntity();
-                    cloneSlot.setMealType(slot.getMealType());
-                    cloneSlot.setMealPlan(clone);
-                    cloneSlot.setNote(slot.getNote());
-                    cloneSlot.setRecipe(slot.getRecipe());
-                    cloneSlot.setDay(slot.getDay());
-
-                    return cloneSlot;
-                }).toList();
-
-        clone.setMealSlots(slots);
     }
 
     private MealPlanDetailsDto editMealPlan(MealPlanUpdateRequest mealPlanRequest, MealPlanEntity mealPlanEntity) {
