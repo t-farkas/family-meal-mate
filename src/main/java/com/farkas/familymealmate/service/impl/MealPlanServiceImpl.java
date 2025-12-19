@@ -83,7 +83,6 @@ public class MealPlanServiceImpl implements MealPlanService {
 
         LocalDate weekStart = getWeekStart(week);
         MealPlanEntity mealPlanEntity = getMealPlanEntity(household, weekStart);
-        checkAlreadyTemplate(mealPlanEntity);
 
         MealPlanEntity clone = cloneMealPlan(mealPlanEntity, household);
         mealPlanRepository.save(clone);
@@ -113,13 +112,6 @@ public class MealPlanServiceImpl implements MealPlanService {
             case CURRENT -> MealPlanDateUtils.getCurrentWeekStart();
             case NEXT -> MealPlanDateUtils.getNextWeekStart();
         };
-    }
-
-    private void checkAlreadyTemplate(MealPlanEntity mealPlanEntity) {
-        if (!mealPlanEntity.isTemplate()) {
-            throw new ServiceException(
-                    ErrorCode.MEAL_PLAN_ALREADY_TEMPLATE.getTemplate(), ErrorCode.MEAL_PLAN_ALREADY_TEMPLATE);
-        }
     }
 
     private void checkFavouriteCount(HouseholdEntity household) {

@@ -16,7 +16,6 @@ public enum ErrorCode {
     NO_AUTHORIZATION(HttpStatus.FORBIDDEN, "You have no authorization to access this resource: %d"),
     INVALID_INGREDIENT_MEASUREMENT(HttpStatus.BAD_REQUEST, "Invalid measurements"),
     MAXIMUM_MEAL_PLAN_REACHED(HttpStatus.CONFLICT, "Maximum number of favourite meal plans reached"),
-    MEAL_PLAN_ALREADY_TEMPLATE(HttpStatus.CONFLICT, "Meal plan is already saved as favourite"),
     MEAL_NOT_A_TEMPLATE(HttpStatus.BAD_REQUEST, "Meal plan with id :%s is not saved as a favourite"),
     ;
 
