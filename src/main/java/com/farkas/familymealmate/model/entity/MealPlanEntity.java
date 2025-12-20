@@ -1,5 +1,6 @@
 package com.farkas.familymealmate.model.entity;
 
+import com.farkas.familymealmate.model.common.HouseholdOwned;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "meal_plan")
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class MealPlanEntity extends BaseEntity {
+public class MealPlanEntity extends BaseEntity implements HouseholdOwned {
 
     @Column(name = "week_start")
     private LocalDate weekStart;

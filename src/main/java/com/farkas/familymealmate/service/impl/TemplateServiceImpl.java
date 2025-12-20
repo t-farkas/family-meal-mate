@@ -8,9 +8,11 @@ import com.farkas.familymealmate.model.entity.HouseholdEntity;
 import com.farkas.familymealmate.model.entity.MealPlanEntity;
 import com.farkas.familymealmate.model.entity.MealSlotEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
+import com.farkas.familymealmate.model.enums.HouseholdOwnedResourceType;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.repository.MealPlanRepository;
 import com.farkas.familymealmate.security.CurrentUserService;
+import com.farkas.familymealmate.security.annotation.CheckHouseholdAccess;
 import com.farkas.familymealmate.service.TemplateService;
 import com.farkas.familymealmate.util.MealPlanDateUtils;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +47,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
+    @CheckHouseholdAccess(type = HouseholdOwnedResourceType.MEAL_PLAN)
     public void deleteTemplate(Long id) {
         MealPlanEntity mealPlan = getMealPlanEntity(id);
         if (mealPlan.isTemplate()) {

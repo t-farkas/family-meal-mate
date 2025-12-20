@@ -1,5 +1,6 @@
 package com.farkas.familymealmate.model.entity;
 
+import com.farkas.familymealmate.model.common.HouseholdOwned;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,7 +16,7 @@ import java.util.Set;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class RecipeEntity extends BaseEntity {
+public class RecipeEntity extends BaseEntity implements HouseholdOwned {
 
     private String title;
     private String description;

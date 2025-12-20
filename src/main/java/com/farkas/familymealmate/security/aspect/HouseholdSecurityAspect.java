@@ -1,8 +1,9 @@
 package com.farkas.familymealmate.security.aspect;
 
 import com.farkas.familymealmate.exception.ServiceException;
-import com.farkas.familymealmate.model.entity.RecipeEntity;
+import com.farkas.familymealmate.model.common.HouseholdOwned;
 import com.farkas.familymealmate.model.enums.ErrorCode;
+import com.farkas.familymealmate.repository.MealPlanRepository;
 import com.farkas.familymealmate.repository.RecipeRepository;
 import com.farkas.familymealmate.security.CurrentUserService;
 import com.farkas.familymealmate.security.annotation.CheckHouseholdAccess;
@@ -20,26 +21,30 @@ public class HouseholdSecurityAspect {
 
     private final CurrentUserService currentUserService;
     private final RecipeRepository recipeRepository;
+    private final MealPlanRepository mealPlanRepository;
 
     @Around("@annotation(checkHouseholdAccess)")
-    public Object checkRecipeAccess(ProceedingJoinPoint joinPoint, CheckHouseholdAccess checkHouseholdAccess) throws Throwable {
-        Object[] args = joinPoint.getArgs();
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        String[] parameterNames = signature.getParameterNames();
+    public Object checkHouseholdAccess(ProceedingJoinPoint joinPoint, CheckHouseholdAccess checkHouseholdAccess) throws Throwable {
+        final Long householdOwnedId = extractId(joinPoint, checkHouseholdAccess.idArg());
+        Long householdId = currentUserService.getCurrentHousehold().getId();
 
-        final Long recipeId = extractRecipeId(args, parameterNames, checkHouseholdAccess.idArg());
+        HouseholdOwned householdOwnedEntity = switch (checkHouseholdAccess.type()) {
+            case RECIPE -> getRecipe(householdOwnedId);
+            case MEAL_PLAN -> getMealPlan(householdOwnedId);
+        };
 
-        RecipeEntity recipeEntity = recipeRepository.findById(recipeId).orElseThrow(
-                () -> new ServiceException(ErrorCode.RECIPE_NOT_FOUND.format(recipeId), ErrorCode.RECIPE_NOT_FOUND));
-
-        if (!recipeEntity.getHousehold().getId().equals(currentUserService.getCurrentHousehold().getId())) {
-            throw new ServiceException(ErrorCode.NO_AUTHORIZATION.format(recipeId), ErrorCode.NO_AUTHORIZATION);
+        if (!householdOwnedEntity.getHousehold().getId().equals(householdId)) {
+            throw new ServiceException(ErrorCode.NO_AUTHORIZATION.format(householdOwnedId), ErrorCode.NO_AUTHORIZATION);
         }
 
         return joinPoint.proceed();
     }
 
-    private Long extractRecipeId(Object[] args, String[] paramNames, String idArg) {
+    private Long extractId(ProceedingJoinPoint joinPoint, String idArg) {
+        Object[] args = joinPoint.getArgs();
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        String[] paramNames = signature.getParameterNames();
+
         for (int i = 0; i < paramNames.length; i++) {
             if (paramNames[i].equals(idArg) && args[i] instanceof Long) {
 
@@ -49,4 +54,15 @@ public class HouseholdSecurityAspect {
 
         throw new IllegalArgumentException("Argument '" + idArg + "' not found");
     }
+
+    private HouseholdOwned getMealPlan(Long id) {
+        return mealPlanRepository.findById(id).orElseThrow(
+                () -> new ServiceException(ErrorCode.MEAL_PLAN_NOT_FOUND.format(id), ErrorCode.MEAL_PLAN_NOT_FOUND));
+    }
+
+    private HouseholdOwned getRecipe(Long id) {
+        return recipeRepository.findById(id).orElseThrow(
+                () -> new ServiceException(ErrorCode.RECIPE_NOT_FOUND.format(id), ErrorCode.RECIPE_NOT_FOUND));
+    }
+
 }

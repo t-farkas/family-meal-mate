@@ -13,6 +13,7 @@ import com.farkas.familymealmate.model.entity.RecipeEntity;
 import com.farkas.familymealmate.model.entity.RecipeIngredientEntity;
 import com.farkas.familymealmate.model.entity.TagEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
+import com.farkas.familymealmate.model.enums.HouseholdOwnedResourceType;
 import com.farkas.familymealmate.repository.IngredientRepository;
 import com.farkas.familymealmate.repository.RecipeRepository;
 import com.farkas.familymealmate.repository.TagRepository;
@@ -72,20 +73,20 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    @CheckHouseholdAccess
+    @CheckHouseholdAccess(type = HouseholdOwnedResourceType.RECIPE)
     public RecipeDetailsDto get(Long id) {
         RecipeEntity recipe = getRecipe(id);
         return recipeMapper.toRecipeDetails(recipe);
     }
 
     @Override
-    @CheckHouseholdAccess
+    @CheckHouseholdAccess(type = HouseholdOwnedResourceType.RECIPE)
     public RecipeEntity getEntity(Long id) {
         return getRecipe(id);
     }
 
     @Override
-    @CheckHouseholdAccess
+    @CheckHouseholdAccess(type = HouseholdOwnedResourceType.RECIPE)
     public void delete(Long id) {
         RecipeEntity recipe = getRecipe(id);
         recipeRepository.delete(recipe);
