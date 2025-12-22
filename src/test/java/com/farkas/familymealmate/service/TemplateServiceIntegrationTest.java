@@ -1,16 +1,14 @@
 package com.farkas.familymealmate.service;
 
 import com.farkas.familymealmate.exception.ServiceException;
-import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
 import com.farkas.familymealmate.model.dto.mealplan.MealSlotDetailsDto;
-import com.farkas.familymealmate.model.dto.mealplan.MealSlotUpdateRequest;
-import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
 import com.farkas.familymealmate.model.dto.template.TemplateCreateRequest;
 import com.farkas.familymealmate.model.dto.template.TemplateDto;
 import com.farkas.familymealmate.model.entity.UserEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
-import com.farkas.familymealmate.testdata.mealplan.TestMealSlot;
+import com.farkas.familymealmate.model.enums.MealType;
+import com.farkas.familymealmate.testdata.mealplan.TestMealPlanHelper;
 import com.farkas.familymealmate.testdata.recipe.TestRecipes;
 import com.farkas.familymealmate.testdata.user.TestUserFactory;
 import com.farkas.familymealmate.testdata.user.TestUsers;
@@ -19,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,22 +31,20 @@ public class TemplateServiceIntegrationTest {
     private static final String OATMEAL_NOTE = "A nice oatmeal";
     private static final String SPAGHETTI_NOTE = "A nice spaghetti";
 
+    public static final String TEMPLATE_NAME = "My first template";
+
+    @Autowired
+    TestMealPlanHelper mealPlanBuilder;
     @Autowired
     private TemplateService templateService;
-
-    @Autowired
-    private MealPlanService mealPlanService;
-
-    @Autowired
-    private RecipeService recipeService;
-
     @Autowired
     private TestUserFactory userFactory;
 
     @Test
     void shouldCreateTemplateFromCurrentWeek() {
-        createMealPlans();
-        TemplateCreateRequest createRequest = new TemplateCreateRequest("my first template", MealPlanWeek.CURRENT);
+        setupTestWithUserAndMealPlan();
+
+        TemplateCreateRequest createRequest = getTemplateCreateRequest();
         TemplateDto template = templateService.createTemplate(createRequest);
 
         assertThat(template).isNotNull();
@@ -57,11 +54,11 @@ public class TemplateServiceIntegrationTest {
                 MealSlotDetailsDto::note).contains(OMLETTE_NOTE, OATMEAL_NOTE, SPAGHETTI_NOTE);
     }
 
-
     @Test
-    void shouldRejectWhenTemplateLimitReached() {
-        createMealPlans();
-        TemplateCreateRequest createRequest = new TemplateCreateRequest("my first template", MealPlanWeek.CURRENT);
+    void shouldRejectTemplateWithSameName() {
+        setupTestWithUserAndMealPlan();
+
+        TemplateCreateRequest createRequest = getTemplateCreateRequest();
         templateService.createTemplate(createRequest);
         assertThatExceptionOfType(ServiceException.class)
                 .isThrownBy(() -> templateService.createTemplate(createRequest))
@@ -71,8 +68,9 @@ public class TemplateServiceIntegrationTest {
 
     @Test
     void shouldDeleteTemplate() {
-        createMealPlans();
-        TemplateCreateRequest createRequest = new TemplateCreateRequest("my first template", MealPlanWeek.CURRENT);
+        setupTestWithUserAndMealPlan();
+
+        TemplateCreateRequest createRequest = getTemplateCreateRequest();
         TemplateDto template = templateService.createTemplate(createRequest);
 
         templateService.deleteTemplate(template.id());
@@ -81,22 +79,35 @@ public class TemplateServiceIntegrationTest {
 
     }
 
-    private void createMealPlans() {
+    @Test
+    void cannotDeleteTemplateFromDifferentHousehold() {
+        setupTestWithUserAndMealPlan();
+
+        TemplateCreateRequest createRequest = getTemplateCreateRequest();
+        TemplateDto template = templateService.createTemplate(createRequest);
+
+        UserEntity tim = userFactory.registerWithNewHousehold(TestUsers.TIM);
+        userFactory.authenticate(tim);
+
+        assertThatExceptionOfType(ServiceException.class)
+                .isThrownBy(() -> templateService.deleteTemplate(template.id()))
+                .satisfies(e -> assertThat(e.getErrorCode()).isEqualTo(ErrorCode.NO_AUTHORIZATION));
+    }
+
+    private void setupTestWithUserAndMealPlan() {
         UserEntity bertha = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
         userFactory.authenticate(bertha);
-        mealPlanService.createMealPlans();
-        mealPlanService.editMealPlan(getMealPlanUpdateRequest());
+
+        mealPlanBuilder
+                .forWeek(MealPlanWeek.CURRENT)
+                .slot(OATMEAL_NOTE, DayOfWeek.MONDAY, MealType.BREAKFAST, TestRecipes.OATMEAL)
+                .slot(OMLETTE_NOTE, DayOfWeek.TUESDAY, MealType.BREAKFAST, TestRecipes.OMLETTE)
+                .slot(SPAGHETTI_NOTE, DayOfWeek.WEDNESDAY, MealType.LUNCH, TestRecipes.SPAGHETTI_BOLOGNESE)
+                .persist();
     }
 
-    private MealPlanUpdateRequest getMealPlanUpdateRequest() {
-        RecipeDetailsDto oatmeal = recipeService.create(TestRecipes.OATMEAL.createRequest());
-        RecipeDetailsDto omelette = recipeService.create(TestRecipes.OMLETTE.createRequest());
-        RecipeDetailsDto spaghetti = recipeService.create(TestRecipes.SPAGHETTI_BOLOGNESE.createRequest());
-
-        MealSlotUpdateRequest spaghettiSlot = new TestMealSlot(null, SPAGHETTI_NOTE, spaghetti.getId()).lunch();
-        MealSlotUpdateRequest omeletteSlot = new TestMealSlot(null, OMLETTE_NOTE, omelette.getId()).breakfast();
-        MealSlotUpdateRequest oatmealSlot = new TestMealSlot(null, OATMEAL_NOTE, oatmeal.getId()).breakfast();
-
-        return new MealPlanUpdateRequest(MealPlanWeek.CURRENT, List.of(spaghettiSlot, omeletteSlot, oatmealSlot));
+    private TemplateCreateRequest getTemplateCreateRequest() {
+        return new TemplateCreateRequest(TEMPLATE_NAME, MealPlanWeek.CURRENT);
     }
+
 }

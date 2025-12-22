@@ -19,7 +19,7 @@ public class TestRecipes {
             List.of(new RecipeIngredientCreateRequestDto(1L, BigDecimal.valueOf(3), QuantitativeMeasurement.LITER, null)));
 
     public static final TestRecipe SPAGHETTI_BOLOGNESE = new TestRecipe(
-            "Kid's template Spaghetti Bolognese",
+            "Kid's Spaghetti Bolognese",
             List.of("Heat up a can of bolognese sauce", "cook spaghetti and mix"),
             List.of(new RecipeIngredientCreateRequestDto(1L, BigDecimal.valueOf(3), QuantitativeMeasurement.LITER, null)));
 
