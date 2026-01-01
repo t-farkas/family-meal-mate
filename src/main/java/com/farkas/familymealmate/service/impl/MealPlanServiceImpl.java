@@ -122,12 +122,22 @@ public class MealPlanServiceImpl implements MealPlanService {
                 .filter(slot -> slot.id() != null)
                 .forEach(slot -> {
                     MealSlotEntity entity = entityMap.get(slot.id());
+                    nullCheckEntity(slot, entity);
+
                     entity.setRecipe(recipeService.getEntity(slot.recipeId()));
                     entity.setNote(slot.note());
                     entity.setDay(slot.day());
                     entity.setMealType(slot.mealType());
                 });
 
+    }
+
+    private void nullCheckEntity(MealSlotUpdateRequest slot, MealSlotEntity entity) {
+        if (entity == null) {
+            throw new ServiceException(
+                    ErrorCode.MEAL_SLOT_NOT_FOUND.format(slot.id()),
+                    ErrorCode.MEAL_SLOT_NOT_FOUND);
+        }
     }
 
     private List<MealSlotEntity> createNew(MealPlanEntity mealPlan, List<MealSlotUpdateRequest> mealSlots) {

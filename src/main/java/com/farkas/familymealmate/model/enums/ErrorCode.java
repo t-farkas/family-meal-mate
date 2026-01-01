@@ -17,12 +17,14 @@ public enum ErrorCode {
     MISSING_HOUSEHOLD_DETAILS(HttpStatus.BAD_REQUEST, "Either householdJoinId or householdName must be provided"),
 
     MEAL_PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "Meal plan not found: %s"),
+    MEAL_SLOT_NOT_FOUND(HttpStatus.NOT_FOUND, "Meal slot not found: %s"),
     MAXIMUM_MEAL_PLAN_REACHED(HttpStatus.CONFLICT, "Maximum number of templates reached"),
 
     TEMPLATE_NOT_FOUND(HttpStatus.NOT_FOUND, "Template not found with id: %s"),
     TEMPLATE_NAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "Template with name %s already exists"),
 
     SHOPPING_LIST_NOT_FOUND(HttpStatus.NOT_FOUND, "No shopping list found"),
+    SHOPPING_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "Shopping item not found with id: %s"),
 
     NO_AUTHORIZATION(HttpStatus.FORBIDDEN, "You have no authorization to access this resource: %d"),
     ;
