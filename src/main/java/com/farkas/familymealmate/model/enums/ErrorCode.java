@@ -22,6 +22,8 @@ public enum ErrorCode {
     TEMPLATE_NOT_FOUND(HttpStatus.NOT_FOUND, "Template not found with id: %s"),
     TEMPLATE_NAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "Template with name %s already exists"),
 
+    SHOPPING_LIST_NOT_FOUND(HttpStatus.NOT_FOUND, "No shopping list found"),
+
     NO_AUTHORIZATION(HttpStatus.FORBIDDEN, "You have no authorization to access this resource: %d"),
     ;
 

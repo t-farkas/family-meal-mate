@@ -10,7 +10,7 @@ public interface ShoppingListService {
 
     ShoppingListDto getShoppingList();
 
-    ShoppingListDto update(ShoppingListUpdateRequest updateRequest);
+    ShoppingListDto edit(ShoppingListUpdateRequest updateRequest);
 
     ShoppingListDto addMealPlan(MealPlanWeek week);
 
