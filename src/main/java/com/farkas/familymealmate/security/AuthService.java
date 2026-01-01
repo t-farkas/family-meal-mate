@@ -13,6 +13,7 @@ import com.farkas.familymealmate.repository.UserRepository;
 import com.farkas.familymealmate.security.jwt.JwtService;
 import com.farkas.familymealmate.service.FamilyMemberService;
 import com.farkas.familymealmate.service.HouseholdService;
+import com.farkas.familymealmate.service.ShoppingListService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +29,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final FamilyMemberService familyMemberService;
     private final HouseholdService householdService;
+    private final ShoppingListService shoppingListService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailService userDetailService;
@@ -44,6 +46,7 @@ public class AuthService {
             houseHold = householdService.findByJoinId(request.getHouseholdJoinId());
         } else {
             houseHold = householdService.createHouseHold(request.getHouseholdName());
+            shoppingListService.createForHousehold(houseHold);
         }
 
         FamilyMemberEntity familyMemberEntity = familyMemberService.createFamilyMember(request.getFamilyMemberCreateRequest(), houseHold);

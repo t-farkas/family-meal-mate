@@ -1,6 +1,5 @@
 package com.farkas.familymealmate.model.entity;
 
-import com.farkas.familymealmate.model.enums.IngredientCategory;
 import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
