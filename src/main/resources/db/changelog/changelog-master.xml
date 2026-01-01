@@ -18,4 +18,5 @@
     <include file="/db/changelog/changes/11-create-meal-plan.xml"/>
     <include file="/db/changelog/changes/12-mealslot_day_of_week_migration.xml"/>
     <include file="/db/changelog/changes/13-add-template-name-to-meal-plan.xml"/>
+    <include file="/db/changelog/changes/14-create-shopping-list.xml"/>
 </databaseChangeLog>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="create-shopping-list" author="t-farkas">
+        <createTable tableName="shopping_list">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="household_id" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="fk_shoppinglist_household"
+                             references="household(id)"/>
+            </column>
+            <column name="note" type="VARCHAR(255)"/>
+        </createTable>
+
+        <addUniqueConstraint
+                tableName="shopping_list"
+                columnNames="household_id"
+                constraintName="uk_shoppinglist_household"/>
+    </changeSet>
+
+    <changeSet id="create-shopping-item" author="t-farkas">
+        <createTable tableName="shopping_item">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="shopping_list_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="ingredient_id" type="BIGINT"/>
+            <column name="quantity" type="DECIMAL(10,2)"/>
+            <column name="quantitative_measurement" type="VARCHAR(50)"/>
+
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="note" type="VARCHAR(255)"/>
+            <column name="checked" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="shopping_item"
+                baseColumnNames="shopping_list_id"
+                constraintName="fk_shoppingitem_shoppinglist_delete"
+                referencedTableName="shopping_list"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+                baseTableName="shopping_item"
+                baseColumnNames="ingredient_id"
+                referencedTableName="ingredient"
+                referencedColumnNames="id"
+                constraintName="shopping_list_fk_ingredient"
+                onDelete="SET NULL"/>
+    </changeSet>
+
+</databaseChangeLog>
