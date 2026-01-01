@@ -31,10 +31,6 @@ public class ShoppingItemEntity extends BaseEntity {
     @Column(name = "quantitative_measurement", length = 50)
     private QuantitativeMeasurement quantitativeMeasurement;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 100)
-    private IngredientCategory category;
-
     private String name;
     private String note;
     private boolean checked;
