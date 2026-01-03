@@ -71,6 +71,12 @@ public class MealPlanServiceImpl implements MealPlanService {
         return editMealPlan(mealPlanRequest, mealPlanEntity);
     }
 
+    @Override
+    public MealPlanEntity getMealPlanEntity(MealPlanWeek week) {
+        HouseholdEntity household = currentUserService.getCurrentHousehold();
+        LocalDate weekStart = getWeekStart(week);
+        return getMealPlanEntity(household, weekStart);
+    }
 
     private LocalDate getWeekStart(MealPlanWeek week) {
         return switch (week) {
