@@ -6,7 +6,9 @@ import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientCre
 import java.util.List;
 
 public record TestRecipe(
+        Long id,
         String title,
+        String note,
         List<String> instructions,
         List<TestRecipeIngredient> ingredients
 ) {
@@ -27,6 +29,7 @@ public record TestRecipe(
 
         return RecipeCreateRequest.builder()
                 .title(title)
+                .notes(List.of(note))
                 .instructions(instructions)
                 .ingredients(ingredientList)
                 .build();

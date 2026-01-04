@@ -8,7 +8,9 @@ import java.util.List;
 public class TestRecipes {
 
     public static final TestRecipe CHICKEN_STIR_FRY = new TestRecipe(
+            1L,
             "Chicken Stir Fry",
+            "A lovely Chicken Stir Fry",
             List.of(
                     "Cut chicken into strips",
                     "Stir fry with vegetables",
@@ -24,7 +26,9 @@ public class TestRecipes {
     );
 
     public static final TestRecipe SPAGHETTI_BOLOGNESE = new TestRecipe(
+            2L,
             "Spaghetti Bolognese",
+            "Best Spaghetti Bolognese",
             List.of(
                     "Brown the beef",
                     "Add tomatoes and simmer",
@@ -40,7 +44,9 @@ public class TestRecipes {
     );
 
     public static final TestRecipe VEGETABLE_OMELETTE = new TestRecipe(
+            3L,
             "Vegetable Omelette",
+            "Omelette Omelette",
             List.of(
                     "Beat eggs",
                     "Cook vegetables",
@@ -55,7 +61,9 @@ public class TestRecipes {
     );
 
     public static final TestRecipe OVERNIGHT_OATS = new TestRecipe(
+            4L,
             "Overnight Oats",
+            "Tasty Overnight Oats",
             List.of(
                     "Mix ingredients",
                     "Let soak overnight",
@@ -69,7 +77,9 @@ public class TestRecipes {
     );
 
     public static final TestRecipe PANCAKES = new TestRecipe(
+           5L,
             "Simple Pancakes",
+            "Quick and Easy Pancakes",
             List.of(
                     "Mix dry ingredients",
                     "Add wet ingredients",

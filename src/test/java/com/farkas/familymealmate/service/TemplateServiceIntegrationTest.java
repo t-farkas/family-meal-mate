@@ -1,6 +1,7 @@
 package com.farkas.familymealmate.service;
 
 import com.farkas.familymealmate.exception.ServiceException;
+import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
 import com.farkas.familymealmate.model.dto.mealplan.MealSlotDetailsDto;
 import com.farkas.familymealmate.model.dto.template.TemplateCreateRequest;
 import com.farkas.familymealmate.model.dto.template.TemplateDto;
@@ -8,7 +9,8 @@ import com.farkas.familymealmate.model.entity.UserEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.model.enums.MealType;
-import com.farkas.familymealmate.testdata.mealplan.TestMealPlanHelper;
+import com.farkas.familymealmate.testdata.mealplan.TestMealPlanBuilder;
+import com.farkas.familymealmate.testdata.recipe.TestRecipeFactory;
 import com.farkas.familymealmate.testdata.recipe.TestRecipes;
 import com.farkas.familymealmate.testdata.user.TestUserFactory;
 import com.farkas.familymealmate.testdata.user.TestUsers;
@@ -27,14 +29,13 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 @Transactional
 public class TemplateServiceIntegrationTest {
 
-    private static final String OMLETTE_NOTE = "A nice omelette";
-    private static final String OATMEAL_NOTE = "A nice oatmeal";
-    private static final String SPAGHETTI_NOTE = "A nice spaghetti";
-
     public static final String TEMPLATE_NAME = "My first template";
+    private final TestMealPlanBuilder mealPlanBuilder = new TestMealPlanBuilder();
 
     @Autowired
-    TestMealPlanHelper mealPlanBuilder;
+    MealPlanService mealPlanService;
+    @Autowired
+    private TestRecipeFactory recipeFactory;
     @Autowired
     private TemplateService templateService;
     @Autowired
@@ -51,7 +52,10 @@ public class TemplateServiceIntegrationTest {
         assertThat(template.templateName()).isEqualTo(createRequest.name());
         assertThat(template.mealSlots()).hasSize(3);
         assertThat(template.mealSlots()).extracting(
-                MealSlotDetailsDto::note).contains(OMLETTE_NOTE, OATMEAL_NOTE, SPAGHETTI_NOTE);
+                MealSlotDetailsDto::note).contains(
+                TestRecipes.OVERNIGHT_OATS.note(),
+                TestRecipes.VEGETABLE_OMELETTE.note(),
+                TestRecipes.SPAGHETTI_BOLOGNESE.note());
     }
 
     @Test
@@ -97,13 +101,20 @@ public class TemplateServiceIntegrationTest {
     private void setupTestWithUserAndMealPlan() {
         UserEntity bertha = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
         userFactory.authenticate(bertha);
+        mealPlanService.createMealPlans();
 
-        mealPlanBuilder
+        Long oatsId = recipeFactory.createRecipe(TestRecipes.OVERNIGHT_OATS);
+        Long omeletteId = recipeFactory.createRecipe(TestRecipes.VEGETABLE_OMELETTE);
+        Long bologneseId = recipeFactory.createRecipe(TestRecipes.SPAGHETTI_BOLOGNESE);
+
+        MealPlanUpdateRequest request = mealPlanBuilder
                 .forWeek(MealPlanWeek.CURRENT)
-                .slot(OATMEAL_NOTE, DayOfWeek.MONDAY, MealType.BREAKFAST, TestRecipes.OVERNIGHT_OATS)
-                .slot(OMLETTE_NOTE, DayOfWeek.TUESDAY, MealType.BREAKFAST, TestRecipes.VEGETABLE_OMELETTE)
-                .slot(SPAGHETTI_NOTE, DayOfWeek.WEDNESDAY, MealType.LUNCH, TestRecipes.SPAGHETTI_BOLOGNESE)
-                .persist();
+                .slot(TestRecipes.OVERNIGHT_OATS.note(), DayOfWeek.MONDAY, MealType.BREAKFAST, oatsId)
+                .slot(TestRecipes.VEGETABLE_OMELETTE.note(), DayOfWeek.TUESDAY, MealType.BREAKFAST, omeletteId)
+                .slot(TestRecipes.SPAGHETTI_BOLOGNESE.note(), DayOfWeek.WEDNESDAY, MealType.LUNCH, bologneseId)
+                .build();
+
+        mealPlanService.editMealPlan(request);
     }
 
     private TemplateCreateRequest getTemplateCreateRequest() {

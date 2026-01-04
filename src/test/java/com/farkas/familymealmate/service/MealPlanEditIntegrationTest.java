@@ -1,11 +1,13 @@
 package com.farkas.familymealmate.service;
 
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanDetailsDto;
+import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
 import com.farkas.familymealmate.model.dto.mealplan.MealSlotDetailsDto;
 import com.farkas.familymealmate.model.entity.UserEntity;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.model.enums.MealType;
-import com.farkas.familymealmate.testdata.mealplan.TestMealPlanHelper;
+import com.farkas.familymealmate.testdata.mealplan.TestMealPlanBuilder;
+import com.farkas.familymealmate.testdata.recipe.TestRecipeFactory;
 import com.farkas.familymealmate.testdata.recipe.TestRecipes;
 import com.farkas.familymealmate.testdata.user.TestUserFactory;
 import com.farkas.familymealmate.testdata.user.TestUsers;
@@ -22,43 +24,59 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class MealPlanEditIntegrationTest {
 
-    private static final String OMLETTE_NOTE = "A nice omelette";
-    private static final String OATMEAL_NOTE = "A nice oatmeal";
-    private static final String SPAGHETTI_NOTE = "A nice spaghetti";
-    private static final String UPDATED_SPAGHETTI_NOTE = "UPDATED: A nice spaghetti";
+    private static final String UPDATED_SPAGHETTI_NOTE = "Wow this is an updated note";
+    private final TestMealPlanBuilder mealPlanBuilder = new TestMealPlanBuilder();
 
     @Autowired
-    TestMealPlanHelper mealPlanBuilder;
+    private MealPlanService mealPlanService;
+
+    @Autowired
+    private TestRecipeFactory recipeFactory;
 
     @Autowired
     private TestUserFactory userFactory;
 
     @Test
     void shouldEditMealSlots() {
-        UserEntity user = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
-        userFactory.authenticate(user);
+        setupTestWithUserAndMealPlan();
+        MealPlanDetailsDto mealPlan = mealPlanService.getMealPlan(MealPlanWeek.CURRENT);
+        MealPlanUpdateRequest request = getUpdatedMealPlanRequest(mealPlan);
 
-        MealPlanDetailsDto mealPlan = mealPlanBuilder
-                .forWeek(MealPlanWeek.CURRENT)
-                .slot(OATMEAL_NOTE, DayOfWeek.MONDAY, MealType.BREAKFAST, TestRecipes.OVERNIGHT_OATS)
-                .slot(OMLETTE_NOTE, DayOfWeek.TUESDAY, MealType.BREAKFAST, TestRecipes.VEGETABLE_OMELETTE)
-                .slot(SPAGHETTI_NOTE, DayOfWeek.WEDNESDAY, MealType.LUNCH, TestRecipes.SPAGHETTI_BOLOGNESE)
-                .persist();
-
-        assertThat(mealPlan.mealSlots()).hasSize(3);
-        assertThat(mealPlan.mealSlots()).extracting(MealSlotDetailsDto::note)
-                .contains(SPAGHETTI_NOTE, OATMEAL_NOTE, OMLETTE_NOTE);
-
-
-        mealPlan = mealPlanBuilder
-                .forWeek(MealPlanWeek.CURRENT)
-                .slot(OATMEAL_NOTE, DayOfWeek.MONDAY, MealType.BREAKFAST, TestRecipes.OVERNIGHT_OATS)
-                .slot(UPDATED_SPAGHETTI_NOTE, DayOfWeek.WEDNESDAY, MealType.LUNCH, TestRecipes.SPAGHETTI_BOLOGNESE)
-                .persist();
+        mealPlan = mealPlanService.editMealPlan(request);
 
         assertThat(mealPlan.mealSlots()).hasSize(2);
         assertThat(mealPlan.mealSlots()).extracting(MealSlotDetailsDto::note)
-                .contains(OATMEAL_NOTE, UPDATED_SPAGHETTI_NOTE);
+                .contains(TestRecipes.OVERNIGHT_OATS.note(), UPDATED_SPAGHETTI_NOTE);
+    }
+
+    private MealPlanUpdateRequest getUpdatedMealPlanRequest(MealPlanDetailsDto mealPlan) {
+        return mealPlanBuilder
+                .forWeek(MealPlanWeek.CURRENT)
+                .slot(TestRecipes.OVERNIGHT_OATS.note(), DayOfWeek.MONDAY, MealType.BREAKFAST, mealPlan.mealSlots().get(0).recipeId())
+                .slot(UPDATED_SPAGHETTI_NOTE, DayOfWeek.WEDNESDAY, MealType.LUNCH, mealPlan.mealSlots().get(2).recipeId())
+                .build();
+
+    }
+
+    private void setupTestWithUserAndMealPlan() {
+        UserEntity user = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
+        userFactory.authenticate(user);
+        mealPlanService.createMealPlans();
+        mealPlanService.editMealPlan(getMealPlanUpdateRequest());
+
+    }
+
+    private MealPlanUpdateRequest getMealPlanUpdateRequest() {
+        Long oatsId = recipeFactory.createRecipe(TestRecipes.OVERNIGHT_OATS);
+        Long omeletteId = recipeFactory.createRecipe(TestRecipes.VEGETABLE_OMELETTE);
+        Long bologneseId = recipeFactory.createRecipe(TestRecipes.SPAGHETTI_BOLOGNESE);
+
+        return mealPlanBuilder
+                .forWeek(MealPlanWeek.CURRENT)
+                .slot(TestRecipes.OVERNIGHT_OATS.note(), DayOfWeek.MONDAY, MealType.BREAKFAST, oatsId)
+                .slot(TestRecipes.VEGETABLE_OMELETTE.note(), DayOfWeek.TUESDAY, MealType.BREAKFAST, omeletteId)
+                .slot(TestRecipes.SPAGHETTI_BOLOGNESE.note(), DayOfWeek.WEDNESDAY, MealType.LUNCH, bologneseId)
+                .build();
     }
 
 
