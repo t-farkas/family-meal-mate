@@ -21,7 +21,7 @@ public class RecipeControllerIntegrationTest extends ApiTestBase {
 
         String token = registerAndLoginUser(TestUsers.BERTHA);
 
-        RecipeCreateRequest request = TestRecipes.OMLETTE.createRequest();
+        RecipeCreateRequest request = TestRecipes.VEGETABLE_OMELETTE.createRequest();
         request.setInstructions(null);
 
         mockMvc.perform(post("/api/recipe")
@@ -35,7 +35,7 @@ public class RecipeControllerIntegrationTest extends ApiTestBase {
     void createRecipeFailsWhenInstructionsAreBlank() throws Exception {
         String token = registerAndLoginUser(TestUsers.BERTHA);
 
-        RecipeCreateRequest request = TestRecipes.OMLETTE.createRequest();
+        RecipeCreateRequest request = TestRecipes.VEGETABLE_OMELETTE.createRequest();
         request.setInstructions(List.of(""));
 
         mockMvc.perform(post("/api/recipe")
@@ -49,7 +49,7 @@ public class RecipeControllerIntegrationTest extends ApiTestBase {
     void createRecipeFailsWhenIngredientsAreBlank() throws Exception {
         String token = registerAndLoginUser(TestUsers.BERTHA);
 
-        RecipeCreateRequest request = TestRecipes.OMLETTE.createRequest();
+        RecipeCreateRequest request = TestRecipes.VEGETABLE_OMELETTE.createRequest();
         request.setIngredients(new ArrayList<>());
 
         mockMvc.perform(post("/api/recipe")
@@ -63,7 +63,7 @@ public class RecipeControllerIntegrationTest extends ApiTestBase {
     void createRecipeFailsWhenTitleIsBlank() throws Exception {
         String token = registerAndLoginUser(TestUsers.BERTHA);
 
-        RecipeCreateRequest request = TestRecipes.OMLETTE.createRequest();
+        RecipeCreateRequest request = TestRecipes.VEGETABLE_OMELETTE.createRequest();
         request.setTitle("");
 
         mockMvc.perform(post("/api/recipe")
@@ -77,7 +77,7 @@ public class RecipeControllerIntegrationTest extends ApiTestBase {
     void correctRequestReturnsRecipe() throws Exception {
 
         String token = registerAndLoginUser(TestUsers.BERTHA);
-        RecipeCreateRequest request = TestRecipes.OMLETTE.createRequest();
+        RecipeCreateRequest request = TestRecipes.VEGETABLE_OMELETTE.createRequest();
         RecipeIngredientCreateRequestDto firstIngredient = request.getIngredients().get(0);
 
         mockMvc.perform(post("/api/recipe")

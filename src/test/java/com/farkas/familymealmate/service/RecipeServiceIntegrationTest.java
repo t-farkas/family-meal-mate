@@ -55,7 +55,7 @@ public class RecipeServiceIntegrationTest {
     void checkHouseholdAccessThrowsWhenRecipeIsFromAnotherHousehold() {
         UserEntity user = userFactory.registerWithNewHousehold(TestUsers.TIM);
         userFactory.authenticate(user);
-        RecipeDetailsDto recipeDetailsDto = recipeService.create(TestRecipes.OATMEAL.createRequest());
+        RecipeDetailsDto recipeDetailsDto = recipeService.create(TestRecipes.OVERNIGHT_OATS.createRequest());
 
         UserEntity user2 = userFactory.registerWithNewHousehold(TestUsers.JOHN);
         userFactory.authenticate(user2);
@@ -69,7 +69,7 @@ public class RecipeServiceIntegrationTest {
     void createRecipeUsesCurrentHouseholdAndUser() {
         UserEntity user = userFactory.registerWithNewHousehold(TestUsers.TIM);
         userFactory.authenticate(user);
-        RecipeDetailsDto recipeDetailsDto = recipeService.create(TestRecipes.OATMEAL.createRequest());
+        RecipeDetailsDto recipeDetailsDto = recipeService.create(TestRecipes.OVERNIGHT_OATS.createRequest());
 
         String recipeHouseholdName = recipeDetailsDto.getHousehold().getName();
         String currentUserHouseholdName = user.getFamilyMember().getHousehold().getName();
@@ -83,7 +83,7 @@ public class RecipeServiceIntegrationTest {
 
     @Test
     void listReturnsOnlyRecipesFromCurrentHousehold() {
-        UserEntity user1 = createHouseholdAndRecipes(TestUsers.BERTHA, TestRecipes.OATMEAL, TestRecipes.SPAGHETTI_BOLOGNESE);
+        UserEntity user1 = createHouseholdAndRecipes(TestUsers.BERTHA, TestRecipes.OVERNIGHT_OATS, TestRecipes.SPAGHETTI_BOLOGNESE);
         createHouseholdAndRecipes(TestUsers.JOHN, TestRecipes.SPAGHETTI_BOLOGNESE);
 
         HouseholdEntity household = user1.getFamilyMember().getHousehold();
@@ -101,11 +101,11 @@ public class RecipeServiceIntegrationTest {
         UserEntity user = userFactory.registerWithNewHousehold(TestUsers.TIM);
         userFactory.authenticate(user);
 
-        RecipeCreateRequest request = TestRecipes.OATMEAL.createRequest();
+        RecipeCreateRequest request = TestRecipes.OVERNIGHT_OATS.createRequest();
         RecipeDetailsDto recipeDetailsDto = recipeService.create(request);
         RecipeDetailsDto loaded = recipeService.get(recipeDetailsDto.getId());
 
-        assertThat(loaded.getIngredients()).hasSize(1);
+        assertThat(loaded.getIngredients()).hasSize(TestRecipes.OVERNIGHT_OATS.ingredients().size());
 
         RecipeIngredientDto loadedIngredient = loaded.getIngredients().get(0);
         RecipeIngredientCreateRequestDto requestIngredient = request.getIngredients().get(0);
@@ -119,7 +119,7 @@ public class RecipeServiceIntegrationTest {
         UserEntity user = userFactory.registerWithNewHousehold(TestUsers.TIM);
         userFactory.authenticate(user);
 
-        RecipeDetailsDto recipe = recipeService.create(TestRecipes.OATMEAL.createRequest());
+        RecipeDetailsDto recipe = recipeService.create(TestRecipes.OVERNIGHT_OATS.createRequest());
         Long recipeId = recipe.getId();
 
         recipeService.delete(recipeId);

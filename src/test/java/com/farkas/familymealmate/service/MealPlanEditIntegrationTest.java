@@ -40,8 +40,8 @@ public class MealPlanEditIntegrationTest {
 
         MealPlanDetailsDto mealPlan = mealPlanBuilder
                 .forWeek(MealPlanWeek.CURRENT)
-                .slot(OATMEAL_NOTE, DayOfWeek.MONDAY, MealType.BREAKFAST, TestRecipes.OATMEAL)
-                .slot(OMLETTE_NOTE, DayOfWeek.TUESDAY, MealType.BREAKFAST, TestRecipes.OMLETTE)
+                .slot(OATMEAL_NOTE, DayOfWeek.MONDAY, MealType.BREAKFAST, TestRecipes.OVERNIGHT_OATS)
+                .slot(OMLETTE_NOTE, DayOfWeek.TUESDAY, MealType.BREAKFAST, TestRecipes.VEGETABLE_OMELETTE)
                 .slot(SPAGHETTI_NOTE, DayOfWeek.WEDNESDAY, MealType.LUNCH, TestRecipes.SPAGHETTI_BOLOGNESE)
                 .persist();
 
@@ -52,7 +52,7 @@ public class MealPlanEditIntegrationTest {
 
         mealPlan = mealPlanBuilder
                 .forWeek(MealPlanWeek.CURRENT)
-                .slot(OATMEAL_NOTE, DayOfWeek.MONDAY, MealType.BREAKFAST, TestRecipes.OATMEAL)
+                .slot(OATMEAL_NOTE, DayOfWeek.MONDAY, MealType.BREAKFAST, TestRecipes.OVERNIGHT_OATS)
                 .slot(UPDATED_SPAGHETTI_NOTE, DayOfWeek.WEDNESDAY, MealType.LUNCH, TestRecipes.SPAGHETTI_BOLOGNESE)
                 .persist();
 

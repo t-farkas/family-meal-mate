@@ -33,7 +33,7 @@ public class RecipeSecurityAspectTest {
         UserEntity user2 = testUserFactory.registerWithNewHousehold(TestUsers.BERTHA);
 
         testUserFactory.authenticate(user2);
-        RecipeDetailsDto recipe = recipeService.create(TestRecipes.OATMEAL.createRequest());
+        RecipeDetailsDto recipe = recipeService.create(TestRecipes.OVERNIGHT_OATS.createRequest());
 
         testUserFactory.authenticate(user1);
 
