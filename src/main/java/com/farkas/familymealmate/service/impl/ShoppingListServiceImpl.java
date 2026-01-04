@@ -140,12 +140,12 @@ public class ShoppingListServiceImpl implements ShoppingListService {
     }
 
     private ShoppingListDto editShoppingList(ShoppingListUpdateRequest updateRequest, ShoppingListEntity shoppingListEntity) {
-        List<ShoppingItemEntity> shoppingItemEntites = shoppingListEntity.getShoppingItems();
+        List<ShoppingItemEntity> shoppingItemEntities = shoppingListEntity.getShoppingItems();
         List<ShoppingItemUpdateRequest> shoppingItems = updateRequest.getShoppingItems();
 
-        deleteRemoved(shoppingItemEntites, shoppingItems);
-        updateExisting(shoppingItemEntites, shoppingItems);
-        shoppingItemEntites.addAll(createNew(shoppingListEntity, shoppingItems));
+        deleteRemoved(shoppingItemEntities, shoppingItems);
+        updateExisting(shoppingItemEntities, shoppingItems);
+        shoppingItemEntities.addAll(createNew(shoppingListEntity, shoppingItems));
 
         ShoppingListEntity saved = shoppingListRepository.save(shoppingListEntity);
         return mapper.toDto(saved);

@@ -28,7 +28,7 @@ public class ShoppingListController {
         return ResponseEntity.ok(shoppingList);
     }
 
-    @PutMapping
+    @PutMapping("/meal-plan")
     public ResponseEntity<ShoppingListDto> addMealPlan(@RequestParam MealPlanWeek week) {
         ShoppingListDto shoppingList = service.addMealPlan(week);
         return ResponseEntity.ok(shoppingList);
