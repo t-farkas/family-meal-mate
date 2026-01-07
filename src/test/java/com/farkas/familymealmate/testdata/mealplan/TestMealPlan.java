@@ -18,7 +18,8 @@ public record TestMealPlan(
                         slot.note(),
                         slot.day(),
                         slot.type(),
-                        slot.recipeId())).toList();
+                        slot.recipe().id()))
+                .toList();
 
         return new MealPlanUpdateRequest(week, slotUpdateRequests);
     }

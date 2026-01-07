@@ -5,10 +5,12 @@ import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
 import com.farkas.familymealmate.model.dto.mealplan.MealSlotDetailsDto;
 import com.farkas.familymealmate.model.dto.template.TemplateCreateRequest;
 import com.farkas.familymealmate.model.dto.template.TemplateDto;
+import com.farkas.familymealmate.model.entity.RecipeEntity;
 import com.farkas.familymealmate.model.entity.UserEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.model.enums.MealType;
+import com.farkas.familymealmate.testdata.mealplan.TestMealNotes;
 import com.farkas.familymealmate.testdata.mealplan.TestMealPlanBuilder;
 import com.farkas.familymealmate.testdata.recipe.TestRecipeFactory;
 import com.farkas.familymealmate.testdata.recipe.TestRecipes;
@@ -53,9 +55,9 @@ public class TemplateServiceIntegrationTest {
         assertThat(template.mealSlots()).hasSize(3);
         assertThat(template.mealSlots()).extracting(
                 MealSlotDetailsDto::note).contains(
-                TestRecipes.OVERNIGHT_OATS.note(),
-                TestRecipes.VEGETABLE_OMELETTE.note(),
-                TestRecipes.SPAGHETTI_BOLOGNESE.note());
+                TestMealNotes.OATMEAL_BREAKFAST,
+                TestMealNotes.OMELETTE_BREAKFAST,
+                TestMealNotes.BOLOGNESE_LUNCH);
     }
 
     @Test
@@ -103,16 +105,16 @@ public class TemplateServiceIntegrationTest {
         userFactory.authenticate(bertha);
         mealPlanService.createMealPlans();
 
-        Long oatsId = recipeFactory.createRecipe(TestRecipes.OVERNIGHT_OATS);
-        Long omeletteId = recipeFactory.createRecipe(TestRecipes.VEGETABLE_OMELETTE);
-        Long bologneseId = recipeFactory.createRecipe(TestRecipes.SPAGHETTI_BOLOGNESE);
+        RecipeEntity oatsEntity = recipeFactory.createRecipe(TestRecipes.OVERNIGHT_OATS);
+        RecipeEntity omeletteEntity = recipeFactory.createRecipe(TestRecipes.VEGETABLE_OMELETTE);
+        RecipeEntity bologneseEntity = recipeFactory.createRecipe(TestRecipes.SPAGHETTI_BOLOGNESE);
 
         MealPlanUpdateRequest request = mealPlanBuilder
                 .forWeek(MealPlanWeek.CURRENT)
-                .slot(TestRecipes.OVERNIGHT_OATS.note(), DayOfWeek.MONDAY, MealType.BREAKFAST, oatsId)
-                .slot(TestRecipes.VEGETABLE_OMELETTE.note(), DayOfWeek.TUESDAY, MealType.BREAKFAST, omeletteId)
-                .slot(TestRecipes.SPAGHETTI_BOLOGNESE.note(), DayOfWeek.WEDNESDAY, MealType.LUNCH, bologneseId)
-                .build();
+                .slot(TestMealNotes.OATMEAL_BREAKFAST, DayOfWeek.MONDAY, MealType.BREAKFAST, oatsEntity)
+                .slot(TestMealNotes.OMELETTE_BREAKFAST, DayOfWeek.TUESDAY, MealType.BREAKFAST, omeletteEntity)
+                .slot(TestMealNotes.BOLOGNESE_LUNCH, DayOfWeek.WEDNESDAY, MealType.LUNCH, bologneseEntity)
+                .buildRequest();
 
         mealPlanService.editMealPlan(request);
     }

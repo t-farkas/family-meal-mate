@@ -3,9 +3,11 @@ package com.farkas.familymealmate.service;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanDetailsDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
 import com.farkas.familymealmate.model.dto.mealplan.MealSlotDetailsDto;
+import com.farkas.familymealmate.model.entity.RecipeEntity;
 import com.farkas.familymealmate.model.entity.UserEntity;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.model.enums.MealType;
+import com.farkas.familymealmate.testdata.mealplan.TestMealNotes;
 import com.farkas.familymealmate.testdata.mealplan.TestMealPlanBuilder;
 import com.farkas.familymealmate.testdata.recipe.TestRecipeFactory;
 import com.farkas.familymealmate.testdata.recipe.TestRecipes;
@@ -24,7 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class MealPlanEditIntegrationTest {
 
-    private static final String UPDATED_SPAGHETTI_NOTE = "Wow this is an updated note";
     private final TestMealPlanBuilder mealPlanBuilder = new TestMealPlanBuilder();
 
     @Autowired
@@ -46,16 +47,7 @@ public class MealPlanEditIntegrationTest {
 
         assertThat(mealPlan.mealSlots()).hasSize(2);
         assertThat(mealPlan.mealSlots()).extracting(MealSlotDetailsDto::note)
-                .contains(TestRecipes.OVERNIGHT_OATS.note(), UPDATED_SPAGHETTI_NOTE);
-    }
-
-    private MealPlanUpdateRequest getUpdatedMealPlanRequest(MealPlanDetailsDto mealPlan) {
-        return mealPlanBuilder
-                .forWeek(MealPlanWeek.CURRENT)
-                .slot(TestRecipes.OVERNIGHT_OATS.note(), DayOfWeek.MONDAY, MealType.BREAKFAST, mealPlan.mealSlots().get(0).recipeId())
-                .slot(UPDATED_SPAGHETTI_NOTE, DayOfWeek.WEDNESDAY, MealType.LUNCH, mealPlan.mealSlots().get(2).recipeId())
-                .build();
-
+                .contains(TestMealNotes.OATMEAL_BREAKFAST, TestMealNotes.UPDATED_NOTE);
     }
 
     private void setupTestWithUserAndMealPlan() {
@@ -67,16 +59,28 @@ public class MealPlanEditIntegrationTest {
     }
 
     private MealPlanUpdateRequest getMealPlanUpdateRequest() {
-        Long oatsId = recipeFactory.createRecipe(TestRecipes.OVERNIGHT_OATS);
-        Long omeletteId = recipeFactory.createRecipe(TestRecipes.VEGETABLE_OMELETTE);
-        Long bologneseId = recipeFactory.createRecipe(TestRecipes.SPAGHETTI_BOLOGNESE);
+        RecipeEntity oatsEntity = recipeFactory.createRecipe(TestRecipes.OVERNIGHT_OATS);
+        RecipeEntity omeletteEntity = recipeFactory.createRecipe(TestRecipes.VEGETABLE_OMELETTE);
+        RecipeEntity bologneseEntity = recipeFactory.createRecipe(TestRecipes.SPAGHETTI_BOLOGNESE);
 
         return mealPlanBuilder
                 .forWeek(MealPlanWeek.CURRENT)
-                .slot(TestRecipes.OVERNIGHT_OATS.note(), DayOfWeek.MONDAY, MealType.BREAKFAST, oatsId)
-                .slot(TestRecipes.VEGETABLE_OMELETTE.note(), DayOfWeek.TUESDAY, MealType.BREAKFAST, omeletteId)
-                .slot(TestRecipes.SPAGHETTI_BOLOGNESE.note(), DayOfWeek.WEDNESDAY, MealType.LUNCH, bologneseId)
-                .build();
+                .slot(TestMealNotes.OATMEAL_BREAKFAST, DayOfWeek.MONDAY, MealType.BREAKFAST, oatsEntity)
+                .slot(TestMealNotes.OMELETTE_BREAKFAST, DayOfWeek.TUESDAY, MealType.BREAKFAST, omeletteEntity)
+                .slot(TestMealNotes.BOLOGNESE_LUNCH, DayOfWeek.WEDNESDAY, MealType.LUNCH, bologneseEntity)
+                .buildRequest();
+    }
+
+    private MealPlanUpdateRequest getUpdatedMealPlanRequest(MealPlanDetailsDto mealPlan) {
+        RecipeEntity recipe_1 = recipeFactory.getEntity(mealPlan.mealSlots().get(0).recipeId());
+        RecipeEntity recipe_2 = recipeFactory.getEntity(mealPlan.mealSlots().get(1).recipeId());
+
+        return mealPlanBuilder
+                .forWeek(MealPlanWeek.CURRENT)
+                .slot(TestMealNotes.OATMEAL_BREAKFAST, DayOfWeek.MONDAY, MealType.BREAKFAST, recipe_1)
+                .slot(TestMealNotes.UPDATED_NOTE, DayOfWeek.WEDNESDAY, MealType.LUNCH, recipe_2)
+                .buildRequest();
+
     }
 
 
