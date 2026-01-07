@@ -13,12 +13,10 @@ import com.farkas.familymealmate.repository.ShoppingListRepository;
 import com.farkas.familymealmate.security.CurrentUserService;
 import com.farkas.familymealmate.service.MealPlanService;
 import com.farkas.familymealmate.service.ShoppingListService;
-import com.farkas.familymealmate.util.UnitConversionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +32,8 @@ public class ShoppingListServiceImpl implements ShoppingListService {
     private final CurrentUserService currentUserService;
     private final MealPlanService mealPlanService;
     private final ShoppingListMapper mapper;
+    private final ShoppingListAggregator shoppingListAggregator = new ShoppingListAggregator();
+
 
     @Override
     public void createForHousehold(HouseholdEntity household) {
@@ -67,71 +67,13 @@ public class ShoppingListServiceImpl implements ShoppingListService {
     public ShoppingListDto addMealPlan(MealPlanWeek week) {
         Long householdId = currentUserService.getCurrentHousehold().getId();
         ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
-        Map<Long, ShoppingItemEntity> itemMap = shoppingList.getShoppingItems().stream()
-                .collect(Collectors.toMap(
-                        item -> item.getIngredient().getId(),
-                        item -> item));
 
         MealPlanEntity mealPlan = mealPlanService.getMealPlanEntity(week);
-        List<RecipeIngredientEntity> ingredients = mealPlan.getMealSlots()
-                .stream()
-                .flatMap(slot -> slot.getRecipe().getIngredients().stream()).toList();
-
-        ingredients.forEach(
-                ingredient -> {
-                    ShoppingItemEntity existingItem = itemMap.get(ingredient.getId());
-
-                    if (existingItem == null) {
-                        ShoppingItemEntity item = addNewItem(shoppingList, ingredient);
-                        itemMap.put(ingredient.getIngredient().getId(), item);
-                    } else {
-                        if (isAggregatable(ingredient)) {
-                            if (canConvert(ingredient, existingItem)) {
-                                aggregate(ingredient, existingItem);
-                            } else {
-                                ShoppingItemEntity item = addNewItem(shoppingList, ingredient);
-                                itemMap.put(ingredient.getIngredient().getId(), item);
-
-                            }
-                        }
-                    }
-                });
+        shoppingListAggregator.aggregate(shoppingList, mealPlan);
 
         ShoppingListEntity savedShoppingList = shoppingListRepository.save(shoppingList);
         return mapper.toDto(savedShoppingList);
 
-    }
-
-    private void aggregate(RecipeIngredientEntity ingredient, ShoppingItemEntity item) {
-        BigDecimal convertedValue = UnitConversionUtil.convert(
-                ingredient.getQuantity(),
-                ingredient.getQuantitativeMeasurement(),
-                item.getQuantitativeMeasurement());
-
-        item.setQuantity(item.getQuantity().add(convertedValue));
-    }
-
-    private boolean canConvert(RecipeIngredientEntity ingredient, ShoppingItemEntity item) {
-        return UnitConversionUtil.canConvert(ingredient.getQuantitativeMeasurement(), item.getQuantitativeMeasurement());
-    }
-
-    private boolean isAggregatable(RecipeIngredientEntity ingredient) {
-        return isQuantitative(ingredient) && UnitConversionUtil.shouldKeepQuantity(ingredient.getQuantitativeMeasurement());
-    }
-
-    private ShoppingItemEntity addNewItem(ShoppingListEntity shoppingList, RecipeIngredientEntity ingredient) {
-        ShoppingItemEntity item = new ShoppingItemEntity();
-        item.setIngredient(ingredient.getIngredient());
-
-        if (isAggregatable(ingredient)) {
-            item.setQuantity(ingredient.getQuantity());
-            item.setQuantitativeMeasurement(ingredient.getQuantitativeMeasurement());
-        }
-
-        item.setShoppingList(shoppingList);
-        shoppingList.getShoppingItems().add(item);
-
-        return item;
     }
 
     private ShoppingListEntity getShoppingListEntity(Long householdId) {
@@ -217,7 +159,4 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         shoppingItemEntities.removeIf(entity -> !requestIds.contains(entity.getId()));
     }
 
-    private boolean isQuantitative(RecipeIngredientEntity ingredient) {
-        return ingredient.getQuantity() != null && ingredient.getQuantitativeMeasurement() != null;
-    }
 }
