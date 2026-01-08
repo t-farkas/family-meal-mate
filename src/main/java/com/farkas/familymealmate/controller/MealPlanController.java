@@ -1,6 +1,7 @@
 package com.farkas.familymealmate.controller;
 
 import com.farkas.familymealmate.model.dto.BaseResponse;
+import com.farkas.familymealmate.model.dto.VersionDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanDetailsDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
@@ -20,21 +21,27 @@ public class MealPlanController {
 
     @PostMapping
     public ResponseEntity<BaseResponse> createMealPlans() {
-        service.createMealPlans();
+        service.create();
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponse("Meal Plans created successfully"));
     }
 
     @GetMapping
     public ResponseEntity<MealPlanDetailsDto> getMealPlan(@RequestParam MealPlanWeek week) {
-        MealPlanDetailsDto mealPlan = service.getMealPlan(week);
+        MealPlanDetailsDto mealPlan = service.get(week);
         return ResponseEntity.ok(mealPlan);
     }
 
     @PutMapping
     public ResponseEntity<MealPlanDetailsDto> editMealPlan(@RequestBody @Valid MealPlanUpdateRequest mealPlan) {
-        MealPlanDetailsDto mealPlanDetailsDto = service.editMealPlan(mealPlan);
+        MealPlanDetailsDto mealPlanDetailsDto = service.update(mealPlan);
         return ResponseEntity.ok(mealPlanDetailsDto);
+    }
+
+    @GetMapping("/version")
+    public ResponseEntity<VersionDto> getVersion(@RequestParam MealPlanWeek week){
+        VersionDto version = service.getVersion(week);
+        return ResponseEntity.ok(version);
     }
 
 }

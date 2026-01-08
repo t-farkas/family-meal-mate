@@ -17,6 +17,9 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class MealPlanEntity extends BaseEntity implements HouseholdOwned {
 
+    @Version
+    private Long version;
+
     @Column(name = "week_start")
     private LocalDate weekStart;
 

@@ -1,5 +1,6 @@
 package com.farkas.familymealmate.controller;
 
+import com.farkas.familymealmate.model.dto.VersionDto;
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingListDto;
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingListUpdateRequest;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
@@ -18,7 +19,7 @@ public class ShoppingListController {
 
     @GetMapping
     public ResponseEntity<ShoppingListDto> getShoppingList() {
-        ShoppingListDto shoppingList = service.getShoppingList();
+        ShoppingListDto shoppingList = service.get();
         return ResponseEntity.ok(shoppingList);
     }
 
@@ -32,6 +33,12 @@ public class ShoppingListController {
     public ResponseEntity<ShoppingListDto> addMealPlan(@RequestParam MealPlanWeek week) {
         ShoppingListDto shoppingList = service.addMealPlan(week);
         return ResponseEntity.ok(shoppingList);
+    }
+
+    @GetMapping("/version")
+    public ResponseEntity<VersionDto> getVersion(){
+        VersionDto version = service.getVersion();
+        return ResponseEntity.ok(version);
     }
 
 }

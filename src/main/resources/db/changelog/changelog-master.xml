@@ -20,4 +20,5 @@
     <include file="/db/changelog/changes/13-add-template-name-to-meal-plan.xml"/>
     <include file="/db/changelog/changes/14-create-shopping-list.xml"/>
     <include file="/db/changelog/changes/15-remove-category-from-shopping-item.xml"/>
+    <include file="/db/changelog/changes/16-add-version-to-shared-resources.xml"/>
 </databaseChangeLog>

@@ -16,6 +16,9 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class ShoppingListEntity extends BaseEntity implements HouseholdOwned {
 
+    @Version
+    private Long version;
+
     @OneToOne
     @JoinColumn(name = "household_id", nullable = false)
     private HouseholdEntity household;

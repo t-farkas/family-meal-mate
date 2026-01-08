@@ -75,8 +75,7 @@ public class TemplateServiceImpl implements TemplateService {
     private void checkTemplateCount(HouseholdEntity household) {
         long countFavourites = mealPlanRepository.countByHouseholdIdAndTemplate(household.getId(), true);
         if (countFavourites > maxFavourites) {
-            throw new ServiceException(
-                    ErrorCode.MAXIMUM_MEAL_PLAN_REACHED.getTemplate(), ErrorCode.MAXIMUM_MEAL_PLAN_REACHED);
+            throw new ServiceException(ErrorCode.MAXIMUM_MEAL_PLAN_REACHED);
         }
     }
 

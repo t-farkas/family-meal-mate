@@ -1,8 +1,9 @@
-package com.farkas.familymealmate.service;
+package com.farkas.familymealmate.service.mealplan;
 
 import com.farkas.familymealmate.model.entity.MealPlanEntity;
 import com.farkas.familymealmate.model.entity.UserEntity;
 import com.farkas.familymealmate.repository.MealPlanRepository;
+import com.farkas.familymealmate.service.MealPlanService;
 import com.farkas.familymealmate.testdata.user.TestUserFactory;
 import com.farkas.familymealmate.testdata.user.TestUsers;
 import com.farkas.familymealmate.util.MealPlanDateUtils;
@@ -30,11 +31,11 @@ public class MealPlanServiceIntegrationTest {
 
 
     @Test
-    void shouldCreateMealPlansWhenNoneExist() {
+    void shouldCreateWhenNoneExist() {
         UserEntity bertha = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
         userFactory.authenticate(bertha);
 
-        mealPlanService.createMealPlans();
+        mealPlanService.create();
 
         List<MealPlanEntity> mealPlans = mealPlanRepository.findAll();
         assertThat(mealPlans.size()).isEqualTo(2);
@@ -49,12 +50,12 @@ public class MealPlanServiceIntegrationTest {
         UserEntity bertha = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
         userFactory.authenticate(bertha);
 
-        mealPlanService.createMealPlans();
+        mealPlanService.create();
 
         List<MealPlanEntity> mealPlans = mealPlanRepository.findAll();
         assertThat(mealPlans.size()).isEqualTo(2);
 
-        mealPlanService.createMealPlans();
+        mealPlanService.create();
         List<MealPlanEntity> mealPlans2 = mealPlanRepository.findAll();
 
         assertThat(mealPlans2.size()).isEqualTo(2);

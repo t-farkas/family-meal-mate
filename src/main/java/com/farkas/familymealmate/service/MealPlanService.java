@@ -1,17 +1,21 @@
 package com.farkas.familymealmate.service;
 
+import com.farkas.familymealmate.model.dto.VersionDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanDetailsDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
 import com.farkas.familymealmate.model.entity.MealPlanEntity;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 
 public interface MealPlanService {
-    void createMealPlans();
 
-    MealPlanDetailsDto getMealPlan(MealPlanWeek week);
+    void create();
 
-    MealPlanEntity getMealPlanEntity(MealPlanWeek week);
+    MealPlanDetailsDto get(MealPlanWeek week);
 
-    MealPlanDetailsDto editMealPlan(MealPlanUpdateRequest mealPlanRequest);
+    MealPlanEntity getEntity(MealPlanWeek week);
+
+    MealPlanDetailsDto update(MealPlanUpdateRequest mealPlanRequest);
+
+    VersionDto getVersion(MealPlanWeek week);
 
 }

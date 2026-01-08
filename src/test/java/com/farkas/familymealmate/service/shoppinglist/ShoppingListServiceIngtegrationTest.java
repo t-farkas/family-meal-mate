@@ -1,4 +1,4 @@
-package com.farkas.familymealmate.service;
+package com.farkas.familymealmate.service.shoppinglist;
 
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingItemDto;
@@ -8,6 +8,8 @@ import com.farkas.familymealmate.model.entity.RecipeEntity;
 import com.farkas.familymealmate.model.entity.UserEntity;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.model.enums.MealType;
+import com.farkas.familymealmate.service.MealPlanService;
+import com.farkas.familymealmate.service.ShoppingListService;
 import com.farkas.familymealmate.testdata.mealplan.TestMealNotes;
 import com.farkas.familymealmate.testdata.mealplan.TestMealPlanBuilder;
 import com.farkas.familymealmate.testdata.recipe.TestRecipeFactory;
@@ -55,7 +57,7 @@ public class ShoppingListServiceIngtegrationTest {
 
         shoppingListService.addMealPlan(MealPlanWeek.CURRENT);
         ShoppingListDto shoppingList = shoppingListService.addMealPlan(MealPlanWeek.NEXT);
-        List<ShoppingItemDto> shoppingItems = shoppingList.getShoppingItems();
+        List<ShoppingItemDto> shoppingItems = shoppingList.shoppingItems();
 
         assertEquals(BigDecimal.valueOf(1000), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.CHICKEN_ID).getQuantity());
         assertEquals(BigDecimal.valueOf(800), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.GROUND_BEEF_ID).getQuantity());
@@ -80,9 +82,9 @@ public class ShoppingListServiceIngtegrationTest {
     @Test
     void shouldUpdateShoppingList() {
         setupUser();
-        ShoppingListUpdateRequest updateRequest = getShoppingListUpdateRequest();
+        ShoppingListUpdateRequest updateRequest = getUpdateRequest();
         ShoppingListDto shoppingList = shoppingListService.update(updateRequest);
-        List<ShoppingItemDto> shoppingItems = shoppingList.getShoppingItems();
+        List<ShoppingItemDto> shoppingItems = shoppingList.shoppingItems();
 
         assertEquals(BigDecimal.valueOf(500), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.CHICKEN_ID).getQuantity());
         assertEquals(BigDecimal.valueOf(2), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.TOMATO_ID).getQuantity());
@@ -112,11 +114,11 @@ public class ShoppingListServiceIngtegrationTest {
     private void setupUser() {
         UserEntity user = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
         userFactory.authenticate(user);
-        shoppingListService.createForHousehold(user.getFamilyMember().getHousehold());
+        shoppingListService.create(user.getFamilyMember().getHousehold());
     }
 
     private void createMealPlans() {
-        mealPlanService.createMealPlans();
+        mealPlanService.create();
 
         RecipeEntity oatsEntity = recipeFactory.createRecipe(TestRecipes.OVERNIGHT_OATS);
         RecipeEntity omeletteEntity = recipeFactory.createRecipe(TestRecipes.VEGETABLE_OMELETTE);
@@ -140,11 +142,11 @@ public class ShoppingListServiceIngtegrationTest {
                 .slot(TestMealNotes.STIR_FRY_LUNCH, DayOfWeek.WEDNESDAY, MealType.LUNCH, stirFryEntity)
                 .buildRequest();
 
-        mealPlanService.editMealPlan(currentWeekMealPlan);
-        mealPlanService.editMealPlan(nextWeekMealPlan);
+        mealPlanService.update(currentWeekMealPlan);
+        mealPlanService.update(nextWeekMealPlan);
     }
 
-    private ShoppingListUpdateRequest getShoppingListUpdateRequest() {
+    private ShoppingListUpdateRequest getUpdateRequest() {
         return shoppingListBuilder
                 .addRecipeIngredients(TestRecipes.CHICKEN_STIR_FRY)
                 .addRecipeIngredients(TestRecipes.SPAGHETTI_BOLOGNESE)

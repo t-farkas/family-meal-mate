@@ -2,6 +2,7 @@ package com.farkas.familymealmate.service.impl;
 
 import com.farkas.familymealmate.exception.ServiceException;
 import com.farkas.familymealmate.mapper.MealPlanMapper;
+import com.farkas.familymealmate.model.dto.VersionDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanDetailsDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
 import com.farkas.familymealmate.model.dto.mealplan.MealSlotUpdateRequest;
@@ -16,6 +17,7 @@ import com.farkas.familymealmate.service.MealPlanService;
 import com.farkas.familymealmate.service.RecipeService;
 import com.farkas.familymealmate.util.MealPlanDateUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +37,7 @@ public class MealPlanServiceImpl implements MealPlanService {
     private final RecipeService recipeService;
 
     @Override
-    public void createMealPlans() {
+    public void create() {
         HouseholdEntity household = currentUserService.getCurrentHousehold();
 
         LocalDate currentWeekStart = MealPlanDateUtils.getCurrentWeekStart();
@@ -53,7 +55,7 @@ public class MealPlanServiceImpl implements MealPlanService {
     }
 
     @Override
-    public MealPlanDetailsDto getMealPlan(MealPlanWeek week) {
+    public MealPlanDetailsDto get(MealPlanWeek week) {
         HouseholdEntity household = currentUserService.getCurrentHousehold();
         LocalDate weekStart = getWeekStart(week);
         MealPlanEntity mealPlan = getMealPlanEntity(household, weekStart);
@@ -62,22 +64,33 @@ public class MealPlanServiceImpl implements MealPlanService {
     }
 
     @Override
-    public MealPlanDetailsDto editMealPlan(MealPlanUpdateRequest mealPlanRequest) {
+    public MealPlanDetailsDto update(MealPlanUpdateRequest updateRequest) {
         HouseholdEntity household = currentUserService.getCurrentHousehold();
-        LocalDate weekStart = getWeekStart(mealPlanRequest.week());
+        LocalDate weekStart = getWeekStart(updateRequest.week());
         MealPlanEntity mealPlanEntity = getMealPlanEntity(household, weekStart);
 
-        editMealPlan(mealPlanRequest, mealPlanEntity);
+        updateMealSlots(updateRequest, mealPlanEntity);
+        mealPlanEntity.setVersion(updateRequest.version());
 
-        MealPlanEntity saved = mealPlanRepository.save(mealPlanEntity);
-        return mealPlanMapper.toDto(saved);
+        try {
+            MealPlanEntity saved = mealPlanRepository.save(mealPlanEntity);
+            return mealPlanMapper.toDto(saved);
+        } catch (ObjectOptimisticLockingFailureException exception) {
+            throw new ServiceException(ErrorCode.MEAL_PLAN_VERSION_MISMATCH);
+        }
     }
 
     @Override
-    public MealPlanEntity getMealPlanEntity(MealPlanWeek week) {
+    public MealPlanEntity getEntity(MealPlanWeek week) {
         HouseholdEntity household = currentUserService.getCurrentHousehold();
         LocalDate weekStart = getWeekStart(week);
         return getMealPlanEntity(household, weekStart);
+    }
+
+    @Override
+    public VersionDto getVersion(MealPlanWeek week) {
+        MealPlanEntity mealPlan = getEntity(week);
+        return new VersionDto(mealPlan.getVersion());
     }
 
     private LocalDate getWeekStart(MealPlanWeek week) {
@@ -87,7 +100,7 @@ public class MealPlanServiceImpl implements MealPlanService {
         };
     }
 
-    private void editMealPlan(MealPlanUpdateRequest mealPlanRequest, MealPlanEntity mealPlanEntity) {
+    private void updateMealSlots(MealPlanUpdateRequest mealPlanRequest, MealPlanEntity mealPlanEntity) {
         mealPlanEntity.getMealSlots().clear();
 
         List<MealSlotEntity> mealSlots = mealPlanRequest.mealSlots().stream()

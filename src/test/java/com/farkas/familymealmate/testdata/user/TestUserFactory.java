@@ -2,6 +2,8 @@ package com.farkas.familymealmate.testdata.user;
 
 import com.farkas.familymealmate.model.dto.auth.RegisterRequest;
 import com.farkas.familymealmate.model.entity.UserEntity;
+import com.farkas.familymealmate.repository.HouseholdRepository;
+import com.farkas.familymealmate.repository.ShoppingListRepository;
 import com.farkas.familymealmate.repository.UserRepository;
 import com.farkas.familymealmate.security.AuthService;
 import com.farkas.familymealmate.security.CustomUserDetails;
@@ -13,10 +15,14 @@ public class TestUserFactory {
 
     private final AuthService authService;
     private final UserRepository userRepository;
+    private final HouseholdRepository householdRepository;
+    private final ShoppingListRepository shoppingListRepository;
 
-    public TestUserFactory(AuthService authService, UserRepository userRepository) {
+    public TestUserFactory(AuthService authService, UserRepository userRepository, HouseholdRepository householdRepository, ShoppingListRepository shoppingListRepository) {
         this.authService = authService;
         this.userRepository = userRepository;
+        this.householdRepository = householdRepository;
+        this.shoppingListRepository = shoppingListRepository;
     }
 
     public UserEntity registerWithNewHousehold(TestUser user){
@@ -36,4 +42,9 @@ public class TestUserFactory {
     }
 
 
+    public void deleteAll() {
+        shoppingListRepository.deleteAll();
+        userRepository.deleteAll();
+        householdRepository.deleteAll();
+    }
 }

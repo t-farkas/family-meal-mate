@@ -2,6 +2,7 @@ package com.farkas.familymealmate.service.impl;
 
 import com.farkas.familymealmate.exception.ServiceException;
 import com.farkas.familymealmate.mapper.ShoppingListMapper;
+import com.farkas.familymealmate.model.dto.VersionDto;
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingItemUpdateRequest;
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingListDto;
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingListUpdateRequest;
@@ -16,6 +17,7 @@ import com.farkas.familymealmate.service.ShoppingListService;
 import com.farkas.familymealmate.service.aggregation.ShoppingItemAggregator;
 import com.farkas.familymealmate.util.AggregationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +38,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
     private final ShoppingListMapper mapper;
 
     @Override
-    public void createForHousehold(HouseholdEntity household) {
+    public void create(HouseholdEntity household) {
         Optional<ShoppingListEntity> shoppingList = shoppingListRepository.findByHouseholdId(household.getId());
 
         if (shoppingList.isEmpty()) {
@@ -47,7 +49,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
     }
 
     @Override
-    public ShoppingListDto getShoppingList() {
+    public ShoppingListDto get() {
         Long householdId = currentUserService.getCurrentHousehold().getId();
         ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
 
@@ -59,10 +61,16 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         Long householdId = currentUserService.getCurrentHousehold().getId();
         ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
 
-        updateEntities(shoppingList, updateRequest);
+        updateShoppingItems(shoppingList, updateRequest);
+        shoppingList.setNote(updateRequest.getNote());
+        shoppingList.setVersion(updateRequest.getVersion());
 
-        ShoppingListEntity saved = shoppingListRepository.save(shoppingList);
-        return mapper.toDto(saved);
+        try {
+            ShoppingListEntity saved = shoppingListRepository.save(shoppingList);
+            return mapper.toDto(saved);
+        } catch (ObjectOptimisticLockingFailureException exception) {
+            throw new ServiceException(ErrorCode.SHOPPING_LIST_VERSION_MISMATCH);
+        }
     }
 
     @Override
@@ -70,7 +78,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         Long householdId = currentUserService.getCurrentHousehold().getId();
 
         ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
-        MealPlanEntity mealPlan = mealPlanService.getMealPlanEntity(week);
+        MealPlanEntity mealPlan = mealPlanService.getEntity(week);
 
         List<ShoppingItemEntity> allItems = mergeShoppingListWithMealPlan(mealPlan, shoppingList);
         List<ShoppingItemEntity> aggregated = ShoppingItemAggregator.aggregate(allItems);
@@ -82,6 +90,13 @@ public class ShoppingListServiceImpl implements ShoppingListService {
 
         ShoppingListEntity savedShoppingList = shoppingListRepository.save(shoppingList);
         return mapper.toDto(savedShoppingList);
+    }
+
+    @Override
+    public VersionDto getVersion() {
+        Long householdId = currentUserService.getCurrentHousehold().getId();
+        ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
+        return new VersionDto(shoppingList.getVersion());
     }
 
     private List<ShoppingItemEntity> mergeShoppingListWithMealPlan(MealPlanEntity mealPlan, ShoppingListEntity shoppingList) {
@@ -97,10 +112,10 @@ public class ShoppingListServiceImpl implements ShoppingListService {
 
     private ShoppingListEntity getShoppingListEntity(Long householdId) {
         return shoppingListRepository.findByHouseholdId(householdId)
-                .orElseThrow(() -> new ServiceException(ErrorCode.SHOPPING_LIST_NOT_FOUND.getTemplate(), ErrorCode.SHOPPING_LIST_NOT_FOUND));
+                .orElseThrow(() -> new ServiceException(ErrorCode.SHOPPING_LIST_NOT_FOUND));
     }
 
-    private void updateEntities(ShoppingListEntity shoppingList, ShoppingListUpdateRequest updateRequest) {
+    private void updateShoppingItems(ShoppingListEntity shoppingList, ShoppingListUpdateRequest updateRequest) {
         shoppingList.getShoppingItems().clear();
 
         List<ShoppingItemEntity> itemsToSave = updateRequest.getShoppingItems().stream()

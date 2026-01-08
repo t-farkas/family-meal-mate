@@ -41,12 +41,12 @@ public class AuthService {
         HouseholdEntity houseHold;
 
         if (noHouseholdDetailsProvied(request)) {
-            throw new ServiceException(ErrorCode.MISSING_HOUSEHOLD_DETAILS.getTemplate(), ErrorCode.MISSING_HOUSEHOLD_DETAILS);
+            throw new ServiceException(ErrorCode.MISSING_HOUSEHOLD_DETAILS);
         } else if (shouldJoinHousehold(request)) {
             houseHold = householdService.findByJoinId(request.getHouseholdJoinId());
         } else {
             houseHold = householdService.createHouseHold(request.getHouseholdName());
-            shoppingListService.createForHousehold(houseHold);
+            shoppingListService.create(houseHold);
         }
 
         FamilyMemberEntity familyMemberEntity = familyMemberService.createFamilyMember(request.getFamilyMemberCreateRequest(), houseHold);

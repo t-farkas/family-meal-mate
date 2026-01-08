@@ -19,12 +19,14 @@ public enum ErrorCode {
     MEAL_PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "Meal plan not found: %s"),
     MEAL_SLOT_NOT_FOUND(HttpStatus.NOT_FOUND, "Meal slot not found: %s"),
     MAXIMUM_MEAL_PLAN_REACHED(HttpStatus.CONFLICT, "Maximum number of templates reached"),
+    MEAL_PLAN_VERSION_MISMATCH(HttpStatus.CONFLICT, "Meal plan was modified by another user"),
 
     TEMPLATE_NOT_FOUND(HttpStatus.NOT_FOUND, "Template not found with id: %s"),
     TEMPLATE_NAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "Template with name %s already exists"),
 
     SHOPPING_LIST_NOT_FOUND(HttpStatus.NOT_FOUND, "No shopping list found"),
     SHOPPING_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "Shopping item not found with id: %s"),
+    SHOPPING_LIST_VERSION_MISMATCH(HttpStatus.CONFLICT, "Shopping list was modified by another user"),
 
     INCOMPATIBLE_UNITS(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot convert %s to %s"),
     NO_AUTHORIZATION(HttpStatus.FORBIDDEN, "You have no authorization to access this resource: %d"),

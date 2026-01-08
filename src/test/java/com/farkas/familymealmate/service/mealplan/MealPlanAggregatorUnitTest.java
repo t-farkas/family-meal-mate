@@ -1,4 +1,4 @@
-package com.farkas.familymealmate.service;
+package com.farkas.familymealmate.service.mealplan;
 
 import com.farkas.familymealmate.model.entity.ShoppingItemEntity;
 import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;

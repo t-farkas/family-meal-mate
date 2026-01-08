@@ -1,4 +1,4 @@
-package com.farkas.familymealmate.service;
+package com.farkas.familymealmate.service.mealplan;
 
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanDetailsDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
@@ -7,6 +7,7 @@ import com.farkas.familymealmate.model.entity.RecipeEntity;
 import com.farkas.familymealmate.model.entity.UserEntity;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.model.enums.MealType;
+import com.farkas.familymealmate.service.MealPlanService;
 import com.farkas.familymealmate.testdata.mealplan.TestMealNotes;
 import com.farkas.familymealmate.testdata.mealplan.TestMealPlanBuilder;
 import com.farkas.familymealmate.testdata.recipe.TestRecipeFactory;
@@ -40,10 +41,10 @@ public class MealPlanEditIntegrationTest {
     @Test
     void shouldEditMealSlots() {
         setupTestWithUserAndMealPlan();
-        MealPlanDetailsDto mealPlan = mealPlanService.getMealPlan(MealPlanWeek.CURRENT);
+        MealPlanDetailsDto mealPlan = mealPlanService.get(MealPlanWeek.CURRENT);
         MealPlanUpdateRequest request = getUpdatedMealPlanRequest(mealPlan);
 
-        mealPlan = mealPlanService.editMealPlan(request);
+        mealPlan = mealPlanService.update(request);
 
         assertThat(mealPlan.mealSlots()).hasSize(2);
         assertThat(mealPlan.mealSlots()).extracting(MealSlotDetailsDto::note)
@@ -53,8 +54,8 @@ public class MealPlanEditIntegrationTest {
     private void setupTestWithUserAndMealPlan() {
         UserEntity user = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
         userFactory.authenticate(user);
-        mealPlanService.createMealPlans();
-        mealPlanService.editMealPlan(getMealPlanUpdateRequest());
+        mealPlanService.create();
+        mealPlanService.update(getMealPlanUpdateRequest());
 
     }
 

@@ -136,8 +136,7 @@ public class RecipeServiceImpl implements RecipeService {
             recipeIngredientEntity.setQuantity(ingredient.getQuantity());
             recipeIngredientEntity.setQuantitativeMeasurement(ingredient.getQuantitativeMeasurement());
         } else {
-            throw new ServiceException(ErrorCode.INVALID_INGREDIENT_MEASUREMENT.getTemplate(),
-                    ErrorCode.INVALID_INGREDIENT_MEASUREMENT);
+            throw new ServiceException(ErrorCode.INVALID_INGREDIENT_MEASUREMENT);
         }
     }
 

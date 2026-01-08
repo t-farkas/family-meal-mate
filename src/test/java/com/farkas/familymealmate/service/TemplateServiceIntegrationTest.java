@@ -103,7 +103,7 @@ public class TemplateServiceIntegrationTest {
     private void setupTestWithUserAndMealPlan() {
         UserEntity bertha = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
         userFactory.authenticate(bertha);
-        mealPlanService.createMealPlans();
+        mealPlanService.create();
 
         RecipeEntity oatsEntity = recipeFactory.createRecipe(TestRecipes.OVERNIGHT_OATS);
         RecipeEntity omeletteEntity = recipeFactory.createRecipe(TestRecipes.VEGETABLE_OMELETTE);
@@ -116,7 +116,7 @@ public class TemplateServiceIntegrationTest {
                 .slot(TestMealNotes.BOLOGNESE_LUNCH, DayOfWeek.WEDNESDAY, MealType.LUNCH, bologneseEntity)
                 .buildRequest();
 
-        mealPlanService.editMealPlan(request);
+        mealPlanService.update(request);
     }
 
     private TemplateCreateRequest getTemplateCreateRequest() {
