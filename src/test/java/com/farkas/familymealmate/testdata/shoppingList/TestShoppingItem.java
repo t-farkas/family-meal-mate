@@ -17,7 +17,7 @@ public record TestShoppingItem(
 
     public TestShoppingItem(TestRecipeIngredient recipeIngredient) {
         this(
-                recipeIngredient.ingredientName(),
+                null,
                 null,
                 false,
                 recipeIngredient.ingredientId(),

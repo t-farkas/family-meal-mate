@@ -24,7 +24,7 @@ public class ShoppingListController {
 
     @PutMapping
     public ResponseEntity<ShoppingListDto> editShoppingList(@RequestBody @Valid ShoppingListUpdateRequest updateRequest) {
-        ShoppingListDto shoppingList = service.edit(updateRequest);
+        ShoppingListDto shoppingList = service.update(updateRequest);
         return ResponseEntity.ok(shoppingList);
     }
 

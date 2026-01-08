@@ -14,7 +14,7 @@ public class TestShoppingListBuilder {
 
     List<TestShoppingItem> items = new ArrayList<>();
 
-    public TestShoppingListBuilder addRecipes(TestRecipe... recipes){
+    public TestShoppingListBuilder addRecipes(TestRecipe... recipes) {
         for (TestRecipe recipe : recipes) {
             addRecipeIngredients(recipe);
         }
@@ -53,18 +53,6 @@ public class TestShoppingListBuilder {
         return shoppingList;
     }
 
-    private IngredientEntity getIngredientEntity(TestShoppingItem item) {
-        if (item.ingredientId() == null) {
-            return null;
-        }
-
-        IngredientEntity entity = new IngredientEntity();
-        entity.setId(item.ingredientId());
-        entity.setName(item.name());
-        return entity;
-
-    }
-
     public ShoppingListUpdateRequest buildUpdateRequest() {
         ShoppingListUpdateRequest request = new ShoppingListUpdateRequest();
         request.setShoppingItems(new ArrayList<>());
@@ -83,6 +71,22 @@ public class TestShoppingListBuilder {
 
         reset();
         return request;
+    }
+
+    public List<ShoppingItemEntity> buildAggregateRequest(){
+        return this.buildEntity().getShoppingItems();
+    }
+
+    private IngredientEntity getIngredientEntity(TestShoppingItem item) {
+        if (item.ingredientId() == null) {
+            return null;
+        }
+
+        IngredientEntity entity = new IngredientEntity();
+        entity.setId(item.ingredientId());
+        entity.setName(item.name());
+        return entity;
+
     }
 
     private void reset() {

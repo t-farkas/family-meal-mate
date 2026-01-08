@@ -13,14 +13,15 @@ import com.farkas.familymealmate.repository.ShoppingListRepository;
 import com.farkas.familymealmate.security.CurrentUserService;
 import com.farkas.familymealmate.service.MealPlanService;
 import com.farkas.familymealmate.service.ShoppingListService;
+import com.farkas.familymealmate.service.aggregation.ShoppingItemAggregator;
+import com.farkas.familymealmate.util.AggregationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +33,6 @@ public class ShoppingListServiceImpl implements ShoppingListService {
     private final CurrentUserService currentUserService;
     private final MealPlanService mealPlanService;
     private final ShoppingListMapper mapper;
-    private final ShoppingListAggregator shoppingListAggregator = new ShoppingListAggregator();
-
 
     @Override
     public void createForHousehold(HouseholdEntity household) {
@@ -52,28 +51,47 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
 
         return mapper.toDto(shoppingList);
-
     }
 
     @Override
-    public ShoppingListDto edit(ShoppingListUpdateRequest updateRequest) {
+    public ShoppingListDto update(ShoppingListUpdateRequest updateRequest) {
         Long householdId = currentUserService.getCurrentHousehold().getId();
         ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
 
-        return editShoppingList(updateRequest, shoppingList);
+        updateEntities(shoppingList, updateRequest);
+
+        ShoppingListEntity saved = shoppingListRepository.save(shoppingList);
+        return mapper.toDto(saved);
     }
 
     @Override
     public ShoppingListDto addMealPlan(MealPlanWeek week) {
         Long householdId = currentUserService.getCurrentHousehold().getId();
-        ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
 
+        ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
         MealPlanEntity mealPlan = mealPlanService.getMealPlanEntity(week);
-        shoppingListAggregator.aggregate(shoppingList, mealPlan);
+
+        List<ShoppingItemEntity> allItems = mergeShoppingListWithMealPlan(mealPlan, shoppingList);
+        List<ShoppingItemEntity> aggregated = ShoppingItemAggregator.aggregate(allItems);
+
+        aggregated.forEach(item -> item.setShoppingList(shoppingList));
+
+        shoppingList.getShoppingItems().clear();
+        shoppingList.setShoppingItems(aggregated);
 
         ShoppingListEntity savedShoppingList = shoppingListRepository.save(shoppingList);
         return mapper.toDto(savedShoppingList);
+    }
 
+    private List<ShoppingItemEntity> mergeShoppingListWithMealPlan(MealPlanEntity mealPlan, ShoppingListEntity shoppingList) {
+        List<ShoppingItemEntity> itemsToAdd = mealPlan.getMealSlots().stream()
+                .flatMap(slot -> slot.getRecipe().getIngredients().stream())
+                .map(this::mapRecipeIngredient)
+                .toList();
+
+        List<ShoppingItemEntity> allItems = new ArrayList<>(shoppingList.getShoppingItems());
+        allItems.addAll(itemsToAdd);
+        return allItems;
     }
 
     private ShoppingListEntity getShoppingListEntity(Long householdId) {
@@ -81,68 +99,30 @@ public class ShoppingListServiceImpl implements ShoppingListService {
                 .orElseThrow(() -> new ServiceException(ErrorCode.SHOPPING_LIST_NOT_FOUND.getTemplate(), ErrorCode.SHOPPING_LIST_NOT_FOUND));
     }
 
-    private ShoppingListDto editShoppingList(ShoppingListUpdateRequest updateRequest, ShoppingListEntity shoppingListEntity) {
-        List<ShoppingItemEntity> shoppingItemEntities = shoppingListEntity.getShoppingItems();
-        List<ShoppingItemUpdateRequest> shoppingItems = updateRequest.getShoppingItems();
+    private void updateEntities(ShoppingListEntity shoppingList, ShoppingListUpdateRequest updateRequest) {
+        shoppingList.getShoppingItems().clear();
 
-        deleteRemoved(shoppingItemEntities, shoppingItems);
-        updateExisting(shoppingItemEntities, shoppingItems);
-        shoppingItemEntities.addAll(createNew(shoppingListEntity, shoppingItems));
+        List<ShoppingItemEntity> itemsToSave = updateRequest.getShoppingItems().stream()
+                .map(item -> createEntity(shoppingList, item))
+                .toList();
 
-        ShoppingListEntity saved = shoppingListRepository.save(shoppingListEntity);
-        return mapper.toDto(saved);
+        shoppingList.setShoppingItems(ShoppingItemAggregator.aggregate(itemsToSave));
     }
 
-    private List<ShoppingItemEntity> createNew(ShoppingListEntity shoppingListEntity, List<ShoppingItemUpdateRequest> shoppingItems) {
-        return shoppingItems.stream()
-                .filter(item -> item.getId() == null)
-                .map(item -> {
-                    ShoppingItemEntity entity = new ShoppingItemEntity();
-                    entity.setNote(item.getNote());
-                    entity.setShoppingList(shoppingListEntity);
-                    entity.setChecked(item.isChecked());
+    private ShoppingItemEntity createEntity(ShoppingListEntity shoppingListEntity, ShoppingItemUpdateRequest item) {
+        ShoppingItemEntity entity = new ShoppingItemEntity();
+        entity.setNote(item.getNote());
+        entity.setShoppingList(shoppingListEntity);
+        entity.setChecked(item.isChecked());
 
-                    if (isIngredientBased(item)) {
-                        entity.setIngredient(getIngredient(item.getIngredientId()));
-                        entity.setQuantity(item.getQuantity());
-                        entity.setQuantitativeMeasurement(item.getQuantitativeMeasurement());
-                    } else {
-                        entity.setName(item.getName());
-                    }
-                    return entity;
-                }).collect(Collectors.toList());
-
-    }
-
-    private void updateExisting(List<ShoppingItemEntity> shoppingItemEntites, List<ShoppingItemUpdateRequest> shoppingItems) {
-        Map<Long, ShoppingItemEntity> entityMap = shoppingItemEntites.stream()
-                .collect(Collectors.toMap(BaseEntity::getId, entity -> entity));
-
-        shoppingItems.stream()
-                .filter(item -> item.getId() != null)
-                .forEach(item -> {
-                    ShoppingItemEntity entity = entityMap.get(item.getId());
-                    nullCheckEntity(item, entity);
-
-                    entity.setNote(item.getNote());
-                    entity.setChecked(item.isChecked());
-
-                    if (isIngredientBased(item)) {
-                        entity.setQuantity(item.getQuantity());
-                        entity.setQuantitativeMeasurement(item.getQuantitativeMeasurement());
-                    } else {
-                        entity.setName(item.getName());
-                    }
-                });
-
-    }
-
-    private void nullCheckEntity(ShoppingItemUpdateRequest item, ShoppingItemEntity entity) {
-        if (entity == null) {
-            throw new ServiceException(
-                    ErrorCode.SHOPPING_ITEM_NOT_FOUND.format(item.getId()),
-                    ErrorCode.SHOPPING_ITEM_NOT_FOUND);
+        if (isIngredientBased(item)) {
+            entity.setIngredient(getIngredient(item.getIngredientId()));
+            entity.setQuantity(item.getQuantity());
+            entity.setQuantitativeMeasurement(item.getQuantitativeMeasurement());
+        } else {
+            entity.setName(item.getName());
         }
+        return entity;
     }
 
     private boolean isIngredientBased(ShoppingItemUpdateRequest item) {
@@ -154,9 +134,16 @@ public class ShoppingListServiceImpl implements ShoppingListService {
                 .orElseThrow(() -> new ServiceException(ErrorCode.INGREDIENT_NOT_FOUND.format(ingredientId), ErrorCode.INGREDIENT_NOT_FOUND));
     }
 
-    private void deleteRemoved(List<ShoppingItemEntity> shoppingItemEntities, List<ShoppingItemUpdateRequest> shoppingItems) {
-        List<Long> requestIds = shoppingItems.stream().map(ShoppingItemUpdateRequest::getId).toList();
-        shoppingItemEntities.removeIf(entity -> !requestIds.contains(entity.getId()));
+    private ShoppingItemEntity mapRecipeIngredient(RecipeIngredientEntity recipeIngredient) {
+        ShoppingItemEntity item = new ShoppingItemEntity();
+        item.setIngredient(recipeIngredient.getIngredient());
+
+        if (AggregationUtil.isAggregatable(recipeIngredient.getQuantity(), recipeIngredient.getQuantitativeMeasurement())) {
+            item.setQuantity(recipeIngredient.getQuantity());
+            item.setQuantitativeMeasurement(recipeIngredient.getQuantitativeMeasurement());
+        }
+
+        return item;
     }
 
 }

@@ -11,11 +11,15 @@ import org.mapstruct.ReportingPolicy;
 public interface ShoppingItemMapper {
 
     @Mapping(source = "ingredient.id", target = "ingredientId")
-    @Mapping(source = "ingredient.name", target = "name")
+    @Mapping(target = "name", expression = "java(mapName(entity))")
     @Mapping(target = "category", expression = "java(mapCategory(entity))")
     ShoppingItemDto toDto(ShoppingItemEntity entity);
 
     default IngredientCategory mapCategory(ShoppingItemEntity entity) {
         return entity.getIngredient() == null ? IngredientCategory.OTHER : entity.getIngredient().getCategory();
+    }
+
+    default String mapName(ShoppingItemEntity entity){
+        return entity.getIngredient() == null ? entity.getName() : entity.getIngredient().getName();
     }
 }
