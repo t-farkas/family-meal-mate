@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -68,7 +67,10 @@ public class MealPlanServiceImpl implements MealPlanService {
         LocalDate weekStart = getWeekStart(mealPlanRequest.week());
         MealPlanEntity mealPlanEntity = getMealPlanEntity(household, weekStart);
 
-        return editMealPlan(mealPlanRequest, mealPlanEntity);
+        editMealPlan(mealPlanRequest, mealPlanEntity);
+
+        MealPlanEntity saved = mealPlanRepository.save(mealPlanEntity);
+        return mealPlanMapper.toDto(saved);
     }
 
     @Override
@@ -85,16 +87,14 @@ public class MealPlanServiceImpl implements MealPlanService {
         };
     }
 
-    private MealPlanDetailsDto editMealPlan(MealPlanUpdateRequest mealPlanRequest, MealPlanEntity mealPlanEntity) {
-        List<MealSlotEntity> mealSlotEntities = mealPlanEntity.getMealSlots();
-        List<MealSlotUpdateRequest> mealSlots = mealPlanRequest.mealSlots();
+    private void editMealPlan(MealPlanUpdateRequest mealPlanRequest, MealPlanEntity mealPlanEntity) {
+        mealPlanEntity.getMealSlots().clear();
 
-        deleteRemoved(mealSlotEntities, mealSlots);
-        updateExisting(mealSlotEntities, mealSlots);
-        mealSlotEntities.addAll(createNew(mealPlanEntity, mealSlots));
+        List<MealSlotEntity> mealSlots = mealPlanRequest.mealSlots().stream()
+                .map(slot -> createEntity(slot, mealPlanEntity))
+                .collect(Collectors.toList());
 
-        MealPlanEntity saved = mealPlanRepository.save(mealPlanEntity);
-        return mealPlanMapper.toDto(saved);
+        mealPlanEntity.setMealSlots(mealSlots);
     }
 
     private MealPlanEntity getMealPlanEntity(HouseholdEntity currentHousehold, LocalDate weekStart) {
@@ -115,49 +115,14 @@ public class MealPlanServiceImpl implements MealPlanService {
         mealPlanRepository.save(mealPlanEntity);
     }
 
-    private void deleteRemoved(List<MealSlotEntity> mealSlotEntities, List<MealSlotUpdateRequest> mealSlots) {
-        List<Long> requestIds = mealSlots.stream().map(MealSlotUpdateRequest::id).toList();
-        mealSlotEntities.removeIf(entity -> !requestIds.contains(entity.getId()));
-    }
+    private MealSlotEntity createEntity(MealSlotUpdateRequest slot, MealPlanEntity mealPlan) {
+        MealSlotEntity entity = new MealSlotEntity();
+        entity.setMealPlan(mealPlan);
+        entity.setMealType(slot.mealType());
+        entity.setDay(slot.day());
+        entity.setNote(slot.note());
+        entity.setRecipe(recipeService.getEntity(slot.recipeId()));
 
-    private void updateExisting(List<MealSlotEntity> mealSlotEntities, List<MealSlotUpdateRequest> mealSlots) {
-        Map<Long, MealSlotEntity> entityMap = mealSlotEntities.stream()
-                .collect(Collectors.toMap(MealSlotEntity::getId, entity -> entity));
-
-        mealSlots.stream()
-                .filter(slot -> slot.id() != null)
-                .forEach(slot -> {
-                    MealSlotEntity entity = entityMap.get(slot.id());
-                    nullCheckEntity(slot, entity);
-
-                    entity.setRecipe(recipeService.getEntity(slot.recipeId()));
-                    entity.setNote(slot.note());
-                    entity.setDay(slot.day());
-                    entity.setMealType(slot.mealType());
-                });
-
-    }
-
-    private void nullCheckEntity(MealSlotUpdateRequest slot, MealSlotEntity entity) {
-        if (entity == null) {
-            throw new ServiceException(
-                    ErrorCode.MEAL_SLOT_NOT_FOUND.format(slot.id()),
-                    ErrorCode.MEAL_SLOT_NOT_FOUND);
-        }
-    }
-
-    private List<MealSlotEntity> createNew(MealPlanEntity mealPlan, List<MealSlotUpdateRequest> mealSlots) {
-        return mealSlots.stream()
-                .filter(slot -> slot.id() == null)
-                .map(slot -> {
-                    MealSlotEntity entity = new MealSlotEntity();
-                    entity.setMealPlan(mealPlan);
-                    entity.setMealType(slot.mealType());
-                    entity.setDay(slot.day());
-                    entity.setNote(slot.note());
-                    entity.setRecipe(recipeService.getEntity(slot.recipeId()));
-
-                    return entity;
-                }).collect(Collectors.toList());
+        return entity;
     }
 }

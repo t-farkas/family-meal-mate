@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -104,7 +105,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
 
         List<ShoppingItemEntity> itemsToSave = updateRequest.getShoppingItems().stream()
                 .map(item -> createEntity(shoppingList, item))
-                .toList();
+                .collect(Collectors.toList());
 
         shoppingList.setShoppingItems(ShoppingItemAggregator.aggregate(itemsToSave));
     }
