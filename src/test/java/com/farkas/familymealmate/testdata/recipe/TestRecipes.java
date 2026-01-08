@@ -85,5 +85,22 @@ public class TestRecipes {
                     TestRecipeIngredients.PANCAKE_SUGAR)
     );
 
+    public static final TestRecipe VEGGIE_BOWL = new TestRecipe(
+            6L,
+            "Tomato Broccoli Bowl",
+            List.of("Light vegetable bowl with rice"),
+            List.of(
+                    "Chop vegetables",
+                    "Cook rice",
+                    "Combine and season"
+            ),
+            List.of(
+                    TestRecipeIngredients.VEGGIE_BOWL_RICE,
+                    TestRecipeIngredients.VEGGIE_BOWL_TOMATO,
+                    TestRecipeIngredients.VEGGIE_BOWL_BROCCOLI
+            )
+    );
+
+
 
 }

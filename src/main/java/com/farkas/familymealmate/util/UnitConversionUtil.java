@@ -18,6 +18,8 @@ public class UnitConversionUtil {
     }
 
     public static boolean canConvert(QuantitativeMeasurement from, QuantitativeMeasurement to) {
+        if (from == null) return false;
+        if (to == null) return true;
         return from.getUnitType() == to.getUnitType() && from.getUnitType() != UnitType.QUALITATIVE;
     }
 
@@ -28,7 +30,9 @@ public class UnitConversionUtil {
                     ErrorCode.INCOMPATIBLE_UNITS);
         }
 
-        return value.multiply(from.getBaseFactor()).divide(to.getBaseFactor(), RoundingMode.HALF_UP);
+        return value
+                .multiply(from.getBaseFactor())
+                .divide(to.getBaseFactor(), RoundingMode.HALF_UP);
     }
 
 

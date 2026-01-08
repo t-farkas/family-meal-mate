@@ -21,8 +21,8 @@ public record TestShoppingItem(
                 null,
                 false,
                 recipeIngredient.ingredientId(),
-                UnitConversionUtil.shouldKeepQuantity(recipeIngredient.quantitativeMeasurement()) ? recipeIngredient.quantity() : null,
-                UnitConversionUtil.shouldKeepQuantity(recipeIngredient.quantitativeMeasurement()) ? recipeIngredient.quantitativeMeasurement() : null);
+                getQuantity(recipeIngredient),
+                getMeasurement(recipeIngredient));
     }
 
     public TestShoppingItem(String name, String note) {
@@ -34,6 +34,20 @@ public record TestShoppingItem(
                 null,
                 null
         );
+    }
+
+    private static BigDecimal getQuantity(TestRecipeIngredient recipeIngredient) {
+        if (recipeIngredient.quantitativeMeasurement() != null) {
+            return UnitConversionUtil.shouldKeepQuantity(recipeIngredient.quantitativeMeasurement()) ? recipeIngredient.quantity() : null;
+        }
+        return null;
+    }
+
+    private static QuantitativeMeasurement getMeasurement(TestRecipeIngredient recipeIngredient) {
+        if (recipeIngredient.quantitativeMeasurement() != null) {
+            return UnitConversionUtil.shouldKeepQuantity(recipeIngredient.quantitativeMeasurement()) ? recipeIngredient.quantitativeMeasurement() : null;
+        }
+        return null;
     }
 
 }

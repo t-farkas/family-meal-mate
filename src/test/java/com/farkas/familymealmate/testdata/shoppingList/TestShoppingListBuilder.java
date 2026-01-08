@@ -1,8 +1,6 @@
 package com.farkas.familymealmate.testdata.shoppingList;
 
-import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingItemDto;
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingItemUpdateRequest;
-import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingListDto;
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingListUpdateRequest;
 import com.farkas.familymealmate.model.entity.IngredientEntity;
 import com.farkas.familymealmate.model.entity.ShoppingItemEntity;
@@ -15,6 +13,13 @@ import java.util.List;
 public class TestShoppingListBuilder {
 
     List<TestShoppingItem> items = new ArrayList<>();
+
+    public TestShoppingListBuilder addRecipes(TestRecipe... recipes){
+        for (TestRecipe recipe : recipes) {
+            addRecipeIngredients(recipe);
+        }
+        return this;
+    }
 
     public TestShoppingListBuilder addRecipeIngredients(TestRecipe recipe) {
         recipe.ingredients().forEach(ingredient -> items.add(new TestShoppingItem(ingredient)));
@@ -57,26 +62,6 @@ public class TestShoppingListBuilder {
         entity.setId(item.ingredientId());
         entity.setName(item.name());
         return entity;
-
-    }
-
-    public ShoppingListDto buildDto() {
-        ShoppingListDto shoppingList = new ShoppingListDto();
-        shoppingList.setShoppingItems(new ArrayList<>());
-
-        items.forEach(item -> {
-            ShoppingItemDto itemDto = new ShoppingItemDto();
-            itemDto.setName(item.name());
-            itemDto.setNote(item.note());
-            itemDto.setChecked(item.checked());
-            itemDto.setQuantity(item.quantity());
-            itemDto.setQuantitativeMeasurement(item.quantitativeMeasurement());
-
-            shoppingList.getShoppingItems().add(itemDto);
-        });
-
-        reset();
-        return shoppingList;
 
     }
 

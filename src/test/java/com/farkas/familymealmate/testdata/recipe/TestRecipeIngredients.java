@@ -14,6 +14,7 @@ public class TestRecipeIngredients {
     public static final Long CHICKEN_ID = 11L;
     public static final Long GROUND_BEEF_ID = 14L;
     public static final Long PASTA_ID = 28L;
+    public static final Long RICE_ID = 31L;
     public static final Long SUGAR_ID = 39L;
     public static final Long CUMIN_ID = 46L;
     public static final Long GARLIC_ID = 50L;
@@ -171,4 +172,27 @@ public class TestRecipeIngredients {
             QuantitativeMeasurement.GRAM,
             IngredientCategory.DAIRY);
 
+    public static final TestRecipeIngredient VEGGIE_BOWL_TOMATO = new TestRecipeIngredient(
+            TOMATO_ID,
+            "Tomato",
+            BigDecimal.valueOf(300),
+            QuantitativeMeasurement.GRAM,
+            IngredientCategory.PRODUCE
+    );
+
+    public static final TestRecipeIngredient VEGGIE_BOWL_BROCCOLI = new TestRecipeIngredient(
+            BROCCOLI_ID,
+            "Broccoli",
+            BigDecimal.valueOf(150),
+            QuantitativeMeasurement.GRAM,
+            IngredientCategory.PRODUCE
+    );
+
+    public static final TestRecipeIngredient VEGGIE_BOWL_RICE = new TestRecipeIngredient(
+            RICE_ID,
+            "Rice",
+            BigDecimal.valueOf(200),
+            QuantitativeMeasurement.GRAM,
+            IngredientCategory.GRAINS_AND_PASTA
+    );
 }

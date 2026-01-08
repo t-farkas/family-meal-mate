@@ -4,6 +4,7 @@ import com.farkas.familymealmate.model.entity.MealPlanEntity;
 import com.farkas.familymealmate.model.entity.RecipeIngredientEntity;
 import com.farkas.familymealmate.model.entity.ShoppingItemEntity;
 import com.farkas.familymealmate.model.entity.ShoppingListEntity;
+import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
 import com.farkas.familymealmate.util.UnitConversionUtil;
 
 import java.math.BigDecimal;
@@ -63,12 +64,19 @@ public class ShoppingListAggregator {
     }
 
     private void aggregateQuantities(RecipeIngredientEntity ingredient, ShoppingItemEntity item) {
-        BigDecimal convertedValue = UnitConversionUtil.convert(
-                ingredient.getQuantity(),
-                ingredient.getQuantitativeMeasurement(),
-                item.getQuantitativeMeasurement());
+        BigDecimal value = ingredient.getQuantity();
+        QuantitativeMeasurement from = ingredient.getQuantitativeMeasurement();
+        QuantitativeMeasurement to = item.getQuantitativeMeasurement();
 
-        item.setQuantity(item.getQuantity().add(convertedValue));
+        if (to == null){
+            item.setQuantity(value);
+            item.setQuantitativeMeasurement(from);
+        }else {
+
+            BigDecimal convertedValue = UnitConversionUtil.convert(value, from, to);
+            item.setQuantity(item.getQuantity().add(convertedValue));
+        }
+
     }
 
     private boolean isAggregatable(RecipeIngredientEntity ingredient) {
