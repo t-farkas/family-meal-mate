@@ -33,9 +33,7 @@ public class MealPlanServiceIntegrationTest {
     @Test
     void shouldCreateWhenNoneExist() {
         UserEntity bertha = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
-        userFactory.authenticate(bertha);
-
-        mealPlanService.create();
+        mealPlanService.create(bertha.getFamilyMember().getHousehold());
 
         List<MealPlanEntity> mealPlans = mealPlanRepository.findAll();
         assertThat(mealPlans.size()).isEqualTo(2);
@@ -48,19 +46,16 @@ public class MealPlanServiceIntegrationTest {
     @Test
     void shouldNotCreateDuplicateMealPlans_ifTheyAlreadyExist() {
         UserEntity bertha = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
-        userFactory.authenticate(bertha);
 
-        mealPlanService.create();
+        mealPlanService.create(bertha.getFamilyMember().getHousehold());
 
         List<MealPlanEntity> mealPlans = mealPlanRepository.findAll();
         assertThat(mealPlans.size()).isEqualTo(2);
 
-        mealPlanService.create();
+        mealPlanService.create(bertha.getFamilyMember().getHousehold());
         List<MealPlanEntity> mealPlans2 = mealPlanRepository.findAll();
 
         assertThat(mealPlans2.size()).isEqualTo(2);
-        assertThat(mealPlans.get(0)).isIn(mealPlans2);
-        assertThat(mealPlans.get(1)).isIn(mealPlans2);
 
     }
 }

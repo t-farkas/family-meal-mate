@@ -14,9 +14,15 @@ public class TestMealPlanBuilder {
 
     private final List<TestMealSlot> mealSlots = new ArrayList<>();
     private MealPlanWeek week;
+    private Long version = 0L;
 
     public TestMealPlanBuilder forWeek(MealPlanWeek week) {
         this.week = week;
+        return this;
+    }
+
+    public TestMealPlanBuilder version(Long version) {
+        this.version = version;
         return this;
     }
 
@@ -28,7 +34,7 @@ public class TestMealPlanBuilder {
     }
 
     public MealPlanUpdateRequest buildRequest() {
-        TestMealPlan plan = new TestMealPlan(week, mealSlots);
+        TestMealPlan plan = new TestMealPlan(version, week, mealSlots);
         MealPlanUpdateRequest request = plan.updateRequest();
         reset();
         return request;
@@ -37,6 +43,7 @@ public class TestMealPlanBuilder {
     private void reset() {
         this.mealSlots.clear();
         this.week = null;
+        this.version = 0L;
     }
 
 }

@@ -1,60 +1,62 @@
 package com.farkas.familymealmate.service.mealplan;
 
-import com.farkas.familymealmate.model.entity.HouseholdEntity;
-import com.farkas.familymealmate.model.entity.MealPlanEntity;
+import com.farkas.familymealmate.exception.ServiceException;
+import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
+import com.farkas.familymealmate.model.entity.RecipeEntity;
 import com.farkas.familymealmate.model.entity.UserEntity;
-import com.farkas.familymealmate.repository.MealPlanRepository;
+import com.farkas.familymealmate.model.enums.ErrorCode;
+import com.farkas.familymealmate.model.enums.MealPlanWeek;
+import com.farkas.familymealmate.model.enums.MealType;
+import com.farkas.familymealmate.service.MealPlanService;
+import com.farkas.familymealmate.testdata.mealplan.TestMealPlanBuilder;
+import com.farkas.familymealmate.testdata.recipe.TestRecipeFactory;
+import com.farkas.familymealmate.testdata.recipe.TestRecipes;
 import com.farkas.familymealmate.testdata.user.TestUserFactory;
 import com.farkas.familymealmate.testdata.user.TestUsers;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.DayOfWeek;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @SpringBootTest
+@Transactional
 public class MealPlanOptimisticLockingTest {
+
+    private final TestMealPlanBuilder mealPlanBuilder = new TestMealPlanBuilder();
 
     @Autowired
     private TestUserFactory userFactory;
 
     @Autowired
-    private MealPlanRepository repository;
+    private TestRecipeFactory recipeFactory;
 
-    @AfterEach
-    void cleanup() {
-        repository.deleteAll();
-        userFactory.deleteAll();
-    }
+    @Autowired
+    private MealPlanService service;
 
     @Test
     void throwsOptimisticLockingException() {
         UserEntity user = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
-        HouseholdEntity household = user.getFamilyMember().getHousehold();
+        userFactory.authenticate(user);
 
-        MealPlanEntity entity = new MealPlanEntity();
-        entity.setWeekStart(LocalDate.now());
-        entity.setHousehold(household);
-        entity.setVersion(0L);
+        RecipeEntity recipe = recipeFactory.createRecipe(TestRecipes.OVERNIGHT_OATS);
 
-        entity = repository.saveAndFlush(entity);
+        MealPlanUpdateRequest request = mealPlanBuilder
+                .version(0L)
+                .forWeek(MealPlanWeek.CURRENT)
+                .slot("First slot", DayOfWeek.MONDAY, MealType.LUNCH, recipe)
+                .buildRequest();
 
-        MealPlanEntity user1 = repository.findById(entity.getId()).get();
-        MealPlanEntity user2 = repository.findById(entity.getId()).get();
+        service.update(request);
 
-        user1.setWeekStart(LocalDate.EPOCH);
-        user2.setWeekStart(LocalDate.MAX);
+        assertThatExceptionOfType(ServiceException.class)
+                .isThrownBy(() -> service.update(request))
+                .satisfies(e -> assertThat(e.getErrorCode()).isEqualTo(ErrorCode.MEAL_PLAN_VERSION_MISMATCH));
 
-        repository.saveAndFlush(user1);
-
-        Assertions.assertThrows(ObjectOptimisticLockingFailureException.class, () -> repository.saveAndFlush(user2));
-
-        MealPlanEntity saved = repository.findById(entity.getId()).get();
-        Assertions.assertEquals(1L, saved.getVersion());
-        Assertions.assertEquals(LocalDate.EPOCH, saved.getWeekStart());
     }
 
 }

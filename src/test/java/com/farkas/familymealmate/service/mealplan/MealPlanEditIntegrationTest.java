@@ -54,7 +54,6 @@ public class MealPlanEditIntegrationTest {
     private void setupTestWithUserAndMealPlan() {
         UserEntity user = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
         userFactory.authenticate(user);
-        mealPlanService.create();
         mealPlanService.update(getMealPlanUpdateRequest());
 
     }
@@ -80,6 +79,7 @@ public class MealPlanEditIntegrationTest {
                 .forWeek(MealPlanWeek.CURRENT)
                 .slot(TestMealNotes.OATMEAL_BREAKFAST, DayOfWeek.MONDAY, MealType.BREAKFAST, recipe_1)
                 .slot(TestMealNotes.UPDATED_NOTE, DayOfWeek.WEDNESDAY, MealType.LUNCH, recipe_2)
+                .version(1L)
                 .buildRequest();
 
     }

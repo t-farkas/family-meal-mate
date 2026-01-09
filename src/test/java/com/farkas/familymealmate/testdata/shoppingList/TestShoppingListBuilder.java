@@ -12,7 +12,19 @@ import java.util.List;
 
 public class TestShoppingListBuilder {
 
-    List<TestShoppingItem> items = new ArrayList<>();
+    private List<TestShoppingItem> items = new ArrayList<>();
+    private Long version = 0L;
+    private String note;
+
+    public TestShoppingListBuilder version(Long version){
+        this.version = version;
+        return this;
+    }
+
+    public TestShoppingListBuilder note(String note){
+        this.note = note;
+        return this;
+    }
 
     public TestShoppingListBuilder addRecipes(TestRecipe... recipes) {
         for (TestRecipe recipe : recipes) {
@@ -55,6 +67,8 @@ public class TestShoppingListBuilder {
 
     public ShoppingListUpdateRequest buildUpdateRequest() {
         ShoppingListUpdateRequest request = new ShoppingListUpdateRequest();
+        request.setNote(note);
+        request.setVersion(version);
         request.setShoppingItems(new ArrayList<>());
 
         items.forEach(item -> {
@@ -90,6 +104,8 @@ public class TestShoppingListBuilder {
     }
 
     private void reset() {
+        this.version = 0L;
+        this.note = null;
         this.items.clear();
     }
 

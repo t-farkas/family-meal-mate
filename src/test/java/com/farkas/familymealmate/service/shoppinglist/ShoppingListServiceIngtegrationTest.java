@@ -114,11 +114,9 @@ public class ShoppingListServiceIngtegrationTest {
     private void setupUser() {
         UserEntity user = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
         userFactory.authenticate(user);
-        shoppingListService.create(user.getFamilyMember().getHousehold());
     }
 
     private void createMealPlans() {
-        mealPlanService.create();
 
         RecipeEntity oatsEntity = recipeFactory.createRecipe(TestRecipes.OVERNIGHT_OATS);
         RecipeEntity omeletteEntity = recipeFactory.createRecipe(TestRecipes.VEGETABLE_OMELETTE);

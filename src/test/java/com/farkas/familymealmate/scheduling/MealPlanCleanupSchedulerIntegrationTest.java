@@ -2,10 +2,9 @@ package com.farkas.familymealmate.scheduling;
 
 import com.farkas.familymealmate.model.entity.HouseholdEntity;
 import com.farkas.familymealmate.model.entity.MealPlanEntity;
-import com.farkas.familymealmate.model.entity.UserEntity;
+import com.farkas.familymealmate.repository.HouseholdRepository;
 import com.farkas.familymealmate.repository.MealPlanRepository;
-import com.farkas.familymealmate.testdata.user.TestUserFactory;
-import com.farkas.familymealmate.testdata.user.TestUsers;
+import com.farkas.familymealmate.util.JoinIdGenerator;
 import com.farkas.familymealmate.util.MealPlanDateUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,20 +26,23 @@ public class MealPlanCleanupSchedulerIntegrationTest {
     private MealPlanCleanupScheduler mealPlanCleanupScheduler;
 
     @Autowired
-    private TestUserFactory testUserFactory;
+    private HouseholdRepository householdRepository;
 
     @Autowired
     private MealPlanRepository mealPlanRepository;
 
+    @Autowired
+    private JoinIdGenerator joinIdGenerator;
+
     @Test
-    void cleanupDeletesOnlyPreviousWeeks(){
-        UserEntity user = testUserFactory.registerWithNewHousehold(TestUsers.BERTHA);
+    void cleanupDeletesOnlyPreviousWeeks() {
+        HouseholdEntity household = saveHousehold();
 
         LocalDate currentWeek = MealPlanDateUtils.getCurrentWeekStart();
         LocalDate nextWeek = MealPlanDateUtils.getNextWeekStart();
         LocalDate previousWeek = currentWeek.minusWeeks(1);
 
-        List<MealPlanEntity> mealPlans = getMealPlans(user.getFamilyMember().getHousehold(), currentWeek, nextWeek, previousWeek);
+        List<MealPlanEntity> mealPlans = getMealPlans(household, currentWeek, nextWeek, previousWeek);
         mealPlanRepository.saveAll(mealPlans);
 
         mealPlanCleanupScheduler.cleanupOldMealPlans();
@@ -49,7 +51,15 @@ public class MealPlanCleanupSchedulerIntegrationTest {
         assertThat(remainingPlans).extracting(MealPlanEntity::getWeekStart).contains(currentWeek, nextWeek);
     }
 
-    private List<MealPlanEntity> getMealPlans(HouseholdEntity household, LocalDate... dates){
+    private HouseholdEntity saveHousehold() {
+        HouseholdEntity household = new HouseholdEntity();
+        household.setName("Household");
+        household.setJoinId(joinIdGenerator.generateUniqueJoinId());
+        household = householdRepository.save(household);
+        return household;
+    }
+
+    private List<MealPlanEntity> getMealPlans(HouseholdEntity household, LocalDate... dates) {
         return Arrays.stream(dates).map(
                 date -> {
                     MealPlanEntity mealPlanEntity = new MealPlanEntity();

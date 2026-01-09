@@ -61,16 +61,24 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         Long householdId = currentUserService.getCurrentHousehold().getId();
         ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
 
-        updateShoppingItems(shoppingList, updateRequest);
-        shoppingList.setNote(updateRequest.getNote());
-        shoppingList.setVersion(updateRequest.getVersion());
+        ShoppingListEntity edited = getEditedShoppingList(updateRequest, shoppingList);
 
         try {
-            ShoppingListEntity saved = shoppingListRepository.save(shoppingList);
+            ShoppingListEntity saved = shoppingListRepository.save(edited);
             return mapper.toDto(saved);
         } catch (ObjectOptimisticLockingFailureException exception) {
             throw new ServiceException(ErrorCode.SHOPPING_LIST_VERSION_MISMATCH);
         }
+    }
+
+    private ShoppingListEntity getEditedShoppingList(ShoppingListUpdateRequest updateRequest, ShoppingListEntity shoppingList) {
+        ShoppingListEntity edited = new ShoppingListEntity();
+        edited.setId(shoppingList.getId());
+        edited.setNote(updateRequest.getNote());
+        edited.setVersion(updateRequest.getVersion());
+        edited.setHousehold(shoppingList.getHousehold());
+        edited.getShoppingItems().addAll(mapShoppingItems(edited, updateRequest));
+        return edited;
     }
 
     @Override
@@ -86,7 +94,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         aggregated.forEach(item -> item.setShoppingList(shoppingList));
 
         shoppingList.getShoppingItems().clear();
-        shoppingList.setShoppingItems(aggregated);
+        shoppingList.getShoppingItems().addAll(aggregated);
 
         ShoppingListEntity savedShoppingList = shoppingListRepository.save(shoppingList);
         return mapper.toDto(savedShoppingList);
@@ -115,14 +123,12 @@ public class ShoppingListServiceImpl implements ShoppingListService {
                 .orElseThrow(() -> new ServiceException(ErrorCode.SHOPPING_LIST_NOT_FOUND));
     }
 
-    private void updateShoppingItems(ShoppingListEntity shoppingList, ShoppingListUpdateRequest updateRequest) {
-        shoppingList.getShoppingItems().clear();
-
+    private List<ShoppingItemEntity> mapShoppingItems(ShoppingListEntity shoppingList, ShoppingListUpdateRequest updateRequest) {
         List<ShoppingItemEntity> itemsToSave = updateRequest.getShoppingItems().stream()
                 .map(item -> createEntity(shoppingList, item))
                 .collect(Collectors.toList());
 
-        shoppingList.setShoppingItems(ShoppingItemAggregator.aggregate(itemsToSave));
+        return ShoppingItemAggregator.aggregate(itemsToSave);
     }
 
     private ShoppingItemEntity createEntity(ShoppingListEntity shoppingListEntity, ShoppingItemUpdateRequest item) {

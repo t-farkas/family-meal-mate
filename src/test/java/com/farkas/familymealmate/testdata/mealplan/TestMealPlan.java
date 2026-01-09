@@ -7,6 +7,7 @@ import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import java.util.List;
 
 public record TestMealPlan(
+        Long version,
         MealPlanWeek week,
         List<TestMealSlot> slots
 ) {
@@ -21,6 +22,6 @@ public record TestMealPlan(
                         slot.recipe().id()))
                 .toList();
 
-        return new MealPlanUpdateRequest(week, 0L, slotUpdateRequests);
+        return new MealPlanUpdateRequest(week, version, slotUpdateRequests);
     }
 }

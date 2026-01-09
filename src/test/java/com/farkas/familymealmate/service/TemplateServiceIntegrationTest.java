@@ -103,7 +103,6 @@ public class TemplateServiceIntegrationTest {
     private void setupTestWithUserAndMealPlan() {
         UserEntity bertha = userFactory.registerWithNewHousehold(TestUsers.BERTHA);
         userFactory.authenticate(bertha);
-        mealPlanService.create();
 
         RecipeEntity oatsEntity = recipeFactory.createRecipe(TestRecipes.OVERNIGHT_OATS);
         RecipeEntity omeletteEntity = recipeFactory.createRecipe(TestRecipes.VEGETABLE_OMELETTE);

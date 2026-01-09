@@ -23,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,21 +35,16 @@ public class MealPlanServiceImpl implements MealPlanService {
     private final RecipeService recipeService;
 
     @Override
-    public void create() {
-        HouseholdEntity household = currentUserService.getCurrentHousehold();
-
+    public void create(HouseholdEntity household) {
         LocalDate currentWeekStart = MealPlanDateUtils.getCurrentWeekStart();
-        Optional<MealPlanEntity> currentWeekMealPlan = getMealPlanOptional(household, currentWeekStart);
-        if (currentWeekMealPlan.isEmpty()) {
+        if (!mealPlanRepository.existsByHouseholdIdAndWeekStart(household.getId(), currentWeekStart)) {
             saveMealPlan(currentWeekStart, household);
         }
 
         LocalDate nextWeekStart = MealPlanDateUtils.getNextWeekStart();
-        Optional<MealPlanEntity> nextWeekMealPlan = getMealPlanOptional(household, nextWeekStart);
-        if (nextWeekMealPlan.isEmpty()) {
+        if (!mealPlanRepository.existsByHouseholdIdAndWeekStart(household.getId(), nextWeekStart)) {
             saveMealPlan(nextWeekStart, household);
         }
-
     }
 
     @Override
@@ -69,15 +62,24 @@ public class MealPlanServiceImpl implements MealPlanService {
         LocalDate weekStart = getWeekStart(updateRequest.week());
         MealPlanEntity mealPlanEntity = getMealPlanEntity(household, weekStart);
 
-        updateMealSlots(updateRequest, mealPlanEntity);
-        mealPlanEntity.setVersion(updateRequest.version());
+        MealPlanEntity entity = getEditedMealPlanEntity(updateRequest, mealPlanEntity);
 
         try {
-            MealPlanEntity saved = mealPlanRepository.save(mealPlanEntity);
+            MealPlanEntity saved = mealPlanRepository.save(entity);
             return mealPlanMapper.toDto(saved);
         } catch (ObjectOptimisticLockingFailureException exception) {
             throw new ServiceException(ErrorCode.MEAL_PLAN_VERSION_MISMATCH);
         }
+    }
+
+    private MealPlanEntity getEditedMealPlanEntity(MealPlanUpdateRequest updateRequest, MealPlanEntity mealPlanEntity) {
+        MealPlanEntity entity = new MealPlanEntity();
+        entity.setId(mealPlanEntity.getId());
+        entity.setHousehold(mealPlanEntity.getHousehold());
+        entity.setWeekStart(mealPlanEntity.getWeekStart());
+        entity.getMealSlots().addAll(mapMealSlots(updateRequest, entity));
+        entity.setVersion(updateRequest.version());
+        return entity;
     }
 
     @Override
@@ -100,23 +102,15 @@ public class MealPlanServiceImpl implements MealPlanService {
         };
     }
 
-    private void updateMealSlots(MealPlanUpdateRequest mealPlanRequest, MealPlanEntity mealPlanEntity) {
-        mealPlanEntity.getMealSlots().clear();
-
-        List<MealSlotEntity> mealSlots = mealPlanRequest.mealSlots().stream()
+    private List<MealSlotEntity> mapMealSlots(MealPlanUpdateRequest mealPlanRequest, MealPlanEntity mealPlanEntity) {
+        return mealPlanRequest.mealSlots().stream()
                 .map(slot -> createEntity(slot, mealPlanEntity))
-                .collect(Collectors.toList());
-
-        mealPlanEntity.setMealSlots(mealSlots);
+                .toList();
     }
 
-    private MealPlanEntity getMealPlanEntity(HouseholdEntity currentHousehold, LocalDate weekStart) {
-        return mealPlanRepository.findByHouseholdIdAndWeekStart(currentHousehold.getId(), weekStart)
+    private MealPlanEntity getMealPlanEntity(HouseholdEntity household, LocalDate weekStart) {
+        return mealPlanRepository.findByHouseholdIdAndWeekStart(household.getId(), weekStart)
                 .orElseThrow(() -> new ServiceException(ErrorCode.MEAL_PLAN_NOT_FOUND.format("current"), ErrorCode.MEAL_PLAN_NOT_FOUND));
-    }
-
-    private Optional<MealPlanEntity> getMealPlanOptional(HouseholdEntity currentHousehold, LocalDate currentWeekStart) {
-        return mealPlanRepository.findByHouseholdIdAndWeekStart(currentHousehold.getId(), currentWeekStart);
     }
 
     private void saveMealPlan(LocalDate currentWeekStart, HouseholdEntity currentHousehold) {

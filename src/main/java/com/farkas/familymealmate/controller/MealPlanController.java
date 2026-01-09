@@ -1,6 +1,5 @@
 package com.farkas.familymealmate.controller;
 
-import com.farkas.familymealmate.model.dto.BaseResponse;
 import com.farkas.familymealmate.model.dto.VersionDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanDetailsDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
@@ -8,7 +7,6 @@ import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.service.MealPlanService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,13 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class MealPlanController {
 
     private final MealPlanService service;
-
-    @PostMapping
-    public ResponseEntity<BaseResponse> createMealPlans() {
-        service.create();
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new BaseResponse("Meal Plans created successfully"));
-    }
 
     @GetMapping
     public ResponseEntity<MealPlanDetailsDto> getMealPlan(@RequestParam MealPlanWeek week) {

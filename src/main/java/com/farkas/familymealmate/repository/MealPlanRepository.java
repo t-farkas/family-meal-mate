@@ -15,4 +15,5 @@ public interface MealPlanRepository extends JpaRepository<MealPlanEntity, Long> 
     long deleteByWeekStartBefore(LocalDate lastAllowedWeek);
     long countByHouseholdIdAndTemplate(Long householdIs, boolean template);
     List<MealPlanEntity> findAllByHouseholdIdAndTemplate(Long householdIs, boolean template);
+    boolean existsByHouseholdIdAndWeekStart(Long householdId, LocalDate weekStart);
 }
