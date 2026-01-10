@@ -15,7 +15,7 @@ public class HouseholdController {
 
     private final HouseholdService householdService;
 
-    @GetMapping("/current")
+    @GetMapping()
     public ResponseEntity<HouseholdDto> getCurrentHousehold() {
         HouseholdDto currentHousehold = householdService.getCurrentHousehold();
         return ResponseEntity.ok(currentHousehold);
