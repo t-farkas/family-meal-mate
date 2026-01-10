@@ -1,7 +1,6 @@
 package com.farkas.familymealmate.model.dto.shoppinglist;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -17,7 +16,7 @@ public class ShoppingListUpdateRequest {
     private String note;
     @NotNull(message = "{shoppinglist.version.notnull}")
     Long version;
-    @NotEmpty(message = "{shoppinglist.items.notempty}")
+    @NotNull(message = "{shoppinglist.items.notnull}")
     private List<@Valid ShoppingItemUpdateRequest> shoppingItems;
 
 }
