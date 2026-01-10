@@ -1,5 +1,6 @@
 package com.farkas.familymealmate.service.aggregation;
 
+import com.farkas.familymealmate.model.common.AggregationKey;
 import com.farkas.familymealmate.model.entity.ShoppingItemEntity;
 import com.farkas.familymealmate.util.AggregationUtil;
 
@@ -14,7 +15,7 @@ public class ShoppingItemAggregator {
     }
 
     public static List<ShoppingItemEntity> aggregate(List<ShoppingItemEntity> items) {
-        Map<Long, ShoppingItemEntity> aggregatedByIngredient = new HashMap<>();
+        Map<AggregationKey, ShoppingItemEntity> aggregatedByIngredient = new HashMap<>();
         List<ShoppingItemEntity> result = new ArrayList<>();
 
         for (ShoppingItemEntity item : items) {
@@ -24,11 +25,11 @@ public class ShoppingItemAggregator {
                 continue;
             }
 
-            Long ingredientId = item.getIngredient().getId();
-            ShoppingItemEntity existing = aggregatedByIngredient.get(ingredientId);
+            AggregationKey key = new AggregationKey(item.getIngredient().getId(), item.getQuantitativeMeasurement());
+            ShoppingItemEntity existing = aggregatedByIngredient.get(key);
 
             if (existing == null) {
-                aggregatedByIngredient.put(ingredientId, item);
+                aggregatedByIngredient.put(key, item);
                 result.add(item);
                 continue;
             }

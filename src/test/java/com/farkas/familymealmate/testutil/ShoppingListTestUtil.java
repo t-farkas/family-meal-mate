@@ -8,33 +8,61 @@ import java.util.List;
 
 public class ShoppingListTestUtil {
 
-    public static ShoppingItemEntity getFirstItemByIngredientId(List<ShoppingItemEntity> list, Long id) {
+    public static ShoppingItemEntity getEntity(List<ShoppingItemEntity> list, Long id, QuantitativeMeasurement unit) {
         return list.stream()
-                .filter(item -> item.getIngredient() != null && item.getIngredient().getId().equals(id))
-                .findFirst().orElse(null);
+                .filter(item -> item.getIngredient() != null
+                        && item.getIngredient().getId().equals(id)
+                        && unit.equals(item.getQuantitativeMeasurement()))
+                .findFirst()
+                .orElse(null);
     }
 
-    public static List<ShoppingItemEntity> getItemListByIngredientId(List<ShoppingItemEntity> list, Long id) {
+    public static ShoppingItemEntity getEntity(List<ShoppingItemEntity> list, Long id) {
         return list.stream()
-                .filter(item -> item.getIngredient() != null && item.getIngredient().getId().equals(id))
-                .toList();
+                .filter(item -> item.getIngredient() != null
+                        && item.getIngredient().getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
-    public static ShoppingItemDto getFirstItemDtoByIngredientId(List<ShoppingItemDto> list, Long id) {
+    public static ShoppingItemEntity getEntityWithNullUnit(List<ShoppingItemEntity> list, Long id) {
         return list.stream()
-                .filter(item -> item.getIngredientId() != null && item.getIngredientId().equals(id))
-                .findFirst().orElse(null);
+                .filter(item -> item.getIngredient() != null
+                        && item.getIngredient().getId().equals(id)
+                        && item.getQuantitativeMeasurement() == null)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static ShoppingItemDto getDto(List<ShoppingItemDto> list, Long id, QuantitativeMeasurement unit) {
+        return list.stream()
+                .filter(item -> item.getIngredientId() != null
+                        && item.getIngredientId().equals(id)
+                        && unit.equals(item.getQuantitativeMeasurement()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static ShoppingItemDto getDto(List<ShoppingItemDto> list, Long id) {
+        return list.stream()
+                .filter(item -> item.getIngredientId() != null
+                        && item.getIngredientId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static ShoppingItemDto getDtoWithNullUnit(List<ShoppingItemDto> list, Long id) {
+        return list.stream()
+                .filter(item -> item.getIngredientId() != null
+                        && item.getIngredientId().equals(id)
+                        && item.getQuantitativeMeasurement() == null)
+                .findFirst()
+                .orElse(null);
     }
 
     public static ShoppingItemDto getItemByName(List<ShoppingItemDto> list, String name) {
         return list.stream()
                 .filter(item -> name.equals(item.getName()))
-                .findFirst().orElse(null);
-    }
-
-    public static ShoppingItemEntity getByMeasurement(List<ShoppingItemEntity> list, QuantitativeMeasurement measurement) {
-        return list.stream()
-                .filter(item -> item.getQuantitativeMeasurement() != null && item.getQuantitativeMeasurement().equals(measurement))
                 .findFirst().orElse(null);
     }
 }

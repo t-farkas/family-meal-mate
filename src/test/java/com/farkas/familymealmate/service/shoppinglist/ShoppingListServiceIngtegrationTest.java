@@ -8,6 +8,7 @@ import com.farkas.familymealmate.model.entity.RecipeEntity;
 import com.farkas.familymealmate.model.entity.UserEntity;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.model.enums.MealType;
+import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
 import com.farkas.familymealmate.service.MealPlanService;
 import com.farkas.familymealmate.service.ShoppingListService;
 import com.farkas.familymealmate.testdata.mealplan.TestMealNotes;
@@ -59,24 +60,24 @@ public class ShoppingListServiceIngtegrationTest {
         ShoppingListDto shoppingList = shoppingListService.addMealPlan(MealPlanWeek.NEXT);
         List<ShoppingItemDto> shoppingItems = shoppingList.shoppingItems();
 
-        assertEquals(BigDecimal.valueOf(1000), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.CHICKEN_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(800), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.GROUND_BEEF_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(5), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.TOMATO_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(1000), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.PASTA_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(2), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.CANNED_CORN_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(20), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.BUTTER_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(5), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.EGGS_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(800), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.MILK_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(200), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.SUGAR_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(4), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.GARLIC_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(2), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.BELL_PEPPER_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(1), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.BROCCOLI_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(160), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.OATS_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(1000), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.CHICKEN_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(800), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.GROUND_BEEF_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(5), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.TOMATO_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(1000), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.PASTA_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(2), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.CANNED_CORN_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(20), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.BUTTER_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(5), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.EGGS_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(800), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.MILK_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(200), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.SUGAR_ID, QuantitativeMeasurement.GRAM).getQuantity());
+        assertEquals(BigDecimal.valueOf(4), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.GARLIC_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(2), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.BELL_PEPPER_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(1), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.BROCCOLI_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(160), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.OATS_ID).getQuantity());
 
-        assertNull(ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.CUMIN_ID).getQuantity());
-        assertNull(ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.SPINACH_ID).getQuantity());
+        assertNull(ShoppingListTestUtil.getDtoWithNullUnit(shoppingItems, TestRecipeIngredients.CUMIN_ID).getQuantity());
+        assertNull(ShoppingListTestUtil.getDtoWithNullUnit(shoppingItems, TestRecipeIngredients.SPINACH_ID).getQuantity());
 
-        assertEquals(15, shoppingItems.size());
+        assertEquals(16, shoppingItems.size());
     }
 
     @Test
@@ -86,19 +87,19 @@ public class ShoppingListServiceIngtegrationTest {
         ShoppingListDto shoppingList = shoppingListService.update(updateRequest);
         List<ShoppingItemDto> shoppingItems = shoppingList.shoppingItems();
 
-        assertEquals(BigDecimal.valueOf(500), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.CHICKEN_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(2), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.TOMATO_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(2), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.GARLIC_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(1), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.BELL_PEPPER_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(400), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.GROUND_BEEF_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(500), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.PASTA_ID).getQuantity());
-        assertEquals(BigDecimal.ONE, ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.CANNED_CORN_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(80), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.OATS_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(250), ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.MILK_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(500), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.CHICKEN_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(2), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.TOMATO_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(2), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.GARLIC_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(1), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.BELL_PEPPER_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(400), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.GROUND_BEEF_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(500), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.PASTA_ID).getQuantity());
+        assertEquals(BigDecimal.ONE, ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.CANNED_CORN_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(80), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.OATS_ID).getQuantity());
+        assertEquals(BigDecimal.valueOf(250), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.MILK_ID).getQuantity());
 
 
-        assertNull(ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.SUGAR_ID).getQuantity());
-        assertNull(ShoppingListTestUtil.getFirstItemDtoByIngredientId(shoppingItems, TestRecipeIngredients.CUMIN_ID).getQuantity());
+        assertNull(ShoppingListTestUtil.getDtoWithNullUnit(shoppingItems, TestRecipeIngredients.SUGAR_ID).getQuantity());
+        assertNull(ShoppingListTestUtil.getDtoWithNullUnit(shoppingItems, TestRecipeIngredients.CUMIN_ID).getQuantity());
 
         assertNotNull(ShoppingListTestUtil.getItemByName(shoppingItems, TestFreeTextItems.TOILET_PAPER.name()));
         assertNotNull(ShoppingListTestUtil.getItemByName(shoppingItems, TestFreeTextItems.MILK_AND_EGGS.name()));
