@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.model.entity;
 
-import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
+import com.farkas.familymealmate.model.enums.Measurement;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,8 +27,8 @@ public class ShoppingItemEntity extends BaseEntity {
     private BigDecimal quantity;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "quantitative_measurement", length = 50)
-    private QuantitativeMeasurement quantitativeMeasurement;
+    @Column(name = "measurement", length = 50)
+    private Measurement measurement;
 
     private String name;
     private String note;

@@ -55,7 +55,7 @@ public class TestShoppingListBuilder {
             entity.setChecked(item.checked());
             entity.setIngredient(getIngredientEntity(item));
             entity.setQuantity(item.quantity());
-            entity.setQuantitativeMeasurement(item.quantitativeMeasurement());
+            entity.setMeasurement(item.measurement());
 
             entity.setShoppingList(shoppingList);
             shoppingList.getShoppingItems().add(entity);
@@ -78,7 +78,7 @@ public class TestShoppingListBuilder {
             itemUpdateRequest.setChecked(item.checked());
             itemUpdateRequest.setIngredientId(item.ingredientId());
             itemUpdateRequest.setQuantity(item.quantity());
-            itemUpdateRequest.setQuantitativeMeasurement(item.quantitativeMeasurement());
+            itemUpdateRequest.setMeasurement(item.measurement());
 
             request.getShoppingItems().add(itemUpdateRequest);
         });

@@ -10,7 +10,6 @@ public enum ErrorCode {
 
     RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Recipe not found with id: %d"),
     INGREDIENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Ingredient not found with id: %s"),
-    INVALID_INGREDIENT_MEASUREMENT(HttpStatus.BAD_REQUEST, "Invalid measurements"),
     TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "Tag not found with id: %s"),
 
     HOUSEHOLD_NOT_FOUND(HttpStatus.NOT_FOUND, "Household not found with joinId: %s"),

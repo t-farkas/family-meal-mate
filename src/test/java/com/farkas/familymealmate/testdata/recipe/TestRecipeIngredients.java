@@ -1,8 +1,7 @@
 package com.farkas.familymealmate.testdata.recipe;
 
 import com.farkas.familymealmate.model.enums.IngredientCategory;
-import com.farkas.familymealmate.model.enums.QualitativeMeasurement;
-import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
+import com.farkas.familymealmate.model.enums.Measurement;
 
 import java.math.BigDecimal;
 
@@ -29,7 +28,7 @@ public class TestRecipeIngredients {
             CHICKEN_ID,
             "Chicken Breast",
             BigDecimal.valueOf(500),
-            QuantitativeMeasurement.GRAM,
+            Measurement.GRAM,
             IngredientCategory.PROTEIN
     );
 
@@ -37,146 +36,147 @@ public class TestRecipeIngredients {
             TOMATO_ID,
             "Tomato",
             BigDecimal.ONE,
-            QuantitativeMeasurement.PIECE,
+            Measurement.PIECE,
             IngredientCategory.PRODUCE);
 
     public static final TestRecipeIngredient STIR_FRY_GARLIC = new TestRecipeIngredient(
             GARLIC_ID,
             "Garlic",
             BigDecimal.valueOf(2),
-            QuantitativeMeasurement.CLOVE,
+            Measurement.CLOVE,
             IngredientCategory.PRODUCE);
 
     public static final TestRecipeIngredient STIR_FRY_BELL_PEPPER = new TestRecipeIngredient(
             BELL_PEPPER_ID,
             "Bell Pepper",
             BigDecimal.valueOf(1),
-            QuantitativeMeasurement.PIECE,
+            Measurement.PIECE,
             IngredientCategory.PRODUCE);
 
     public static final TestRecipeIngredient STIR_FRY_CUMIN = new TestRecipeIngredient(
             CUMIN_ID,
             "Cumin",
             BigDecimal.ONE,
-            QuantitativeMeasurement.TEASPOON,
+            Measurement.TEASPOON,
             IngredientCategory.SPICES_AND_HERBS);
 
     public static final TestRecipeIngredient BOLOGNESE_BEEF = new TestRecipeIngredient(
             GROUND_BEEF_ID,
             "Ground Beef",
             BigDecimal.valueOf(400),
-            QuantitativeMeasurement.GRAM,
+            Measurement.GRAM,
             IngredientCategory.PROTEIN);
 
     public static final TestRecipeIngredient BOLOGNESE_PASTA = new TestRecipeIngredient(
             PASTA_ID,
             "Pasta",
             BigDecimal.valueOf(500),
-            QuantitativeMeasurement.GRAM,
+            Measurement.GRAM,
             IngredientCategory.GRAINS_AND_PASTA);
 
     public static final TestRecipeIngredient BOLOGNESE_CANNED_CORN = new TestRecipeIngredient(
             CANNED_CORN_ID,
             "Canned Corn",
             BigDecimal.ONE,
-            QuantitativeMeasurement.CAN,
+            Measurement.CAN,
             IngredientCategory.CANNED_AND_JARS);
 
     public static final TestRecipeIngredient BOLOGNESE_TOMATO = new TestRecipeIngredient(
             TOMATO_ID,
             "Tomato",
             BigDecimal.ONE,
-            QuantitativeMeasurement.PIECE,
+            Measurement.PIECE,
             IngredientCategory.PRODUCE);
 
     public static final TestRecipeIngredient BOLOGNESE_CUMIN = new TestRecipeIngredient(
             CUMIN_ID,
             "Cumin",
             BigDecimal.ONE,
-            QuantitativeMeasurement.TEASPOON,
+            Measurement.TEASPOON,
             IngredientCategory.SPICES_AND_HERBS);
 
     public static final TestRecipeIngredient OMELETTE_EGGS = new TestRecipeIngredient(
             EGGS_ID,
             "Eggs",
             BigDecimal.valueOf(3),
-            QuantitativeMeasurement.PIECE,
+            Measurement.PIECE,
             IngredientCategory.PROTEIN);
 
     public static final TestRecipeIngredient OMELETTE_TOMATO = new TestRecipeIngredient(
             TOMATO_ID,
             "Tomato",
             BigDecimal.ONE,
-            QuantitativeMeasurement.PIECE,
+            Measurement.PIECE,
             IngredientCategory.PRODUCE);
 
     public static final TestRecipeIngredient OMELETTE_BROCCOLI = new TestRecipeIngredient(
             BROCCOLI_ID,
             "Broccoli",
             BigDecimal.ONE,
-            QuantitativeMeasurement.PIECE,
+            Measurement.PIECE,
             IngredientCategory.PRODUCE);
 
     public static final TestRecipeIngredient OMELETTE_SPINACH = new TestRecipeIngredient(
             SPINACH_ID,
             "Spinach",
-            QualitativeMeasurement.HANDFUL,
+            BigDecimal.ONE,
+            Measurement.HANDFUL,
             IngredientCategory.PRODUCE);
 
     public static final TestRecipeIngredient OATS_OATS = new TestRecipeIngredient(
             OATS_ID,
             "Oats",
             BigDecimal.valueOf(80),
-            QuantitativeMeasurement.GRAM,
+            Measurement.GRAM,
             IngredientCategory.GRAINS_AND_PASTA);
 
     public static final TestRecipeIngredient OATS_MILK = new TestRecipeIngredient(
             MILK_ID,
             "Milk",
             BigDecimal.valueOf(250),
-            QuantitativeMeasurement.MILLILITER,
+            Measurement.MILLILITER,
             IngredientCategory.DAIRY);
 
     public static final TestRecipeIngredient OATS_SUGAR = new TestRecipeIngredient(
             SUGAR_ID,
             "Sugar",
             BigDecimal.ONE,
-            QuantitativeMeasurement.TEASPOON,
+            Measurement.TEASPOON,
             IngredientCategory.BAKERY);
 
     public static final TestRecipeIngredient PANCAKE_SUGAR = new TestRecipeIngredient(
             SUGAR_ID,
             "Sugar",
             BigDecimal.valueOf(200),
-            QuantitativeMeasurement.GRAM,
+            Measurement.GRAM,
             IngredientCategory.BAKERY);
 
     public static final TestRecipeIngredient PANCAKE_EGGS = new TestRecipeIngredient(
             EGGS_ID,
             "Eggs",
             BigDecimal.valueOf(2),
-            QuantitativeMeasurement.PIECE,
+            Measurement.PIECE,
             IngredientCategory.PROTEIN);
 
     public static final TestRecipeIngredient PANCAKE_MILK = new TestRecipeIngredient(
             MILK_ID,
             "Milk",
             BigDecimal.valueOf(300),
-            QuantitativeMeasurement.MILLILITER,
+            Measurement.MILLILITER,
             IngredientCategory.DAIRY);
 
     public static final TestRecipeIngredient PANCAKE_BUTTER = new TestRecipeIngredient(
             BUTTER_ID,
             "Butter",
             BigDecimal.valueOf(20),
-            QuantitativeMeasurement.GRAM,
+            Measurement.GRAM,
             IngredientCategory.DAIRY);
 
     public static final TestRecipeIngredient VEGGIE_BOWL_TOMATO = new TestRecipeIngredient(
             TOMATO_ID,
             "Tomato",
             BigDecimal.valueOf(300),
-            QuantitativeMeasurement.GRAM,
+            Measurement.GRAM,
             IngredientCategory.PRODUCE
     );
 
@@ -184,7 +184,7 @@ public class TestRecipeIngredients {
             BROCCOLI_ID,
             "Broccoli",
             BigDecimal.valueOf(150),
-            QuantitativeMeasurement.GRAM,
+            Measurement.GRAM,
             IngredientCategory.PRODUCE
     );
 
@@ -192,7 +192,7 @@ public class TestRecipeIngredients {
             RICE_ID,
             "Rice",
             BigDecimal.valueOf(200),
-            QuantitativeMeasurement.GRAM,
+            Measurement.GRAM,
             IngredientCategory.GRAINS_AND_PASTA
     );
 }

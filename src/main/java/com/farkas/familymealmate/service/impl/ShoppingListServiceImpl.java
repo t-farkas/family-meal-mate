@@ -140,7 +140,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         if (isIngredientBased(item)) {
             entity.setIngredient(getIngredient(item.getIngredientId()));
             entity.setQuantity(item.getQuantity());
-            entity.setQuantitativeMeasurement(item.getQuantitativeMeasurement());
+            entity.setMeasurement(item.getMeasurement());
         } else if (isFreeTextItem(item)) {
             entity.setName(item.getName());
         } else {
@@ -166,9 +166,9 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         ShoppingItemEntity item = new ShoppingItemEntity();
         item.setIngredient(recipeIngredient.getIngredient());
 
-        if (AggregationUtil.isAggregatable(recipeIngredient.getQuantity(), recipeIngredient.getQuantitativeMeasurement())) {
+        if (AggregationUtil.isAggregatable(recipeIngredient.getQuantity(), recipeIngredient.getMeasurement())) {
             item.setQuantity(recipeIngredient.getQuantity());
-            item.setQuantitativeMeasurement(recipeIngredient.getQuantitativeMeasurement());
+            item.setMeasurement(recipeIngredient.getMeasurement());
         }
 
         return item;

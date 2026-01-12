@@ -110,7 +110,7 @@ public class RecipeServiceIntegrationTest {
         RecipeIngredientDto loadedIngredient = loaded.getIngredients().get(0);
         RecipeIngredientCreateRequestDto requestIngredient = request.getIngredients().get(0);
 
-        assertThat(loadedIngredient.getQualitativeMeasurement()).isEqualTo(requestIngredient.getQualitativeMeasurement());
+        assertThat(loadedIngredient.getMeasurement()).isEqualTo(requestIngredient.getMeasurement());
         assertThat(loadedIngredient.getQuantity()).isEqualTo(requestIngredient.getQuantity());
     }
 

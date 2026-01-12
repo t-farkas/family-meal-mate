@@ -88,7 +88,7 @@ public class RecipeControllerIntegrationTest extends ApiTestBase {
                 .andExpect(jsonPath("$.title").value(request.getTitle()))
                 .andExpect(jsonPath("$.instructions[0]").value(request.getInstructions().get(0)))
                 .andExpect(jsonPath("$.ingredients[0].quantity").value(firstIngredient.getQuantity()))
-                .andExpect(jsonPath("$.ingredients[0].quantitativeMeasurement").value(firstIngredient.getQuantitativeMeasurement().name()));
+                .andExpect(jsonPath("$.ingredients[0].measurement").value(firstIngredient.getMeasurement().name()));
     }
 
 }

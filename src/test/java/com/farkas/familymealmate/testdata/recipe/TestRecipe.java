@@ -29,7 +29,7 @@ public record TestRecipe(
                         ingredient.getId(),
                         ingredient.getIngredient().getName(),
                         ingredient.getQuantity(),
-                        ingredient.getQuantitativeMeasurement(),
+                        ingredient.getMeasurement(),
                         ingredient.getIngredient().getCategory()
                 )).toList();
     }
@@ -41,8 +41,7 @@ public record TestRecipe(
                     RecipeIngredientCreateRequestDto requestDto = new RecipeIngredientCreateRequestDto();
                     requestDto.setIngredientId(ingredient.ingredientId());
                     requestDto.setQuantity(ingredient.quantity());
-                    requestDto.setQualitativeMeasurement(ingredient.qualitativeMeasurement());
-                    requestDto.setQuantitativeMeasurement(ingredient.quantitativeMeasurement());
+                    requestDto.setMeasurement(ingredient.measurement());
 
                     return requestDto;
                 }).toList();

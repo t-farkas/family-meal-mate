@@ -1,7 +1,6 @@
 package com.farkas.familymealmate.model.entity;
 
-import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
-import com.farkas.familymealmate.model.enums.QualitativeMeasurement;
+import com.farkas.familymealmate.model.enums.Measurement;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,10 +25,7 @@ public class RecipeIngredientEntity extends BaseEntity {
     private BigDecimal quantity;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "quantitative_measurement", length = 50)
-    private QuantitativeMeasurement quantitativeMeasurement;
+    @Column(name = "measurement", length = 50)
+    private Measurement measurement;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "qualitative_measurement", length = 100)
-    private QualitativeMeasurement qualitativeMeasurement;
 }

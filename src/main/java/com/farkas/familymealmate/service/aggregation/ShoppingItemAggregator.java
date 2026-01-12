@@ -34,11 +34,11 @@ public class ShoppingItemAggregator {
                 continue;
             }
 
-            if (AggregationUtil.isAggregatable(item.getQuantity(), item.getQuantitativeMeasurement())) {
-                if (AggregationUtil.canConvert(item.getQuantitativeMeasurement(), existing.getQuantitativeMeasurement())) {
+            if (AggregationUtil.isAggregatable(item.getQuantity(), item.getMeasurement())) {
+                if (AggregationUtil.canConvert(item.getMeasurement(), existing.getMeasurement())) {
                     AggregationUtil.aggregateQuantities(
                             item.getQuantity(),
-                            item.getQuantitativeMeasurement(),
+                            item.getMeasurement(),
                             existing);
 
                     mergeNotes(item, existing);

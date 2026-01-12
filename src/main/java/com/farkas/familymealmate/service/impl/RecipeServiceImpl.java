@@ -112,7 +112,8 @@ public class RecipeServiceImpl implements RecipeService {
 
         ingredients.forEach(ingredient -> {
             RecipeIngredientEntity recipeIngredient = new RecipeIngredientEntity();
-            setMeasurements(ingredient, recipeIngredient);
+            recipeIngredient.setQuantity(ingredient.getQuantity());
+            recipeIngredient.setMeasurement(ingredient.getMeasurement());
             recipeIngredient.setRecipe(recipe);
             IngredientEntity ingredientEntity = getIngredientEntity(ingredient);
             recipeIngredient.setIngredient(ingredientEntity);
@@ -127,25 +128,6 @@ public class RecipeServiceImpl implements RecipeService {
         return ingredientRepository.findById(ingredient.getIngredientId()).orElseThrow(
                 () -> new ServiceException(ErrorCode.INGREDIENT_NOT_FOUND.format(ingredient.getIngredientId()),
                         ErrorCode.INGREDIENT_NOT_FOUND));
-    }
-
-    private void setMeasurements(RecipeIngredientCreateRequestDto ingredient, RecipeIngredientEntity recipeIngredientEntity) {
-        if (isQualitative(ingredient)) {
-            recipeIngredientEntity.setQualitativeMeasurement(ingredient.getQualitativeMeasurement());
-        } else if (isQuantitative(ingredient)) {
-            recipeIngredientEntity.setQuantity(ingredient.getQuantity());
-            recipeIngredientEntity.setQuantitativeMeasurement(ingredient.getQuantitativeMeasurement());
-        } else {
-            throw new ServiceException(ErrorCode.INVALID_INGREDIENT_MEASUREMENT);
-        }
-    }
-
-    private boolean isQuantitative(RecipeIngredientCreateRequestDto ingredient) {
-        return ingredient.getQuantity() != null && ingredient.getQuantitativeMeasurement() != null;
-    }
-
-    private boolean isQualitative(RecipeIngredientCreateRequestDto ingredient) {
-        return !isQuantitative(ingredient) && ingredient.getQualitativeMeasurement() != null;
     }
 
     private Set<TagEntity> getTags(Set<Long> tagIds) {

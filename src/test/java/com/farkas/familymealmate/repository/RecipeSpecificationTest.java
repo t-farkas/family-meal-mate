@@ -2,7 +2,7 @@ package com.farkas.familymealmate.repository;
 
 import com.farkas.familymealmate.model.entity.*;
 import com.farkas.familymealmate.model.enums.IngredientCategory;
-import com.farkas.familymealmate.model.enums.QualitativeMeasurement;
+import com.farkas.familymealmate.model.enums.Measurement;
 import com.farkas.familymealmate.repository.specification.RecipeSpecificationBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,7 +123,7 @@ public class RecipeSpecificationTest {
                     RecipeIngredientEntity recipeIngredient = new RecipeIngredientEntity();
                     recipeIngredient.setIngredient(ingredient);
                     recipeIngredient.setRecipe(recipe);
-                    recipeIngredient.setQualitativeMeasurement(QualitativeMeasurement.PINCH);
+                    recipeIngredient.setMeasurement(Measurement.PINCH);
 
                     return recipeIngredient;
                 }).collect(Collectors.toList());

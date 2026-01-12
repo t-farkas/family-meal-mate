@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.model.common;
 
-import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
+import com.farkas.familymealmate.model.enums.Measurement;
 import lombok.Getter;
 
 import java.util.Objects;
@@ -9,9 +9,9 @@ import java.util.Objects;
 public class AggregationKey {
 
     private final Long ingredientId;
-    private final QuantitativeMeasurement unit;
+    private final Measurement unit;
 
-    public AggregationKey(Long ingredientId, QuantitativeMeasurement unit) {
+    public AggregationKey(Long ingredientId, Measurement unit) {
         this.ingredientId = ingredientId;
         this.unit = unit;
     }

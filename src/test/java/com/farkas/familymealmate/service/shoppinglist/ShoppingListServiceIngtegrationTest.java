@@ -8,7 +8,7 @@ import com.farkas.familymealmate.model.entity.RecipeEntity;
 import com.farkas.familymealmate.model.entity.UserEntity;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.model.enums.MealType;
-import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
+import com.farkas.familymealmate.model.enums.Measurement;
 import com.farkas.familymealmate.service.MealPlanService;
 import com.farkas.familymealmate.service.ShoppingListService;
 import com.farkas.familymealmate.testdata.mealplan.TestMealNotes;
@@ -68,7 +68,7 @@ public class ShoppingListServiceIngtegrationTest {
         assertEquals(BigDecimal.valueOf(20), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.BUTTER_ID).getQuantity());
         assertEquals(BigDecimal.valueOf(5), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.EGGS_ID).getQuantity());
         assertEquals(BigDecimal.valueOf(800), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.MILK_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(200), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.SUGAR_ID, QuantitativeMeasurement.GRAM).getQuantity());
+        assertEquals(BigDecimal.valueOf(200), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.SUGAR_ID, Measurement.GRAM).getQuantity());
         assertEquals(BigDecimal.valueOf(4), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.GARLIC_ID).getQuantity());
         assertEquals(BigDecimal.valueOf(2), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.BELL_PEPPER_ID).getQuantity());
         assertEquals(BigDecimal.valueOf(1), ShoppingListTestUtil.getDto(shoppingItems, TestRecipeIngredients.BROCCOLI_ID).getQuantity());

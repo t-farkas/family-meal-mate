@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.testdata.shoppingList;
 
-import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
+import com.farkas.familymealmate.model.enums.Measurement;
 import com.farkas.familymealmate.testdata.recipe.TestRecipeIngredient;
 import com.farkas.familymealmate.util.UnitConversionUtil;
 
@@ -12,7 +12,7 @@ public record TestShoppingItem(
         boolean checked,
         Long ingredientId,
         BigDecimal quantity,
-        QuantitativeMeasurement quantitativeMeasurement
+        Measurement measurement
 ) {
 
     public TestShoppingItem(TestRecipeIngredient recipeIngredient) {
@@ -37,15 +37,15 @@ public record TestShoppingItem(
     }
 
     private static BigDecimal getQuantity(TestRecipeIngredient recipeIngredient) {
-        if (recipeIngredient.quantitativeMeasurement() != null) {
-            return UnitConversionUtil.shouldKeepQuantity(recipeIngredient.quantitativeMeasurement()) ? recipeIngredient.quantity() : null;
+        if (recipeIngredient.measurement() != null) {
+            return UnitConversionUtil.shouldKeepQuantity(recipeIngredient.measurement()) ? recipeIngredient.quantity() : null;
         }
         return null;
     }
 
-    private static QuantitativeMeasurement getMeasurement(TestRecipeIngredient recipeIngredient) {
-        if (recipeIngredient.quantitativeMeasurement() != null) {
-            return UnitConversionUtil.shouldKeepQuantity(recipeIngredient.quantitativeMeasurement()) ? recipeIngredient.quantitativeMeasurement() : null;
+    private static Measurement getMeasurement(TestRecipeIngredient recipeIngredient) {
+        if (recipeIngredient.measurement() != null) {
+            return UnitConversionUtil.shouldKeepQuantity(recipeIngredient.measurement()) ? recipeIngredient.measurement() : null;
         }
         return null;
     }

@@ -1,7 +1,6 @@
 package com.farkas.familymealmate.model.dto.recipe.ingredient;
 
-import com.farkas.familymealmate.model.enums.QualitativeMeasurement;
-import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
+import com.farkas.familymealmate.model.enums.Measurement;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -15,6 +14,5 @@ public class RecipeIngredientDto {
 
     private String ingredientName;
     private BigDecimal quantity;
-    private QuantitativeMeasurement quantitativeMeasurement;
-    private QualitativeMeasurement qualitativeMeasurement;
+    private Measurement measurement;
 }

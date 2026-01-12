@@ -1,7 +1,6 @@
 package com.farkas.familymealmate.model.dto.recipe.ingredient;
 
-import com.farkas.familymealmate.model.enums.QualitativeMeasurement;
-import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
+import com.farkas.familymealmate.model.enums.Measurement;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -16,6 +15,6 @@ public class RecipeIngredientCreateRequestDto {
     @NotNull(message = "{recipeIngredient.ingredientId.notnull}")
     private Long ingredientId;
     private BigDecimal quantity;
-    private QuantitativeMeasurement quantitativeMeasurement;
-    private QualitativeMeasurement qualitativeMeasurement;
+    @NotNull(message = "recipeIngredient.measurement.notnull}")
+    private Measurement measurement;
 }

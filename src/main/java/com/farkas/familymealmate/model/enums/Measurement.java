@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.math.BigDecimal;
 
 @Getter
-public enum QuantitativeMeasurement {
+public enum Measurement {
 
     GRAM(UnitType.WEIGHT, BigDecimal.ONE),
     DECAGRAM(UnitType.WEIGHT, BigDecimal.valueOf(100)),
@@ -22,13 +22,19 @@ public enum QuantitativeMeasurement {
     PACKAGE(UnitType.COUNT, BigDecimal.ONE),
 
     TEASPOON(UnitType.QUALITATIVE, BigDecimal.ONE),
-    TABLESPOON(UnitType.QUALITATIVE, BigDecimal.ONE)
+    TABLESPOON(UnitType.QUALITATIVE, BigDecimal.ONE),
+
+    PINCH(UnitType.QUALITATIVE, BigDecimal.ONE),
+    SPLASH(UnitType.QUALITATIVE, BigDecimal.ONE),
+    TO_TASTE(UnitType.QUALITATIVE, BigDecimal.ONE),
+    HANDFUL(UnitType.QUALITATIVE, BigDecimal.ONE),
+    AS_NEEDED(UnitType.QUALITATIVE, BigDecimal.ONE)
     ;
 
     private final BigDecimal baseFactor;
     private final UnitType unitType;
 
-    QuantitativeMeasurement(UnitType unitType, BigDecimal baseFactor) {
+    Measurement(UnitType unitType, BigDecimal baseFactor) {
         this.unitType = unitType;
         this.baseFactor = baseFactor;
     }

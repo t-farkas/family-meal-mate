@@ -1,7 +1,7 @@
 package com.farkas.familymealmate.service.mealplan;
 
 import com.farkas.familymealmate.model.entity.ShoppingItemEntity;
-import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
+import com.farkas.familymealmate.model.enums.Measurement;
 import com.farkas.familymealmate.service.aggregation.ShoppingItemAggregator;
 import com.farkas.familymealmate.testdata.recipe.TestRecipe;
 import com.farkas.familymealmate.testdata.recipe.TestRecipeIngredients;
@@ -33,7 +33,7 @@ public class MealPlanAggregatorUnitTest {
         assertEquals(BigDecimal.valueOf(400), ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.GROUND_BEEF_ID).getQuantity());
         assertEquals(BigDecimal.valueOf(550), ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.MILK_ID).getQuantity());
         assertEquals(BigDecimal.valueOf(500), ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.PASTA_ID).getQuantity());
-        assertEquals(BigDecimal.valueOf(200), ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.SUGAR_ID, QuantitativeMeasurement.GRAM).getQuantity());
+        assertEquals(BigDecimal.valueOf(200), ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.SUGAR_ID, Measurement.GRAM).getQuantity());
         assertEquals(BigDecimal.valueOf(5), ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.EGGS_ID).getQuantity());
         assertEquals(BigDecimal.valueOf(2), ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.TOMATO_ID).getQuantity());
 
@@ -61,13 +61,13 @@ public class MealPlanAggregatorUnitTest {
         assertEquals(BigDecimal.valueOf(3), ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.EGGS_ID).getQuantity());
         assertEquals(BigDecimal.valueOf(200), ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.RICE_ID).getQuantity());
 
-        ShoppingItemEntity tomatoGram = ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.TOMATO_ID, QuantitativeMeasurement.GRAM);
-        ShoppingItemEntity tomatoPiece = ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.TOMATO_ID, QuantitativeMeasurement.PIECE);
+        ShoppingItemEntity tomatoGram = ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.TOMATO_ID, Measurement.GRAM);
+        ShoppingItemEntity tomatoPiece = ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.TOMATO_ID, Measurement.PIECE);
         assertEquals(BigDecimal.valueOf(300), tomatoGram.getQuantity());
         assertEquals(BigDecimal.valueOf(1), tomatoPiece.getQuantity());
 
-        ShoppingItemEntity broccoliGram = ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.BROCCOLI_ID, QuantitativeMeasurement.GRAM);
-        ShoppingItemEntity broccoliPiece = ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.BROCCOLI_ID, QuantitativeMeasurement.PIECE);
+        ShoppingItemEntity broccoliGram = ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.BROCCOLI_ID, Measurement.GRAM);
+        ShoppingItemEntity broccoliPiece = ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.BROCCOLI_ID, Measurement.PIECE);
         assertEquals(BigDecimal.valueOf(150), broccoliGram.getQuantity());
         assertEquals(BigDecimal.valueOf(1), broccoliPiece.getQuantity());
 

@@ -5,7 +5,7 @@ import com.farkas.familymealmate.model.entity.IngredientEntity;
 import com.farkas.familymealmate.model.entity.RecipeEntity;
 import com.farkas.familymealmate.model.entity.RecipeIngredientEntity;
 import com.farkas.familymealmate.model.enums.AllergyType;
-import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
+import com.farkas.familymealmate.model.enums.Measurement;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -29,8 +29,8 @@ public class RecipeMapperTest {
         IngredientEntity milk = getIngredientEntity("Milk", Set.of(AllergyType.DAIRY));
         IngredientEntity almond = getIngredientEntity("Almonds", Set.of(AllergyType.NUTS));
 
-        RecipeIngredientEntity ri1 = getRecipeIngredientEntity(milk, BigDecimal.valueOf(200), QuantitativeMeasurement.GRAM);
-        RecipeIngredientEntity ri2 = getRecipeIngredientEntity(almond, BigDecimal.valueOf(50), QuantitativeMeasurement.GRAM);
+        RecipeIngredientEntity ri1 = getRecipeIngredientEntity(milk, BigDecimal.valueOf(200), Measurement.GRAM);
+        RecipeIngredientEntity ri2 = getRecipeIngredientEntity(almond, BigDecimal.valueOf(50), Measurement.GRAM);
 
         RecipeEntity recipe = getRecipe(ri1, ri2);
 
@@ -50,11 +50,11 @@ public class RecipeMapperTest {
         return recipe;
     }
 
-    private RecipeIngredientEntity getRecipeIngredientEntity(IngredientEntity milk, BigDecimal quantity, QuantitativeMeasurement measurement) {
+    private RecipeIngredientEntity getRecipeIngredientEntity(IngredientEntity milk, BigDecimal quantity, Measurement measurement) {
         RecipeIngredientEntity ri1 = new RecipeIngredientEntity();
         ri1.setIngredient(milk);
         ri1.setQuantity(quantity);
-        ri1.setQuantitativeMeasurement(measurement);
+        ri1.setMeasurement(measurement);
         return ri1;
     }
 
