@@ -1,9 +1,12 @@
 package com.farkas.familymealmate.util;
 
+import com.farkas.familymealmate.model.common.AggregationKey;
 import com.farkas.familymealmate.model.entity.ShoppingItemEntity;
 import com.farkas.familymealmate.model.enums.QuantitativeMeasurement;
 
 import java.math.BigDecimal;
+import java.util.Objects;
+import java.util.Set;
 
 public class AggregationUtil {
 
@@ -23,15 +26,26 @@ public class AggregationUtil {
         }
     }
 
+    public static QuantitativeMeasurement autoMatchNull(Set<AggregationKey> aggregationKeys, ShoppingItemEntity item) {
+        if (item.getQuantitativeMeasurement() != null) return item.getQuantitativeMeasurement();
+
+        return aggregationKeys.stream()
+                .filter(key -> key.getIngredientId().equals(item.getIngredient().getId()))
+                .map(AggregationKey::getUnit)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+    }
+
     public static boolean canConvert(QuantitativeMeasurement from, QuantitativeMeasurement to) {
         return UnitConversionUtil.canConvert(from, to);
     }
 
     public static boolean isAggregatable(BigDecimal value, QuantitativeMeasurement unit) {
-        return isQuantitative(value, unit) && UnitConversionUtil.shouldKeepQuantity(unit);
+        return isNotNull(value, unit) && UnitConversionUtil.shouldKeepQuantity(unit);
     }
 
-    public static boolean isQuantitative(BigDecimal value, QuantitativeMeasurement unit) {
+    private static boolean isNotNull(BigDecimal value, QuantitativeMeasurement unit) {
         return value != null && unit != null;
     }
 }

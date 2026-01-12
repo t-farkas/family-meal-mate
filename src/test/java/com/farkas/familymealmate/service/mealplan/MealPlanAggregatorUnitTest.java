@@ -44,9 +44,8 @@ public class MealPlanAggregatorUnitTest {
 
         assertNull(ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.CUMIN_ID).getQuantity());
         assertNull(ShoppingListTestUtil.getEntity(aggregated, TestRecipeIngredients.SPINACH_ID).getQuantity());
-        assertNull(ShoppingListTestUtil.getEntityWithNullUnit(aggregated, TestRecipeIngredients.SUGAR_ID).getQuantity());
 
-        assertEquals(13, aggregated.size());
+        assertEquals(12, aggregated.size());
 
     }
 

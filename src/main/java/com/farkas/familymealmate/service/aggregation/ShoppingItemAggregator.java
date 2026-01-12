@@ -15,7 +15,7 @@ public class ShoppingItemAggregator {
     }
 
     public static List<ShoppingItemEntity> aggregate(List<ShoppingItemEntity> items) {
-        Map<AggregationKey, ShoppingItemEntity> aggregatedByIngredient = new HashMap<>();
+        Map<AggregationKey, ShoppingItemEntity> aggregatedByKey = new HashMap<>();
         List<ShoppingItemEntity> result = new ArrayList<>();
 
         for (ShoppingItemEntity item : items) {
@@ -25,11 +25,11 @@ public class ShoppingItemAggregator {
                 continue;
             }
 
-            AggregationKey key = new AggregationKey(item.getIngredient().getId(), item.getQuantitativeMeasurement());
-            ShoppingItemEntity existing = aggregatedByIngredient.get(key);
+            AggregationKey key = new AggregationKey(item.getIngredient().getId(), AggregationUtil.autoMatchNull(aggregatedByKey.keySet(), item));
+            ShoppingItemEntity existing = aggregatedByKey.get(key);
 
             if (existing == null) {
-                aggregatedByIngredient.put(key, item);
+                aggregatedByKey.put(key, item);
                 result.add(item);
                 continue;
             }
