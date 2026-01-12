@@ -1,0 +1,770 @@
+{
+	"info": {
+		"_postman_id": "eed44645-be06-448a-9f54-e2783c950c0d",
+		"name": "Family Meal Mate API",
+		"description": "This Postman collection provides example requests for the Family Meal Mate backend API.\n\nThe API supports managing households, family members, recipes, weekly meal plans, and automatically generated shopping lists.\n\n#### **Authentication: register & login**\n\n- Use register to create a new user\n    \n- Use login to authenticate\n    \n\nAfter successful login:\n\n- The returned JWT token is automatically stored in the {{token}} variable\n    \n- The token is automatically applied to all requests requiring authorization\n    \n- You do not need to manually copy the token into headers\n    \n- All secured endpoints use: Authorization: Bearer {{token}}\n    \n\nThis collection expects a Postman environment with at least:\n\n- baseUrl\n    \n- token\n    \n\n**Import the provided environment file or create it manually.**\n\n#### **Master Data**\n\nThe MasterData controller provides read-only reference data used throughout the application.\n\nCurrently loaded from CSV during application startup:\n\n- ingredients\n    \n- tags\n    \n\nDefined in enums:\n\n- Meal Types\n    \n- Measurements\n    \n\n#### **Household & members**\n\n- Add additional family members\n    \n- Query existing members\n    \n\n#### **Recipes**\n\n- Create new recipes\n    \n- Fetch existing recipes\n    \n\n#### **Meal Plans**\n\nAll households come with two predefined Meal Plan for the CURRENT and NEXT week. Users can:\n\n- Edit meal plans by assigning recipes to specific days\n    \n- Mind the version field when updating\n    \n- Turn meal plans into templates to reuse later\n    \n\n#### **Shopping Lists**\n\n- Generate shopping lists from meal plans\n    \n- Edit shopping lists\n    \n- Mind the version field when updating",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "51354639",
+		"_collection_link": "https://timea-tarjanyi-94-2507606.postman.co/workspace/a78956e9-0dfc-44f6-869d-eb6259fc2f6f/collection/51354639-eed44645-be06-448a-9f54-e2783c950c0d?action=share&source=collection_link&creator=51354639"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"bertha@example.com\",\n  \"password\": \"Password123!\",\n  \"householdName\": \"Bertha's household\",\n  \"familyMemberCreateRequest\": {\n    \"name\": \"Bertha\",\n    \"dateOfBirth\": \"1977-10-22\",\n    \"allergies\": [\"DAIRY\"]\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Automatically save JWT to environment variable after login",
+									"if (pm.response.code === 200) {",
+									"    const jsonData = pm.response.json();",
+									"    pm.environment.set(\"token\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"bertha@example.com\",\n  \"password\": \"Password123!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Master Data",
+			"item": [
+				{
+					"name": "Tags",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/masterdata/tags",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"masterdata",
+								"tags"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ingredients",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/masterdata/ingredients",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"masterdata",
+								"ingredients"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Family & Household",
+			"item": [
+				{
+					"name": "Add Family Member",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Joshua\",\n  \"dateOfBirth\": \"2018-05-10\",\n  \"allergies\": [\"NUTS\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/familymember",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"familymember"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Family Member",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/familymember/2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"familymember",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current Household",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/household",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"household"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Recipes",
+			"item": [
+				{
+					"name": "Create recipes",
+					"item": [
+						{
+							"name": "Create Spaghetti",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"title\": \"Spaghetti Bolognese\",\n  \"description\": \"Classic family dish\",\n  \"totalTime\": 45,\n  \"serves\": 4,\n  \"instructions\": [\n    \"Chop onions\",\n    \"Cook meat\",\n    \"Add sauce\"\n  ],\n  \"ingredients\": [\n    {\n      \"ingredientId\": 14,\n      \"quantity\": 400,\n      \"measurement\": \"GRAM\"\n    },\n    {\n      \"ingredientId\": 84,\n      \"quantity\": 1,\n      \"measurement\": \"CAN\"\n    },\n    {\n      \"ingredientId\": 28,\n      \"quantity\": 500,\n      \"measurement\": \"GRAM\"\n    },\n    {\n      \"ingredientId\": 57,\n      \"quantity\": 1,\n      \"measurement\": \"PIECE\"\n    },\n    {\n      \"ingredientId\": 46,\n      \"quantity\": 1,\n      \"measurement\": \"TEASPOON\"\n    }\n  ],\n  \"notes\": [\n    \"Freezes well\"\n  ],\n  \"tagIds\": [\n    6,\n    9,\n    13\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/recipe",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"recipe"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Chicken Stir Fry",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"title\": \"Chicken Stir Fry\",\n  \"description\": \"Asian style Chicken Stir Fry\",\n  \"totalTime\": 45,\n  \"serves\": 4,\n  \"instructions\": [\n    \"Cut chicken into strips\",\n    \"Stir fry with vegetables\",\n    \"Season and serve\"\n  ],\n  \"ingredients\": [\n    {\n      \"ingredientId\": 11,\n      \"quantity\": 500,\n      \"measurement\": \"GRAM\"\n    },\n    {\n      \"ingredientId\": 57,\n      \"quantity\": 1,\n      \"measurement\": \"PIECE\"\n    },\n    {\n      \"ingredientId\": 50,\n      \"quantity\": 1,\n      \"measurement\": \"CLOVE\"\n    },\n    {\n      \"ingredientId\": 60,\n      \"quantity\": 1,\n      \"measurement\": \"PIECE\"\n    },\n    {\n      \"ingredientId\": 46,\n      \"quantity\": 1,\n      \"measurement\": \"TEASPOON\"\n    }\n  ],\n  \"notes\": [\n    \"Best served over rice\"\n  ],\n  \"tagIds\": [\n    23,\n    38\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/recipe",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"recipe"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Oatmeal",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"title\": \"Overnight Oats\",\n  \"description\": \"Tasty Overnight Oats\",\n  \"totalTime\": 10,\n  \"serves\": 2,\n  \"instructions\": [\n    \"Mix ingredients\",\n    \"Let soak overnight\",\n    \"Serve cold\"\n  ],\n  \"ingredients\": [\n    {\n      \"ingredientId\": 34,\n      \"quantity\": 80,\n      \"measurement\": \"GRAM\"\n    },\n    {\n      \"ingredientId\": 1,\n      \"quantity\": 250,\n      \"measurement\": \"MILLILITER\"\n    },\n    {\n      \"ingredientId\": 39,\n      \"quantity\": 1,\n      \"measurement\": \"TEASPOON\"\n    }\n  ],\n  \"notes\": [\n    \"Use plant based milk to for vegan version\"\n  ],\n  \"tagIds\": [\n    8,\n    14,\n    21\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/recipe",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"recipe"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Pancakes",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"title\": \"Simple pancakes\",\n  \"description\": \"Quick and easy Pancakes\",\n  \"totalTime\": 20,\n  \"serves\": 3,\n  \"instructions\": [\n    \"Mix dry ingredients\",\n    \"Add wet ingredients\",\n    \"Cook on pan\"\n  ],\n  \"ingredients\": [\n    {\n      \"ingredientId\": 3,\n      \"quantity\": 20,\n      \"measurement\": \"GRAM\"\n    },\n    {\n      \"ingredientId\": 1,\n      \"quantity\": 300,\n      \"measurement\": \"MILLILITER\"\n    },\n    {\n      \"ingredientId\": 10,\n      \"quantity\": 2,\n      \"measurement\": \"PIECE\"\n    },\n    {\n      \"ingredientId\": 39,\n      \"quantity\": 200,\n      \"measurement\": \"GRAM\"\n    }\n  ],\n  \"notes\": [],\n  \"tagIds\": [\n    26,\n    35\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/recipe",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"recipe"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Veggie Bowl",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"title\": \"Veggie Bowl\",\n  \"description\": \"Healthy tomato and Broccoli Bowl\",\n  \"totalTime\": 40,\n  \"serves\": 4,\n  \"instructions\": [\n    \"Chop and steam vegetables\",\n    \"Cook rice\",\n    \"Combine and season\"\n  ],\n  \"ingredients\": [\n    {\n      \"ingredientId\": 31,\n      \"quantity\": 200,\n      \"measurement\": \"GRAM\"\n    },\n    {\n      \"ingredientId\": 65,\n      \"quantity\": 150,\n      \"measurement\": \"GRAM\"\n    },\n    {\n      \"ingredientId\": 57,\n      \"quantity\": 300,\n      \"measurement\": \"GRAM\"\n    },\n    {\n      \"ingredientId\": 39,\n      \"quantity\": 200,\n      \"measurement\": \"GRAM\"\n    }\n  ],\n  \"notes\": [],\n  \"tagIds\": [\n    8,\n    11,\n    36\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/recipe",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"recipe"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Omelette",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"title\": \"Vegetable Omelette\",\n  \"description\": \"Quick and nutritious Omelette\",\n  \"totalTime\": 15,\n  \"serves\": 2,\n  \"instructions\": [\n    \"Beat eggs\",\n    \"Cook vegetables\",\n    \"Add eggs and fold\"\n  ],\n  \"ingredients\": [\n    {\n      \"ingredientId\": 10,\n      \"quantity\": 3,\n      \"measurement\": \"PIECE\"\n    },\n    {\n      \"ingredientId\": 65,\n      \"quantity\": 1,\n      \"measurement\": \"PIECE\"\n    },\n    {\n      \"ingredientId\": 57,\n      \"quantity\": 1,\n      \"measurement\": \"PIECE\"\n    },\n    {\n      \"ingredientId\": 63,\n      \"measurement\": \"HANDFUL\"\n    }\n  ],\n  \"notes\": [],\n  \"tagIds\": [\n    21,\n    36\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/recipe",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"recipe"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Search Recipes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/recipe?name=&page=0&pageSize=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"recipe"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": ""
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Recipe By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/recipe/8",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"recipe",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Recipe",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/recipe/7",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"recipe",
+								"7"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Meal Plan",
+			"item": [
+				{
+					"name": "Edit Meal Plan",
+					"item": [
+						{
+							"name": "Edit Current Week",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"week\": \"CURRENT\",\n    \"version\": 0,\n    \"mealSlots\": [\n        {\n            \"day\": \"MONDAY\",\n            \"mealType\": \"BREAKFAST\",\n            \"recipeId\": 9,\n            \"note\": \"Quick start to the week\"\n        },\n        {\n            \"day\": \"MONDAY\",\n            \"mealType\": \"LUNCH\",\n            \"recipeId\": 8,\n            \"note\": \"Classic family favourite\"\n        },\n        {\n            \"day\": \"MONDAY\",\n            \"mealType\": \"DINNER\",\n            \"recipeId\": 13,\n            \"note\": \"Asian style dinner\"\n        },\n        {\n            \"day\": \"TUESDAY\",\n            \"mealType\": \"BREAKFAST\",\n            \"recipeId\": 9,\n            \"note\": \"Healthy breakfast\"\n        },\n        {\n            \"day\": \"TUESDAY\",\n            \"mealType\": \"LUNCH\",\n            \"recipeId\": 11,\n            \"note\": \"Veggie goodness\"\n        },\n        {\n            \"day\": \"TUESDAY\",\n            \"mealType\": \"DINNER\",\n            \"recipeId\": 12,\n            \"note\": \"Protein-rich omelette\"\n        },\n        {\n            \"day\": \"WEDNESDAY\",\n            \"mealType\": \"BREAKFAST\",\n            \"recipeId\": 10,\n            \"note\": \"Easy pancakes midweek\"\n        },\n        {\n            \"day\": \"WEDNESDAY\",\n            \"mealType\": \"LUNCH\",\n            \"recipeId\": 8,\n            \"note\": \"Spaghetti Bolognese\"\n        },\n        {\n            \"day\": \"WEDNESDAY\",\n            \"mealType\": \"DINNER\",\n            \"recipeId\": 13,\n            \"note\": \"Chicken Stir Fry\"\n        },\n        {\n            \"day\": \"THURSDAY\",\n            \"mealType\": \"BREAKFAST\",\n            \"recipeId\": 9,\n            \"note\": \"Overnight oats\"\n        },\n        {\n            \"day\": \"THURSDAY\",\n            \"mealType\": \"LUNCH\",\n            \"recipeId\": 11,\n            \"note\": \"Veggie Bowl\"\n        },\n        {\n            \"day\": \"THURSDAY\",\n            \"mealType\": \"DINNER\",\n            \"recipeId\": 12,\n            \"note\": \"Vegetable Omelette\"\n        },\n        {\n            \"day\": \"FRIDAY\",\n            \"mealType\": \"BREAKFAST\",\n            \"recipeId\": 10,\n            \"note\": \"Simple pancakes\"\n        },\n        {\n            \"day\": \"FRIDAY\",\n            \"mealType\": \"LUNCH\",\n            \"recipeId\": 8,\n            \"note\": \"Spaghetti Bolognese\"\n        },\n        {\n            \"day\": \"FRIDAY\",\n            \"mealType\": \"DINNER\",\n            \"recipeId\": 13,\n            \"note\": \"Chicken Stir Fry\"\n        },\n        {\n            \"day\": \"SATURDAY\",\n            \"mealType\": \"BREAKFAST\",\n            \"recipeId\": 9,\n            \"note\": \"Overnight Oats\"\n        },\n        {\n            \"day\": \"SATURDAY\",\n            \"mealType\": \"LUNCH\",\n            \"recipeId\": 11,\n            \"note\": \"Veggie Bowl\"\n        },\n        {\n            \"day\": \"SATURDAY\",\n            \"mealType\": \"DINNER\",\n            \"recipeId\": 12,\n            \"note\": \"Vegetable Omelette\"\n        },\n        {\n            \"day\": \"SUNDAY\",\n            \"mealType\": \"BREAKFAST\",\n            \"recipeId\": 10,\n            \"note\": \"Family favourite pancakes\"\n        },\n        {\n            \"day\": \"SUNDAY\",\n            \"mealType\": \"LUNCH\",\n            \"recipeId\": 8,\n            \"note\": \"Spaghetti Bolognese\"\n        },\n        {\n            \"day\": \"SUNDAY\",\n            \"mealType\": \"DINNER\",\n            \"recipeId\": 13,\n            \"note\": \"Chicken Stir Fry\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/mealplan",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"mealplan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Next Week",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"week\": \"NEXT\",\n  \"version\": 0,\n  \"mealSlots\": [\n    {\n      \"day\": \"MONDAY\",\n      \"mealType\": \"BREAKFAST\",\n      \"recipeId\": 10,\n      \"note\": \"Tasty start to the week\"\n    },\n    {\n      \"day\": \"MONDAY\",\n      \"mealType\": \"LUNCH\",\n      \"recipeId\": 11,\n      \"note\": \"Veggie Bowl for lunch\"\n    },\n    {\n      \"day\": \"MONDAY\",\n      \"mealType\": \"DINNER\",\n      \"recipeId\": 13,\n      \"note\": \"Chicken Stir Fry\"\n    },\n    {\n      \"day\": \"MONDAY\",\n      \"mealType\": \"SNACK\",\n      \"recipeId\": 10,\n      \"note\": \"Pancakes for a mid-afternoon treat\"\n    },\n    {\n      \"day\": \"TUESDAY\",\n      \"mealType\": \"BREAKFAST\",\n      \"recipeId\": 9,\n      \"note\": \"Healthy Oats for Tuesday\"\n    },\n    {\n      \"day\": \"TUESDAY\",\n      \"mealType\": \"LUNCH\",\n      \"recipeId\": 8,\n      \"note\": \"Spaghetti Bolognese\"\n    },\n    {\n      \"day\": \"TUESDAY\",\n      \"mealType\": \"DINNER\",\n      \"recipeId\": 12,\n      \"note\": \"Vegetable Omelette\"\n    },\n    {\n      \"day\": \"WEDNESDAY\",\n      \"mealType\": \"BREAKFAST\",\n      \"recipeId\": 9,\n      \"note\": \"Overnight Oats\"\n    },\n    {\n      \"day\": \"WEDNESDAY\",\n      \"mealType\": \"LUNCH\",\n      \"recipeId\": 13,\n      \"note\": \"Chicken Stir Fry\"\n    },\n    {\n      \"day\": \"WEDNESDAY\",\n      \"mealType\": \"DINNER\",\n      \"recipeId\": 11,\n      \"note\": \"Veggie Bowl\"\n    },\n    {\n      \"day\": \"THURSDAY\",\n      \"mealType\": \"BREAKFAST\",\n      \"recipeId\": 10,\n      \"note\": \"Simple Pancakes\"\n    },\n    {\n      \"day\": \"THURSDAY\",\n      \"mealType\": \"LUNCH\",\n      \"recipeId\": 12,\n      \"note\": \"Omelette with vegetables\"\n    },\n    {\n      \"day\": \"THURSDAY\",\n      \"mealType\": \"DINNER\",\n      \"recipeId\": 8,\n      \"note\": \"Spaghetti Bolognese\"\n    },\n    {\n      \"day\": \"FRIDAY\",\n      \"mealType\": \"BREAKFAST\",\n      \"recipeId\": 9,\n      \"note\": \"Overnight Oats again\"\n    },\n    {\n      \"day\": \"FRIDAY\",\n      \"mealType\": \"LUNCH\",\n      \"recipeId\": 11,\n      \"note\": \"Veggie Bowl\"\n    },\n    {\n      \"day\": \"FRIDAY\",\n      \"mealType\": \"DINNER\",\n      \"recipeId\": 13,\n      \"note\": \"Chicken Stir Fry\"\n    },\n    {\n      \"day\": \"SATURDAY\",\n      \"mealType\": \"BREAKFAST\",\n      \"recipeId\": 10,\n      \"note\": \"Pancakes to enjoy weekend morning\"\n    },\n    {\n      \"day\": \"SATURDAY\",\n      \"mealType\": \"LUNCH\",\n      \"recipeId\": 8,\n      \"note\": \"Spaghetti Bolognese\"\n    },\n    {\n      \"day\": \"SATURDAY\",\n      \"mealType\": \"DINNER\",\n      \"recipeId\": 12,\n      \"note\": \"Vegetable Omelette\"\n    },\n    {\n      \"day\": \"SUNDAY\",\n      \"mealType\": \"BREAKFAST\",\n      \"recipeId\": 9,\n      \"note\": \"Overnight Oats\"\n    },\n    {\n      \"day\": \"SUNDAY\",\n      \"mealType\": \"LUNCH\",\n      \"recipeId\": 13,\n      \"note\": \"Chicken Stir Fry\"\n    },\n    {\n      \"day\": \"SUNDAY\",\n      \"mealType\": \"DINNER\",\n      \"recipeId\": 11,\n      \"note\": \"Veggie Bowl\"\n    },\n    {\n      \"day\": \"SUNDAY\",\n      \"mealType\": \"DESSERT\",\n      \"recipeId\": 10,\n      \"note\": \"Sunday pancakes dessert\"\n    }\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/mealplan",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"mealplan"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Templates",
+					"item": [
+						{
+							"name": "Get Templates",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/template",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"template"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Template",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Quick weekday dinners\",\n  \"week\": \"CURRENT\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/template",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"template"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Template",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/template/7",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"template",
+										"7"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get Meal Plan",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/mealplan?week=NEXT",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"mealplan"
+							],
+							"query": [
+								{
+									"key": "week",
+									"value": "NEXT"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Meal Plan Version",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/mealplan/version?week=CURRENT",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"mealplan",
+								"version"
+							],
+							"query": [
+								{
+									"key": "week",
+									"value": "CURRENT"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Shopping List",
+			"item": [
+				{
+					"name": "Get Shopping List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/shopping-list",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"shopping-list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Shopping List",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"note\": \"Weekly shop\",\n    \"version\": 0,\n    \"shoppingItems\": [\n        {\n            \"name\": \"Birthday cake for Saturday\",\n            \"checked\": false,\n            \"note\": \"Chocolate if possible\"\n        },\n        {\n            \"name\": \"Toilet paper\",\n            \"checked\": false,\n            \"note\": \"Large pack\"\n        },\n        {\n            \"name\": \"Snacks for movie night\",\n            \"checked\": false,\n            \"note\": \"Chips + popcorn\"\n        },\n        {\n            \"name\": \"Gift for Anna\",\n            \"checked\": false,\n            \"note\": \"She likes candles\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/shopping-list",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"shopping-list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Meal Plan to Shopping List",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/shopping-list/meal-plan?week=CURRENT",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"shopping-list",
+								"meal-plan"
+							],
+							"query": [
+								{
+									"key": "week",
+									"value": "CURRENT"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Shopping List Version",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/shopping-list/version",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"shopping-list",
+								"version"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}
