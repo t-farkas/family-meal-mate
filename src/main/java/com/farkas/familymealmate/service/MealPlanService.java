@@ -7,9 +7,13 @@ import com.farkas.familymealmate.model.entity.HouseholdEntity;
 import com.farkas.familymealmate.model.entity.MealPlanEntity;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 
+import java.time.LocalDate;
+
 public interface MealPlanService {
 
     void create(HouseholdEntity houseHold);
+
+    void cleanupBefore(LocalDate before);
 
     MealPlanDetailsDto get(MealPlanWeek week);
 

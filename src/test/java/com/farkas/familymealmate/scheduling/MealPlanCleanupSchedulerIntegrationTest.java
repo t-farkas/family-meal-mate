@@ -45,7 +45,7 @@ public class MealPlanCleanupSchedulerIntegrationTest {
         List<MealPlanEntity> mealPlans = getMealPlans(household, currentWeek, nextWeek, previousWeek);
         mealPlanRepository.saveAll(mealPlans);
 
-        mealPlanCleanupScheduler.cleanupOldMealPlans();
+        mealPlanCleanupScheduler.renewMealPlans();
 
         List<MealPlanEntity> remainingPlans = mealPlanRepository.findAll();
         assertThat(remainingPlans).extracting(MealPlanEntity::getWeekStart).contains(currentWeek, nextWeek);

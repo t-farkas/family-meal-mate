@@ -57,6 +57,11 @@ public class MealPlanServiceImpl implements MealPlanService {
     }
 
     @Override
+    public void cleanupBefore(LocalDate before) {
+        mealPlanRepository.deleteByWeekStartBefore(before);
+    }
+
+    @Override
     public MealPlanDetailsDto update(MealPlanUpdateRequest updateRequest) {
         HouseholdEntity household = currentUserService.getCurrentHousehold();
         LocalDate weekStart = getWeekStart(updateRequest.week());
