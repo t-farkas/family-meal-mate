@@ -28,6 +28,8 @@ public enum ErrorCode {
     SHOPPING_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "Shopping item not found with id: %s"),
     SHOPPING_LIST_VERSION_MISMATCH(HttpStatus.CONFLICT, "Shopping list was modified by another user"),
 
+    SHOPPING_ITEM_INCOMPLETE_DETAILS(HttpStatus.BAD_REQUEST, "Shopping item must have either name or ingredientId"),
+
     INCOMPATIBLE_UNITS(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot convert %s to %s"),
     NO_AUTHORIZATION(HttpStatus.FORBIDDEN, "You have no authorization to access this resource: %d"),
     ;

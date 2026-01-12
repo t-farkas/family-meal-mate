@@ -141,14 +141,20 @@ public class ShoppingListServiceImpl implements ShoppingListService {
             entity.setIngredient(getIngredient(item.getIngredientId()));
             entity.setQuantity(item.getQuantity());
             entity.setQuantitativeMeasurement(item.getQuantitativeMeasurement());
-        } else {
+        } else if (isFreeTextItem(item)) {
             entity.setName(item.getName());
+        } else {
+            throw new ServiceException(ErrorCode.SHOPPING_ITEM_INCOMPLETE_DETAILS);
         }
         return entity;
     }
 
     private boolean isIngredientBased(ShoppingItemUpdateRequest item) {
         return item.getIngredientId() != null && item.getName() == null;
+    }
+
+    private boolean isFreeTextItem(ShoppingItemUpdateRequest item) {
+        return item.getIngredientId() == null && item.getName() != null && !item.getName().isBlank();
     }
 
     private IngredientEntity getIngredient(Long ingredientId) {
