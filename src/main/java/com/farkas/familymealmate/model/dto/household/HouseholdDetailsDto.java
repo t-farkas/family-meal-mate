@@ -5,12 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HouseholdMemberDto {
-    Long id;
+public class HouseholdDetailsDto {
     private String name;
-
+    private String joinId;
+    private List<HouseholdMemberDto> members;
 }

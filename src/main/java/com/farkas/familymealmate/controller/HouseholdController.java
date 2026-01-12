@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.controller;
 
-import com.farkas.familymealmate.model.dto.household.HouseholdDto;
+import com.farkas.familymealmate.model.dto.household.HouseholdDetailsDto;
 import com.farkas.familymealmate.service.HouseholdService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +16,8 @@ public class HouseholdController {
     private final HouseholdService householdService;
 
     @GetMapping()
-    public ResponseEntity<HouseholdDto> getCurrentHousehold() {
-        HouseholdDto currentHousehold = householdService.getCurrentHousehold();
+    public ResponseEntity<HouseholdDetailsDto> getCurrentHousehold() {
+        HouseholdDetailsDto currentHousehold = householdService.getCurrentHousehold();
         return ResponseEntity.ok(currentHousehold);
     }
 }

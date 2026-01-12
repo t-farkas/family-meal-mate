@@ -2,7 +2,7 @@ package com.farkas.familymealmate.service.impl;
 
 import com.farkas.familymealmate.exception.ServiceException;
 import com.farkas.familymealmate.mapper.HouseholdMapper;
-import com.farkas.familymealmate.model.dto.household.HouseholdDto;
+import com.farkas.familymealmate.model.dto.household.HouseholdDetailsDto;
 import com.farkas.familymealmate.model.entity.FamilyMemberEntity;
 import com.farkas.familymealmate.model.entity.HouseholdEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
@@ -42,9 +42,9 @@ public class HouseholdServiceImpl implements HouseholdService {
     }
 
     @Override
-    public HouseholdDto getCurrentHousehold() {
+    public HouseholdDetailsDto getCurrentHousehold() {
         FamilyMemberEntity memberEntity = currentUserService.getCurrentFamilyMember();
         HouseholdEntity currentHousehold = householdRepository.findByIdWithMembers(memberEntity.getHousehold().getId()).get();
-        return householdMapper.toDto(currentHousehold);
+        return householdMapper.toDetailsDto(currentHousehold);
     }
 }
