@@ -3,7 +3,9 @@ package com.farkas.familymealmate.exception;
 import com.farkas.familymealmate.model.dto.error.ErrorDTO;
 import com.farkas.familymealmate.model.dto.error.FieldValidationError;
 import com.farkas.familymealmate.model.dto.error.ValidationErrorResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -32,5 +34,14 @@ public class GlobalExceptionHandler {
         ValidationErrorResponse response = new ValidationErrorResponse("Invalid request", errors);
 
         return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorDTO> handleBadCredentials(BadCredentialsException ex) {
+        ErrorDTO errorDTO = new ErrorDTO("Invalid email or password", "UNAUTHORIZED");
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(errorDTO);
     }
 }
