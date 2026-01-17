@@ -10,3 +10,5 @@ spring:
       ddl-auto: none
   liquibase:
     enabled: true
+  cache:
+    type: simple

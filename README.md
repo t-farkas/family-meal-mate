@@ -36,11 +36,25 @@ FamilyMealMate is a demo backend application to manage shared household data suc
 - JUnit 5, Mockito
 
 ## Getting started
+
+### Prerequisites
+- Docker + Docker Compose
+- Java 17
+- Git
+
+### Steps
 1. Clone the repository
-2. Configure database connection in `application.yml`
-3. Run the application: ./gradlew bootRun 
-4. Swagger UI: Try requests interactively http://localhost:8080/swagger-ui/index.html
-5. Postman Collection: Example requests, includes JWT token automation
+2. Start infrastructure(PostgreSQL + Redis):
+
+   `docker compose up -d`
+3. Make sure `application.yml` is correctly defined for your environment
+3. Run the application:
+
+   `./gradlew bootRun`
+4. Swagger UI - Try requests interactively 
+
+6. http://localhost:8080/swagger-ui/index.html
+5. Postman Collection - example requests with JWT automation
 
 ### Postman Collection
 - Import the collection: `postman/Family Meal Mate API.postman_collection.json`
