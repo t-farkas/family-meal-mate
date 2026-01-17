@@ -14,7 +14,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -27,18 +28,19 @@ public class MasterDataServiceImpl implements MasterDataService {
     private final MasterDataMapper mapper;
 
     @Override
-    @Cacheable(value = "tags", key = "'all'")
-    public List<TagDto> getTags() {
+    @Cacheable(value = "tags")
+    public Map<Long, TagDto> getTags() {
         log.info("Loading tags from DB");
-        List<TagEntity> tags = tagRepository.findAll();
-        return mapper.toTagDtoList(tags);
+        return tagRepository.findAll()
+                .stream()
+                .collect(Collectors.toMap(TagEntity::getId, mapper::toTagDto));
     }
 
     @Override
-    @Cacheable(value = "ingredients", key = "'all'")
-    public List<IngredientDto> getIngredients() {
+    @Cacheable(value = "ingredients")
+    public Map<Long, IngredientDto> getIngredients() {
         log.info("Loading ingredients from DB");
-        List<IngredientEntity> ingredients = ingredientRepository.findAll();
-        return mapper.toIngredientDtoList(ingredients);
+        return ingredientRepository.findAll().stream()
+                .collect(Collectors.toMap(IngredientEntity::getId, mapper::toIngredientDto));
     }
 }

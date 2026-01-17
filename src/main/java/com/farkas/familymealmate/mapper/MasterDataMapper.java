@@ -7,11 +7,9 @@ import com.farkas.familymealmate.model.entity.TagEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MasterDataMapper {
 
-    List<IngredientDto> toIngredientDtoList(List<IngredientEntity> entities);
-    List<TagDto> toTagDtoList(List<TagEntity> entities);
+    IngredientDto toIngredientDto(IngredientEntity entity);
+    TagDto toTagDto(TagEntity entity);
 }

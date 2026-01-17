@@ -12,7 +12,7 @@ import com.farkas.familymealmate.model.entity.MealSlotEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.repository.MealPlanRepository;
-import com.farkas.familymealmate.security.CurrentUserService;
+import com.farkas.familymealmate.security.CurrentUserHelper;
 import com.farkas.familymealmate.service.MealPlanService;
 import com.farkas.familymealmate.service.RecipeService;
 import com.farkas.familymealmate.util.MealPlanDateUtils;
@@ -29,7 +29,6 @@ import java.util.List;
 @Transactional
 public class MealPlanServiceImpl implements MealPlanService {
 
-    private final CurrentUserService currentUserService;
     private final MealPlanRepository mealPlanRepository;
     private final MealPlanMapper mealPlanMapper;
     private final RecipeService recipeService;
@@ -49,7 +48,7 @@ public class MealPlanServiceImpl implements MealPlanService {
 
     @Override
     public MealPlanDetailsDto get(MealPlanWeek week) {
-        HouseholdEntity household = currentUserService.getCurrentHousehold();
+        HouseholdEntity household = CurrentUserHelper.getCurrentHousehold();
         LocalDate weekStart = getWeekStart(week);
         MealPlanEntity mealPlan = getMealPlanEntity(household, weekStart);
 
@@ -63,7 +62,7 @@ public class MealPlanServiceImpl implements MealPlanService {
 
     @Override
     public MealPlanDetailsDto update(MealPlanUpdateRequest updateRequest) {
-        HouseholdEntity household = currentUserService.getCurrentHousehold();
+        HouseholdEntity household = CurrentUserHelper.getCurrentHousehold();
         LocalDate weekStart = getWeekStart(updateRequest.week());
         MealPlanEntity mealPlanEntity = getMealPlanEntity(household, weekStart);
 
@@ -89,7 +88,7 @@ public class MealPlanServiceImpl implements MealPlanService {
 
     @Override
     public MealPlanEntity getEntity(MealPlanWeek week) {
-        HouseholdEntity household = currentUserService.getCurrentHousehold();
+        HouseholdEntity household = CurrentUserHelper.getCurrentHousehold();
         LocalDate weekStart = getWeekStart(week);
         return getMealPlanEntity(household, weekStart);
     }

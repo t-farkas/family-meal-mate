@@ -11,7 +11,7 @@ import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.repository.IngredientRepository;
 import com.farkas.familymealmate.repository.ShoppingListRepository;
-import com.farkas.familymealmate.security.CurrentUserService;
+import com.farkas.familymealmate.security.CurrentUserHelper;
 import com.farkas.familymealmate.service.MealPlanService;
 import com.farkas.familymealmate.service.ShoppingListService;
 import com.farkas.familymealmate.service.aggregation.ShoppingItemAggregator;
@@ -33,7 +33,6 @@ public class ShoppingListServiceImpl implements ShoppingListService {
 
     private final ShoppingListRepository shoppingListRepository;
     private final IngredientRepository ingredientRepository;
-    private final CurrentUserService currentUserService;
     private final MealPlanService mealPlanService;
     private final ShoppingListMapper mapper;
 
@@ -50,7 +49,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
 
     @Override
     public ShoppingListDto get() {
-        Long householdId = currentUserService.getCurrentHousehold().getId();
+        Long householdId = CurrentUserHelper.getCurrentHousehold().getId();
         ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
 
         return mapper.toDto(shoppingList);
@@ -58,7 +57,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
 
     @Override
     public ShoppingListDto update(ShoppingListUpdateRequest updateRequest) {
-        Long householdId = currentUserService.getCurrentHousehold().getId();
+        Long householdId = CurrentUserHelper.getCurrentHousehold().getId();
         ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
 
         ShoppingListEntity edited = getEditedShoppingList(updateRequest, shoppingList);
@@ -83,7 +82,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
 
     @Override
     public ShoppingListDto addMealPlan(MealPlanWeek week) {
-        Long householdId = currentUserService.getCurrentHousehold().getId();
+        Long householdId = CurrentUserHelper.getCurrentHousehold().getId();
 
         ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
         MealPlanEntity mealPlan = mealPlanService.getEntity(week);
@@ -102,7 +101,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
 
     @Override
     public VersionDto getVersion() {
-        Long householdId = currentUserService.getCurrentHousehold().getId();
+        Long householdId = CurrentUserHelper.getCurrentHousehold().getId();
         ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
         return new VersionDto(shoppingList.getVersion());
     }

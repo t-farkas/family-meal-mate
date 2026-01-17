@@ -8,7 +8,7 @@ import com.farkas.familymealmate.model.entity.FamilyMemberEntity;
 import com.farkas.familymealmate.model.entity.HouseholdEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.repository.FamilyMemberRepository;
-import com.farkas.familymealmate.security.CurrentUserService;
+import com.farkas.familymealmate.security.CurrentUserHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class FamilyMemberServiceImpl implements com.farkas.familymealmate.service.FamilyMemberService {
 
     private final FamilyMemberRepository repository;
-    private final CurrentUserService currentUserService;
     private final FamilyMemberMapper mapper;
 
     @Override
@@ -31,7 +30,7 @@ public class FamilyMemberServiceImpl implements com.farkas.familymealmate.servic
 
     @Override
     public FamilyMemberDetailsDto addFamilyMember(FamilyMemberCreateRequest request) {
-        FamilyMemberEntity familyMember = createFamilyMember(request, currentUserService.getCurrentHousehold());
+        FamilyMemberEntity familyMember = createFamilyMember(request, CurrentUserHelper.getCurrentHousehold());
         return mapper.toDto(familyMember);
     }
 
@@ -42,7 +41,7 @@ public class FamilyMemberServiceImpl implements com.farkas.familymealmate.servic
                         ErrorCode.FAMILY_MEMBER_NOT_FOUND.format(id),
                         ErrorCode.FAMILY_MEMBER_NOT_FOUND));
 
-        Long householdId = currentUserService.getCurrentHousehold().getId();
+        Long householdId = CurrentUserHelper.getCurrentHousehold().getId();
 
         if (!entity.getHousehold().getId().equals(householdId)) {
             throw new ServiceException(

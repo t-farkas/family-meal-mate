@@ -5,7 +5,7 @@ import com.farkas.familymealmate.model.common.HouseholdOwned;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.repository.MealPlanRepository;
 import com.farkas.familymealmate.repository.RecipeRepository;
-import com.farkas.familymealmate.security.CurrentUserService;
+import com.farkas.familymealmate.security.CurrentUserHelper;
 import com.farkas.familymealmate.security.annotation.CheckHouseholdAccess;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -19,14 +19,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class HouseholdSecurityAspect {
 
-    private final CurrentUserService currentUserService;
     private final RecipeRepository recipeRepository;
     private final MealPlanRepository mealPlanRepository;
 
     @Around("@annotation(checkHouseholdAccess)")
     public Object checkHouseholdAccess(ProceedingJoinPoint joinPoint, CheckHouseholdAccess checkHouseholdAccess) throws Throwable {
         final Long householdOwnedId = extractId(joinPoint, checkHouseholdAccess.idArg());
-        Long householdId = currentUserService.getCurrentHousehold().getId();
+        Long householdId = CurrentUserHelper.getCurrentHousehold().getId();
 
         HouseholdOwned householdOwnedEntity = switch (checkHouseholdAccess.type()) {
             case RECIPE -> getRecipe(householdOwnedId);

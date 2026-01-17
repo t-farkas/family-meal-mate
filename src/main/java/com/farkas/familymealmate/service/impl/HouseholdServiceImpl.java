@@ -7,7 +7,7 @@ import com.farkas.familymealmate.model.entity.FamilyMemberEntity;
 import com.farkas.familymealmate.model.entity.HouseholdEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.repository.HouseholdRepository;
-import com.farkas.familymealmate.security.CurrentUserService;
+import com.farkas.familymealmate.security.CurrentUserHelper;
 import com.farkas.familymealmate.service.HouseholdService;
 import com.farkas.familymealmate.util.JoinIdGenerator;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class HouseholdServiceImpl implements HouseholdService {
 
-    private final CurrentUserService currentUserService;
     private final HouseholdMapper householdMapper;
     private final HouseholdRepository householdRepository;
     private final JoinIdGenerator joinIdGenerator;
@@ -43,7 +42,7 @@ public class HouseholdServiceImpl implements HouseholdService {
 
     @Override
     public HouseholdDetailsDto getCurrentHousehold() {
-        FamilyMemberEntity memberEntity = currentUserService.getCurrentFamilyMember();
+        FamilyMemberEntity memberEntity = CurrentUserHelper.getCurrentFamilyMember();
         HouseholdEntity currentHousehold = householdRepository.findByIdWithMembers(memberEntity.getHousehold().getId()).get();
         return householdMapper.toDetailsDto(currentHousehold);
     }

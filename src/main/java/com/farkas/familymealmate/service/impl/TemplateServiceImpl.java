@@ -11,7 +11,7 @@ import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.model.enums.HouseholdOwnedResourceType;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.repository.MealPlanRepository;
-import com.farkas.familymealmate.security.CurrentUserService;
+import com.farkas.familymealmate.security.CurrentUserHelper;
 import com.farkas.familymealmate.security.annotation.CheckHouseholdAccess;
 import com.farkas.familymealmate.service.TemplateService;
 import com.farkas.familymealmate.util.MealPlanDateUtils;
@@ -29,7 +29,6 @@ import java.util.List;
 @Transactional
 public class TemplateServiceImpl implements TemplateService {
 
-    private final CurrentUserService currentUserService;
     private final MealPlanRepository mealPlanRepository;
     private final MealPlanMapper mealPlanMapper;
 
@@ -38,7 +37,7 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public TemplateDto createTemplate(TemplateCreateRequest request) {
-        HouseholdEntity household = currentUserService.getCurrentHousehold();
+        HouseholdEntity household = CurrentUserHelper.getCurrentHousehold();
         checkTemplateCount(household);
         MealPlanEntity template = createTemplate(household, request);
 
@@ -60,7 +59,7 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public List<TemplateDto> listTemplates() {
-        HouseholdEntity household = currentUserService.getCurrentHousehold();
+        HouseholdEntity household = CurrentUserHelper.getCurrentHousehold();
         List<MealPlanEntity> favourites = mealPlanRepository.findAllByHouseholdIdAndTemplate(household.getId(), true);
         return mealPlanMapper.toTemplateDtoList(favourites);
     }
