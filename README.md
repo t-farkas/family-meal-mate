@@ -30,6 +30,7 @@ FamilyMealMate is a demo backend application to manage shared household data suc
 - Spring Boot
 - Hibernate / JPA
 - Liquibase 
+- Redis for caching
 - PostgreSQL (H2 for tests)
 - MapStruct 
 - Swagger / OpenAPI and Postman 
@@ -64,6 +65,12 @@ FamilyMealMate is a demo backend application to manage shared household data suc
 - Integration tests to verify feature correctness
 - Unit tests for pure utility components (e.g. join ID generation, ShoppingItemAggregator)
 - Focus on integration tests to validate real behavior rather than mocking internal state
+
+## Scalability
+- Stateless architecture enabling horizontal scaling behind a load balancer
+- Caching: Master data is cached using Redis to reduce DB queries
+- Frequently queried columns (e.g., Household.joinId, User.email, MealPlan.weekStart + household) are indexed via unique constraints or composite indexes to ensure fast lookups and enforce data integrity.
+
 
 ## Future Improvements
 - Angular frontend
