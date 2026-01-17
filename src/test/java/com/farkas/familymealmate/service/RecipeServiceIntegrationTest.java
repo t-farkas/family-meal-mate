@@ -71,7 +71,7 @@ public class RecipeServiceIntegrationTest {
         userFactory.authenticate(user);
         RecipeDetailsDto recipeDetailsDto = recipeService.create(TestRecipes.OVERNIGHT_OATS.createRequest());
 
-        String recipeHouseholdName = recipeDetailsDto.getHousehold().getName();
+        String recipeHouseholdName = recipeDetailsDto.getHousehold().name();
         String currentUserHouseholdName = user.getFamilyMember().getHousehold().getName();
 
         assertThat(recipeHouseholdName).isEqualTo(currentUserHouseholdName);
@@ -92,7 +92,7 @@ public class RecipeServiceIntegrationTest {
         List<RecipeListDto> recipes = recipeService.list(new RecipeFilterRequest()).getContent();
         recipes.forEach(recipe -> {
             RecipeDetailsDto recipeDetailsDto = recipeService.get(recipe.getId());
-            assertThat(recipeDetailsDto.getHousehold().getName()).isEqualTo(household.getName());
+            assertThat(recipeDetailsDto.getHousehold().name()).isEqualTo(household.getName());
         });
     }
 
