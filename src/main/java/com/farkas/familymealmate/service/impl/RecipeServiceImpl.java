@@ -105,7 +105,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     private RecipeEntity getRecipeWithIngredients(Long id) {
-        return recipeRepository.findRecipeWithIngredients(id).orElseThrow(
+        return recipeRepository.findWithIngredientsById(id).orElseThrow(
                 () -> new ServiceException(ErrorCode.RECIPE_NOT_FOUND.format(id), ErrorCode.RECIPE_NOT_FOUND));
     }
 
