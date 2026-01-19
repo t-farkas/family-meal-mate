@@ -7,7 +7,6 @@ import com.farkas.familymealmate.model.dto.recipe.RecipeFilterRequest;
 import com.farkas.familymealmate.model.dto.recipe.RecipeListDto;
 import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientCreateRequestDto;
 import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientDto;
-import com.farkas.familymealmate.model.entity.HouseholdEntity;
 import com.farkas.familymealmate.model.entity.UserEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.testdata.recipe.TestRecipe;
@@ -84,9 +83,7 @@ public class RecipeServiceIntegrationTest {
 
         userFactory.authenticate(user1);
         List<RecipeListDto> recipes = recipeService.list(new RecipeFilterRequest()).getContent();
-        recipes.forEach(recipe -> {
-            assertThat(recipe.getCreatedBy().getName()).isEqualTo(TestUsers.BERTHA.name());
-        });
+        recipes.forEach(recipe -> assertThat(recipe.getCreatedBy().getName()).isEqualTo(TestUsers.BERTHA.name()));
     }
 
     @Test

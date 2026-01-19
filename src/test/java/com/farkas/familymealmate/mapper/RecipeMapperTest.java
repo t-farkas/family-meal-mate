@@ -39,8 +39,7 @@ public class RecipeMapperTest {
         RecipeDetailsDto dto = mapper.toRecipeDetails(recipe);
 
         assertThat(dto.getIngredients()).hasSize(2);
-        assertThat(dto.getAllergies())
-                .contains(AllergyType.DAIRY, AllergyType.NUTS);
+        assertThat(dto.getAllergies()).isNull();
 
     }
 

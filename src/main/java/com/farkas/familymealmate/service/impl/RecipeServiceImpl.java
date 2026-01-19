@@ -1,8 +1,10 @@
 package com.farkas.familymealmate.service.impl;
 
 import com.farkas.familymealmate.exception.ServiceException;
-import com.farkas.familymealmate.mapper.RecipeMapper;
+import com.farkas.familymealmate.mapper.MasterDataMapper;
+import com.farkas.familymealmate.mapper.recipe.RecipeMapper;
 import com.farkas.familymealmate.model.dto.PagingResponse;
+import com.farkas.familymealmate.model.dto.masterdata.IngredientDto;
 import com.farkas.familymealmate.model.dto.recipe.RecipeCreateRequest;
 import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
 import com.farkas.familymealmate.model.dto.recipe.RecipeFilterRequest;
@@ -12,6 +14,7 @@ import com.farkas.familymealmate.model.entity.IngredientEntity;
 import com.farkas.familymealmate.model.entity.RecipeEntity;
 import com.farkas.familymealmate.model.entity.RecipeIngredientEntity;
 import com.farkas.familymealmate.model.entity.TagEntity;
+import com.farkas.familymealmate.model.enums.AllergyType;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.model.enums.HouseholdOwnedResourceType;
 import com.farkas.familymealmate.repository.IngredientRepository;
@@ -20,6 +23,7 @@ import com.farkas.familymealmate.repository.TagRepository;
 import com.farkas.familymealmate.repository.specification.RecipeSpecificationBuilder;
 import com.farkas.familymealmate.security.CurrentUserHelper;
 import com.farkas.familymealmate.security.annotation.CheckHouseholdAccess;
+import com.farkas.familymealmate.service.MasterDataService;
 import com.farkas.familymealmate.service.RecipeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,13 +46,15 @@ public class RecipeServiceImpl implements RecipeService {
     private final IngredientRepository ingredientRepository;
     private final RecipeMapper recipeMapper;
     private final TagRepository tagRepository;
+    private final MasterDataService masterDataService;
+    private final MasterDataMapper masterDataMapper;
 
     @Override
     public RecipeDetailsDto create(RecipeCreateRequest recipeCreateRequest) {
 
         RecipeEntity recipe = getRecipeEntity(recipeCreateRequest);
         RecipeEntity saved = recipeRepository.save(recipe);
-        return recipeMapper.toRecipeDetails(getFullRecipe(saved.getId()));
+        return get(saved.getId());
     }
 
     @Override
@@ -73,8 +79,16 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @CheckHouseholdAccess(type = HouseholdOwnedResourceType.RECIPE)
     public RecipeDetailsDto get(Long id) {
-        RecipeEntity recipe = getFullRecipe(id);
-        return recipeMapper.toRecipeDetails(recipe);
+        RecipeEntity recipe = getRecipeWithIngredients(id);
+        RecipeDetailsDto dto = recipeMapper.toRecipeDetails(recipe);
+        Long recipeId = recipe.getId();
+
+        dto.setAllergies(computeAllergies(recipe));
+        dto.setTags(masterDataMapper.toTagSet(recipeRepository.findTagsByRecipeId(recipeId)));
+        dto.setInstructions(recipeRepository.findInstructionsByRecipeId(recipeId));
+        dto.setNotes(recipeRepository.findNotesByRecipeId(recipeId));
+
+        return dto;
     }
 
     @Override
@@ -90,8 +104,8 @@ public class RecipeServiceImpl implements RecipeService {
         recipeRepository.delete(recipe);
     }
 
-    private RecipeEntity getFullRecipe(Long id) {
-        return recipeRepository.getFullEntityById(id).orElseThrow(
+    private RecipeEntity getRecipeWithIngredients(Long id) {
+        return recipeRepository.findRecipeWithIngredients(id).orElseThrow(
                 () -> new ServiceException(ErrorCode.RECIPE_NOT_FOUND.format(id), ErrorCode.RECIPE_NOT_FOUND));
     }
 
@@ -108,6 +122,17 @@ public class RecipeServiceImpl implements RecipeService {
         recipe.setTags(getTags(recipeCreateRequest.getTagIds()));
         recipe.setIngredients(getIngredients(recipeCreateRequest.getIngredients(), recipe));
         return recipe;
+    }
+
+    private Set<AllergyType> computeAllergies(RecipeEntity entity) {
+        Map<Long, IngredientDto> ingredientMap = masterDataService.getIngredients();
+        return entity.getIngredients().stream()
+                .map(RecipeIngredientEntity::getIngredient)
+                .map(IngredientEntity::getId)
+                .map(ingredientMap::get)
+                .filter(Objects::nonNull)
+                .flatMap(ing -> ing.allergies().stream())
+                .collect(Collectors.toSet());
     }
 
     private List<RecipeIngredientEntity> getIngredients(List<RecipeIngredientCreateRequestDto> ingredients, RecipeEntity recipe) {
