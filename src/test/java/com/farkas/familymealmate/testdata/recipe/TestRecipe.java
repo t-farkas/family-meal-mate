@@ -5,11 +5,12 @@ import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientCre
 import com.farkas.familymealmate.model.entity.RecipeEntity;
 
 import java.util.List;
+import java.util.Set;
 
 public record TestRecipe(
         Long id,
         String title,
-        List<String> notes,
+        Set<String> notes,
         List<String> instructions,
         List<TestRecipeIngredient> ingredients
 ) {

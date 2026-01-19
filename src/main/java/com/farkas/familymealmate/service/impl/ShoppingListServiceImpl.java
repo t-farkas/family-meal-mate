@@ -1,7 +1,7 @@
 package com.farkas.familymealmate.service.impl;
 
 import com.farkas.familymealmate.exception.ServiceException;
-import com.farkas.familymealmate.mapper.ShoppingListMapper;
+import com.farkas.familymealmate.mapper.shoppinglist.ShoppingListMapper;
 import com.farkas.familymealmate.model.dto.VersionDto;
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingItemUpdateRequest;
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingListDto;

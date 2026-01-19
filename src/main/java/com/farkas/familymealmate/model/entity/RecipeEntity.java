@@ -23,13 +23,14 @@ public class RecipeEntity extends BaseEntity implements HouseholdOwned {
     private Integer totalTime;
     private Integer serves;
 
-    @ElementCollection
+    @ElementCollection(fetch =  FetchType.LAZY)
     @Column(name = "instruction")
+    @OrderColumn(name = "step_number")
     private List<String> instructions;
 
-    @ElementCollection
+    @ElementCollection(fetch =  FetchType.LAZY)
     @Column(name = "note")
-    private List<String> notes;
+    private Set<String> notes;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private HouseholdEntity household;
@@ -54,9 +55,9 @@ public class RecipeEntity extends BaseEntity implements HouseholdOwned {
         return instructions;
     }
 
-    public List<String> getNotes() {
+    public Set<String> getNotes() {
         if (notes == null) {
-            instructions = new ArrayList<>();
+            notes = new HashSet<>();
         }
         return notes;
     }

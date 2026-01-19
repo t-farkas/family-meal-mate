@@ -1,4 +1,4 @@
-package com.farkas.familymealmate.mapper;
+package com.farkas.familymealmate.mapper.recipe;
 
 import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientCreateRequestDto;
 import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientDto;

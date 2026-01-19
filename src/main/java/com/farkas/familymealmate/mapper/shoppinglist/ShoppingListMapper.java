@@ -1,4 +1,4 @@
-package com.farkas.familymealmate.mapper;
+package com.farkas.familymealmate.mapper.shoppinglist;
 
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingListDto;
 import com.farkas.familymealmate.model.entity.ShoppingListEntity;

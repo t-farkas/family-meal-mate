@@ -1,5 +1,6 @@
 package com.farkas.familymealmate.model.dto.household;
 
+import com.farkas.familymealmate.model.dto.familymember.FamilyMemberDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,5 +15,5 @@ import java.util.List;
 public class HouseholdDetailsDto {
     private String name;
     private String joinId;
-    private List<HouseholdMemberDto> members;
+    private List<FamilyMemberDto> members;
 }

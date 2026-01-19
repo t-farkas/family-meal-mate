@@ -1,4 +1,4 @@
-package com.farkas.familymealmate.mapper;
+package com.farkas.familymealmate.mapper.household;
 
 import com.farkas.familymealmate.model.dto.household.HouseholdDetailsDto;
 import com.farkas.familymealmate.model.dto.household.HouseholdDto;

@@ -1,5 +1,7 @@
 package com.farkas.familymealmate.mapper;
 
+import com.farkas.familymealmate.mapper.recipe.RecipeIngredientMapper;
+import com.farkas.familymealmate.mapper.recipe.RecipeMapper;
 import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
 import com.farkas.familymealmate.model.entity.IngredientEntity;
 import com.farkas.familymealmate.model.entity.RecipeEntity;

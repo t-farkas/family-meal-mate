@@ -1,7 +1,7 @@
 package com.farkas.familymealmate.service.impl;
 
 import com.farkas.familymealmate.exception.ServiceException;
-import com.farkas.familymealmate.mapper.MealPlanMapper;
+import com.farkas.familymealmate.mapper.mealplan.MealPlanMapper;
 import com.farkas.familymealmate.model.dto.VersionDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanDetailsDto;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;

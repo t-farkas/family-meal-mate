@@ -1,4 +1,4 @@
-package com.farkas.familymealmate.mapper;
+package com.farkas.familymealmate.mapper.mealplan;
 
 import com.farkas.familymealmate.model.dto.mealplan.MealSlotDetailsDto;
 import com.farkas.familymealmate.model.entity.MealSlotEntity;

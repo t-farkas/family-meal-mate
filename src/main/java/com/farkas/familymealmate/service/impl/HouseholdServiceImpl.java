@@ -1,7 +1,7 @@
 package com.farkas.familymealmate.service.impl;
 
 import com.farkas.familymealmate.exception.ServiceException;
-import com.farkas.familymealmate.mapper.HouseholdMapper;
+import com.farkas.familymealmate.mapper.household.HouseholdMapper;
 import com.farkas.familymealmate.model.dto.household.HouseholdDetailsDto;
 import com.farkas.familymealmate.model.entity.FamilyMemberEntity;
 import com.farkas.familymealmate.model.entity.HouseholdEntity;
