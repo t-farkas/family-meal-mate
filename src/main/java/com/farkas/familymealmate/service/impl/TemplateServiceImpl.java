@@ -123,7 +123,7 @@ public class TemplateServiceImpl implements TemplateService {
 
     private MealPlanEntity save(MealPlanEntity template) {
         try {
-            return mealPlanRepository.save(template);
+            return mealPlanRepository.saveAndFlush(template);
         } catch (DataIntegrityViolationException e) {
             throw new ServiceException(
                     ErrorCode.TEMPLATE_NAME_ALREADY_EXISTS.format(template.getTemplateName()),
