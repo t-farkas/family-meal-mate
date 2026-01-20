@@ -14,12 +14,13 @@ import java.util.Set;
 @Setter
 @Entity(name = "Ingredient")
 @Table(name = "ingredient")
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class IngredientEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_ingredient")
     @SequenceGenerator(name = "seq_ingredient", sequenceName = "seq_ingredient", allocationSize = 100)
+    @EqualsAndHashCode.Include
     private Long id;
 
 

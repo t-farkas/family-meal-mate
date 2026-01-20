@@ -15,12 +15,13 @@ import java.util.Set;
 @Table(name = "recipe")
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class RecipeEntity extends BaseEntity implements HouseholdOwned {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_recipe")
     @SequenceGenerator(name = "seq_recipe", sequenceName = "seq_recipe", allocationSize = 1)
+    @EqualsAndHashCode.Include
     private Long id;
 
     private String title;

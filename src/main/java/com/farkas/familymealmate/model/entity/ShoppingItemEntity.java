@@ -12,12 +12,13 @@ import java.math.BigDecimal;
 @Setter
 @Entity
 @Table(name = "shopping_item")
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class ShoppingItemEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_shopping_item")
     @SequenceGenerator(name = "seq_shopping_item", sequenceName = "seq_shopping_item", allocationSize = 40)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -12,12 +12,13 @@ import java.time.DayOfWeek;
 @Setter
 @Entity
 @Table(name = "meal_slot")
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class MealSlotEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_meal_slot")
     @SequenceGenerator(name = "seq_meal_slot", sequenceName = "seq_meal_slot", allocationSize = 40)
+    @EqualsAndHashCode.Include
     private Long id;
 
     private String note;

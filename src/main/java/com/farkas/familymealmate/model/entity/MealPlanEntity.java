@@ -14,12 +14,13 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "meal_plan")
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class MealPlanEntity extends BaseEntity implements HouseholdOwned {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_meal_plan")
     @SequenceGenerator(name = "seq_meal_plan", sequenceName = "seq_meal_plan", allocationSize = 2)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Version

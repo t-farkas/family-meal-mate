@@ -8,12 +8,13 @@ import lombok.*;
 @Entity
 @NoArgsConstructor
 @Table(name = "tag")
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class TagEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_tag")
     @SequenceGenerator(name = "seq_tag", sequenceName = "seq_tag", allocationSize = 100)
+    @EqualsAndHashCode.Include
     private Long id;
 
     private String name;

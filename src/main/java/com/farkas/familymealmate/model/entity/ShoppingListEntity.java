@@ -13,12 +13,13 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "shopping_list")
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class ShoppingListEntity extends BaseEntity implements HouseholdOwned {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_shopping_list")
     @SequenceGenerator(name = "seq_shopping_list", sequenceName = "seq_shopping_list", allocationSize = 1)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Version
