@@ -15,6 +15,11 @@ import java.util.Set;
 @Table(name = "household")
 public class HouseholdEntity extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_household")
+    @SequenceGenerator(name = "seq_household", sequenceName = "seq_household", allocationSize = 1)
+    private Long id;
+
     String joinId;
     String name;
 

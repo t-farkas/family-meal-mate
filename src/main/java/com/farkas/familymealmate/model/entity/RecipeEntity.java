@@ -18,6 +18,11 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class RecipeEntity extends BaseEntity implements HouseholdOwned {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_recipe")
+    @SequenceGenerator(name = "seq_recipe", sequenceName = "seq_recipe", allocationSize = 1)
+    private Long id;
+
     private String title;
     private String description;
     private Integer totalTime;

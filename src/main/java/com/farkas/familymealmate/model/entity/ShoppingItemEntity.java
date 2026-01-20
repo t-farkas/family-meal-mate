@@ -15,6 +15,11 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class ShoppingItemEntity extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_shopping_item")
+    @SequenceGenerator(name = "seq_shopping_item", sequenceName = "seq_shopping_item", allocationSize = 40)
+    private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shopping_list_id", nullable = false)
     private ShoppingListEntity shoppingList;

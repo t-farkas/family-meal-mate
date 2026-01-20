@@ -16,6 +16,11 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class ShoppingListEntity extends BaseEntity implements HouseholdOwned {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_shopping_list")
+    @SequenceGenerator(name = "seq_shopping_list", sequenceName = "seq_shopping_list", allocationSize = 1)
+    private Long id;
+
     @Version
     private Long version;
 

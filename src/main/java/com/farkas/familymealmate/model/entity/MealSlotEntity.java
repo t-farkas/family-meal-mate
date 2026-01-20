@@ -15,6 +15,11 @@ import java.time.DayOfWeek;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class MealSlotEntity extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_meal_slot")
+    @SequenceGenerator(name = "seq_meal_slot", sequenceName = "seq_meal_slot", allocationSize = 40)
+    private Long id;
+
     private String note;
 
     @Enumerated(EnumType.STRING)

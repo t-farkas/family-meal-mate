@@ -17,6 +17,11 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class MealPlanEntity extends BaseEntity implements HouseholdOwned {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_meal_plan")
+    @SequenceGenerator(name = "seq_meal_plan", sequenceName = "seq_meal_plan", allocationSize = 2)
+    private Long id;
+
     @Version
     private Long version;
 

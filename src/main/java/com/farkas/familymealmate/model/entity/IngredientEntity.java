@@ -17,6 +17,12 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class IngredientEntity extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_ingredient")
+    @SequenceGenerator(name = "seq_ingredient", sequenceName = "seq_ingredient", allocationSize = 100)
+    private Long id;
+
+
     @Column(nullable = false)
     private String name;
 

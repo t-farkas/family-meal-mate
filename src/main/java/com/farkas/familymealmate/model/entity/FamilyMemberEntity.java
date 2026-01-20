@@ -18,6 +18,11 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class FamilyMemberEntity extends BaseEntity implements HouseholdOwned {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_family_member")
+    @SequenceGenerator(name = "seq_family_member", sequenceName = "seq_family_member", allocationSize = 1)
+    private Long id;
+
     @Column(name = "name")
     private String name;
 

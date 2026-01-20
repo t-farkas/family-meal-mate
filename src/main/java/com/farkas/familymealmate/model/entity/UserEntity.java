@@ -11,6 +11,11 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class UserEntity extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_user")
+    @SequenceGenerator(name = "seq_user", sequenceName = "seq_user", allocationSize = 1)
+    private Long id;
+
     @Column(unique = true, nullable = false)
     private String email;
 
