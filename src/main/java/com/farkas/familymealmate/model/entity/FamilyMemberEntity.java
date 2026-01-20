@@ -1,5 +1,6 @@
 package com.farkas.familymealmate.model.entity;
 
+import com.farkas.familymealmate.model.common.HouseholdOwned;
 import com.farkas.familymealmate.model.enums.AllergyType;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
@@ -15,7 +16,7 @@ import java.util.Set;
 @Entity
 @Table(name = "family_member")
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class FamilyMemberEntity extends BaseEntity {
+public class FamilyMemberEntity extends BaseEntity implements HouseholdOwned {
 
     @Column(name = "name")
     private String name;

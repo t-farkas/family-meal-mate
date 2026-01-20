@@ -7,8 +7,11 @@ import com.farkas.familymealmate.model.dto.familymember.FamilyMemberDetailsDto;
 import com.farkas.familymealmate.model.entity.FamilyMemberEntity;
 import com.farkas.familymealmate.model.entity.HouseholdEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
+import com.farkas.familymealmate.model.enums.HouseholdOwnedResourceType;
 import com.farkas.familymealmate.repository.FamilyMemberRepository;
 import com.farkas.familymealmate.security.CurrentUserHelper;
+import com.farkas.familymealmate.security.annotation.CheckHouseholdAccess;
+import com.farkas.familymealmate.service.FamilyMemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class FamilyMemberServiceImpl implements com.farkas.familymealmate.service.FamilyMemberService {
+public class FamilyMemberServiceImpl implements FamilyMemberService {
 
     private final FamilyMemberRepository repository;
     private final FamilyMemberMapper mapper;
@@ -35,19 +38,13 @@ public class FamilyMemberServiceImpl implements com.farkas.familymealmate.servic
     }
 
     @Override
+    @CheckHouseholdAccess(type = HouseholdOwnedResourceType.FAMILY_MEMBER)
     public FamilyMemberDetailsDto getFamilyMember(Long id) {
-        FamilyMemberEntity entity = repository.findById(id)
+
+        FamilyMemberEntity entity = repository.findWithAllergiesAndHouseholdById(id)
                 .orElseThrow(() -> new ServiceException(
                         ErrorCode.FAMILY_MEMBER_NOT_FOUND.format(id),
                         ErrorCode.FAMILY_MEMBER_NOT_FOUND));
-
-        Long householdId = CurrentUserHelper.getCurrentHousehold().getId();
-
-        if (!entity.getHousehold().getId().equals(householdId)) {
-            throw new ServiceException(
-                    ErrorCode.NO_AUTHORIZATION.format(id),
-                    ErrorCode.NO_AUTHORIZATION);
-        }
 
         return mapper.toDto(entity);
     }
