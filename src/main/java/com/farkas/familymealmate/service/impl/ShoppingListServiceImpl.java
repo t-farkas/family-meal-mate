@@ -85,7 +85,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         Long householdId = CurrentUserHelper.getCurrentHousehold().getId();
 
         ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
-        MealPlanEntity mealPlan = mealPlanService.getEntity(week);
+        MealPlanEntity mealPlan = mealPlanService.getFullEntity(week);
 
         List<ShoppingItemEntity> allItems = mergeShoppingListWithMealPlan(mealPlan, shoppingList);
         List<ShoppingItemEntity> aggregated = ShoppingItemAggregator.aggregate(allItems);

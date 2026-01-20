@@ -117,7 +117,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     private MealPlanEntity getMealPlanEntity(HouseholdEntity currentHousehold, LocalDate weekStart) {
-        return mealPlanRepository.findByHouseholdIdAndWeekStart(currentHousehold.getId(), weekStart)
+        return mealPlanRepository.findWithMealSlotsAndRecipesByHouseholdIdAndWeekStart(currentHousehold.getId(), weekStart)
                 .orElseThrow(() -> new ServiceException(ErrorCode.MEAL_PLAN_NOT_FOUND.format("current"), ErrorCode.MEAL_PLAN_NOT_FOUND));
     }
 

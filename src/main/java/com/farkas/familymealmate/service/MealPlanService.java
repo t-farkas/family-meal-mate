@@ -17,7 +17,7 @@ public interface MealPlanService {
 
     MealPlanDetailsDto get(MealPlanWeek week);
 
-    MealPlanEntity getEntity(MealPlanWeek week);
+    MealPlanEntity getFullEntity(MealPlanWeek week);
 
     MealPlanDetailsDto update(MealPlanUpdateRequest mealPlanRequest);
 

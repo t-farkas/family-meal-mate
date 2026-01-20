@@ -33,10 +33,11 @@ public class MealPlanEntity extends BaseEntity implements HouseholdOwned {
     @JoinColumn(name = "household_id", nullable = false)
     private HouseholdEntity household;
 
-    @OneToMany(mappedBy = "mealPlan",
+    @OneToMany(
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
+    @JoinColumn(name = "meal_plan_id")
     private List<MealSlotEntity> mealSlots;
 
     public List<MealSlotEntity> getMealSlots() {

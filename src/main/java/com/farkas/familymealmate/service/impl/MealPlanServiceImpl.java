@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +50,7 @@ public class MealPlanServiceImpl implements MealPlanService {
     public MealPlanDetailsDto get(MealPlanWeek week) {
         HouseholdEntity household = CurrentUserHelper.getCurrentHousehold();
         LocalDate weekStart = getWeekStart(week);
-        MealPlanEntity mealPlan = getMealPlanEntity(household, weekStart);
+        MealPlanEntity mealPlan = getMealPlanEntityWithMealSlotsAndRecipes(household, weekStart);
 
         return mealPlanMapper.toDto(mealPlan);
     }
@@ -64,38 +64,46 @@ public class MealPlanServiceImpl implements MealPlanService {
     public MealPlanDetailsDto update(MealPlanUpdateRequest updateRequest) {
         HouseholdEntity household = CurrentUserHelper.getCurrentHousehold();
         LocalDate weekStart = getWeekStart(updateRequest.week());
-        MealPlanEntity mealPlanEntity = getMealPlanEntity(household, weekStart);
+        MealPlanEntity mealPlan = getMealPlanEntityWithMealSlots(household, weekStart);
+        versionCheck(mealPlan, updateRequest.version());
 
-        MealPlanEntity entity = getEditedMealPlanEntity(updateRequest, mealPlanEntity);
+        updateMealSlots(updateRequest, mealPlan);
 
         try {
-            MealPlanEntity saved = mealPlanRepository.save(entity);
+            MealPlanEntity saved = mealPlanRepository.saveAndFlush(mealPlan);
             return mealPlanMapper.toDto(saved);
         } catch (ObjectOptimisticLockingFailureException exception) {
             throw new ServiceException(ErrorCode.MEAL_PLAN_VERSION_MISMATCH);
         }
     }
 
-    private MealPlanEntity getEditedMealPlanEntity(MealPlanUpdateRequest updateRequest, MealPlanEntity mealPlanEntity) {
-        MealPlanEntity entity = new MealPlanEntity();
-        entity.setId(mealPlanEntity.getId());
-        entity.setHousehold(mealPlanEntity.getHousehold());
-        entity.setWeekStart(mealPlanEntity.getWeekStart());
-        entity.getMealSlots().addAll(mapMealSlots(updateRequest, entity));
-        entity.setVersion(updateRequest.version());
-        return entity;
+    private void versionCheck(MealPlanEntity mealPlanEntity, Long version) {
+        if (!mealPlanEntity.getVersion().equals(version)) {
+            throw new ServiceException(ErrorCode.MEAL_PLAN_VERSION_MISMATCH);
+        }
+    }
+
+    private void updateMealSlots(MealPlanUpdateRequest updateRequest, MealPlanEntity mealPlan) {
+        mealPlan.getMealSlots().clear();
+        mealPlan.getMealSlots().addAll(
+                updateRequest.mealSlots().stream()
+                        .map(slot -> createMealSlot(slot, mealPlan))
+                        .toList());
     }
 
     @Override
-    public MealPlanEntity getEntity(MealPlanWeek week) {
+    public MealPlanEntity getFullEntity(MealPlanWeek week) {
         HouseholdEntity household = CurrentUserHelper.getCurrentHousehold();
         LocalDate weekStart = getWeekStart(week);
-        return getMealPlanEntity(household, weekStart);
+        return getMealPlanEntityWithMealSlotsAndRecipes(household, weekStart);
     }
 
     @Override
     public VersionDto getVersion(MealPlanWeek week) {
-        MealPlanEntity mealPlan = getEntity(week);
+        HouseholdEntity household = CurrentUserHelper.getCurrentHousehold();
+        LocalDate weekStart = getWeekStart(week);
+
+        MealPlanEntity mealPlan = getMealPlanEntity(household, weekStart);
         return new VersionDto(mealPlan.getVersion());
     }
 
@@ -106,10 +114,14 @@ public class MealPlanServiceImpl implements MealPlanService {
         };
     }
 
-    private List<MealSlotEntity> mapMealSlots(MealPlanUpdateRequest mealPlanRequest, MealPlanEntity mealPlanEntity) {
-        return mealPlanRequest.mealSlots().stream()
-                .map(slot -> createEntity(slot, mealPlanEntity))
-                .toList();
+    private MealPlanEntity getMealPlanEntityWithMealSlotsAndRecipes(HouseholdEntity household, LocalDate weekStart) {
+        return mealPlanRepository.findWithMealSlotsAndRecipesByHouseholdIdAndWeekStart(household.getId(), weekStart)
+                .orElseThrow(() -> new ServiceException(ErrorCode.MEAL_PLAN_NOT_FOUND.format("current"), ErrorCode.MEAL_PLAN_NOT_FOUND));
+    }
+
+    private MealPlanEntity getMealPlanEntityWithMealSlots(HouseholdEntity household, LocalDate weekStart) {
+        return mealPlanRepository.findWithMealSlotsByHouseholdIdAndWeekStart(household.getId(), weekStart)
+                .orElseThrow(() -> new ServiceException(ErrorCode.MEAL_PLAN_NOT_FOUND.format("current"), ErrorCode.MEAL_PLAN_NOT_FOUND));
     }
 
     private MealPlanEntity getMealPlanEntity(HouseholdEntity household, LocalDate weekStart) {
@@ -126,7 +138,7 @@ public class MealPlanServiceImpl implements MealPlanService {
         mealPlanRepository.save(mealPlanEntity);
     }
 
-    private MealSlotEntity createEntity(MealSlotUpdateRequest slot, MealPlanEntity mealPlan) {
+    private MealSlotEntity createMealSlot(MealSlotUpdateRequest slot, MealPlanEntity mealPlan) {
         MealSlotEntity entity = new MealSlotEntity();
         entity.setMealPlan(mealPlan);
         entity.setMealType(slot.mealType());
