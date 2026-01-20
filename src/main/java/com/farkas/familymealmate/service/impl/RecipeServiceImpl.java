@@ -91,11 +91,6 @@ public class RecipeServiceImpl implements RecipeService {
         return dto;
     }
 
-    @Override
-    @CheckHouseholdAccess(type = HouseholdOwnedResourceType.RECIPE)
-    public RecipeEntity getEntity(Long id) {
-        return getRecipe(id);
-    }
 
     @Override
     @CheckHouseholdAccess(type = HouseholdOwnedResourceType.RECIPE)

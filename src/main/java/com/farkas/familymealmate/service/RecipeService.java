@@ -5,7 +5,6 @@ import com.farkas.familymealmate.model.dto.recipe.RecipeCreateRequest;
 import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
 import com.farkas.familymealmate.model.dto.recipe.RecipeFilterRequest;
 import com.farkas.familymealmate.model.dto.recipe.RecipeListDto;
-import com.farkas.familymealmate.model.entity.RecipeEntity;
 
 public interface RecipeService {
 
@@ -14,8 +13,6 @@ public interface RecipeService {
     PagingResponse<RecipeListDto> list(RecipeFilterRequest request);
 
     RecipeDetailsDto get(Long id);
-
-    RecipeEntity getEntity(Long id);
 
     void delete(Long id);
 }

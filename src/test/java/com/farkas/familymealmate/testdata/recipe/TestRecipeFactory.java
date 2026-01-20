@@ -2,6 +2,7 @@ package com.farkas.familymealmate.testdata.recipe;
 
 import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
 import com.farkas.familymealmate.model.entity.RecipeEntity;
+import com.farkas.familymealmate.repository.RecipeRepository;
 import com.farkas.familymealmate.service.RecipeService;
 import org.springframework.stereotype.Component;
 
@@ -9,9 +10,11 @@ import org.springframework.stereotype.Component;
 public class TestRecipeFactory {
 
     private final RecipeService recipeService;
+    private final RecipeRepository recipeRepository;
 
-    public TestRecipeFactory(RecipeService recipeService) {
+    public TestRecipeFactory(RecipeService recipeService, RecipeRepository recipeRepository) {
         this.recipeService = recipeService;
+        this.recipeRepository = recipeRepository;
     }
 
     public RecipeEntity createRecipe(TestRecipe recipe) {
@@ -20,6 +23,6 @@ public class TestRecipeFactory {
     }
 
     public RecipeEntity getEntity(Long id){
-        return recipeService.getEntity(id);
+        return recipeRepository.findById(id).get();
     }
 }

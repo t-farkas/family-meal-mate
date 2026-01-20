@@ -38,4 +38,6 @@ public interface RecipeRepository extends JpaRepository<RecipeEntity, Long>, Jpa
     @NonNull
     Page<RecipeEntity> findAll(@NonNull Specification<RecipeEntity> spec, @NonNull Pageable pageable);
 
+    List<RecipeEntity> findAllByIdInAndHouseholdId(List<Long> ids, Long householdId);
+
 }

@@ -9,12 +9,13 @@ import com.farkas.familymealmate.model.dto.mealplan.MealSlotUpdateRequest;
 import com.farkas.familymealmate.model.entity.HouseholdEntity;
 import com.farkas.familymealmate.model.entity.MealPlanEntity;
 import com.farkas.familymealmate.model.entity.MealSlotEntity;
+import com.farkas.familymealmate.model.entity.RecipeEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.repository.MealPlanRepository;
+import com.farkas.familymealmate.repository.RecipeRepository;
 import com.farkas.familymealmate.security.CurrentUserHelper;
 import com.farkas.familymealmate.service.MealPlanService;
-import com.farkas.familymealmate.service.RecipeService;
 import com.farkas.familymealmate.util.MealPlanDateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -22,6 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -31,7 +36,7 @@ public class MealPlanServiceImpl implements MealPlanService {
 
     private final MealPlanRepository mealPlanRepository;
     private final MealPlanMapper mealPlanMapper;
-    private final RecipeService recipeService;
+    private final RecipeRepository recipeRepository;
 
     @Override
     public void create(HouseholdEntity household) {
@@ -67,14 +72,26 @@ public class MealPlanServiceImpl implements MealPlanService {
         MealPlanEntity mealPlan = getMealPlanEntityWithMealSlots(household, weekStart);
         versionCheck(mealPlan, updateRequest.version());
 
-        updateMealSlots(updateRequest, mealPlan);
+        Map<Long, RecipeEntity> recipesById = getRecipesByIdMap(updateRequest, household);
+        updateMealSlots(updateRequest, mealPlan, recipesById);
 
         try {
-            MealPlanEntity saved = mealPlanRepository.saveAndFlush(mealPlan);
+            MealPlanEntity saved = mealPlanRepository.save(mealPlan);
             return mealPlanMapper.toDto(saved);
         } catch (ObjectOptimisticLockingFailureException exception) {
             throw new ServiceException(ErrorCode.MEAL_PLAN_VERSION_MISMATCH);
         }
+    }
+
+    private Map<Long, RecipeEntity> getRecipesByIdMap(MealPlanUpdateRequest updateRequest, HouseholdEntity household) {
+        List<Long> recipeIdList = updateRequest.mealSlots().stream()
+                .map(MealSlotUpdateRequest::recipeId)
+                .distinct()
+                .toList();
+
+        return recipeRepository.findAllByIdInAndHouseholdId(recipeIdList, household.getId())
+                .stream()
+                .collect(Collectors.toMap(RecipeEntity::getId, Function.identity()));
     }
 
     private void versionCheck(MealPlanEntity mealPlanEntity, Long version) {
@@ -83,12 +100,24 @@ public class MealPlanServiceImpl implements MealPlanService {
         }
     }
 
-    private void updateMealSlots(MealPlanUpdateRequest updateRequest, MealPlanEntity mealPlan) {
+    private void updateMealSlots(MealPlanUpdateRequest updateRequest, MealPlanEntity mealPlan, Map<Long, RecipeEntity> recipesById) {
         mealPlan.getMealSlots().clear();
+
         mealPlan.getMealSlots().addAll(
                 updateRequest.mealSlots().stream()
-                        .map(slot -> createMealSlot(slot, mealPlan))
+                        .map(slot -> {
+                            RecipeEntity recipeEntity = getRecipeEntity(recipesById, slot.recipeId());
+                            return createMealSlot(slot, mealPlan, recipeEntity);
+                        })
                         .toList());
+    }
+
+    private RecipeEntity getRecipeEntity(Map<Long, RecipeEntity> recipesById, Long recipeId) {
+        RecipeEntity recipeEntity = recipesById.get(recipeId);
+        if (recipeEntity == null) {
+            throw new ServiceException(ErrorCode.RECIPE_NOT_FOUND.format(recipeId), ErrorCode.RECIPE_NOT_FOUND);
+        }
+        return recipeEntity;
     }
 
     @Override
@@ -138,13 +167,13 @@ public class MealPlanServiceImpl implements MealPlanService {
         mealPlanRepository.save(mealPlanEntity);
     }
 
-    private MealSlotEntity createMealSlot(MealSlotUpdateRequest slot, MealPlanEntity mealPlan) {
+    private MealSlotEntity createMealSlot(MealSlotUpdateRequest slot, MealPlanEntity mealPlan, RecipeEntity recipe) {
         MealSlotEntity entity = new MealSlotEntity();
         entity.setMealPlan(mealPlan);
         entity.setMealType(slot.mealType());
         entity.setDay(slot.day());
         entity.setNote(slot.note());
-        entity.setRecipe(recipeService.getEntity(slot.recipeId()));
+        entity.setRecipe(recipe);
 
         return entity;
     }
