@@ -30,17 +30,32 @@ FamilyMealMate is a demo backend application to manage shared household data suc
 - Spring Boot
 - Hibernate / JPA
 - Liquibase 
+- Redis for caching
 - PostgreSQL (H2 for tests)
 - MapStruct 
 - Swagger / OpenAPI and Postman 
 - JUnit 5, Mockito
 
 ## Getting started
+
+### Prerequisites
+- Docker + Docker Compose
+- Java 17
+- Git
+
+### Steps
 1. Clone the repository
-2. Configure database connection in `application.yml`
-3. Run the application: ./gradlew bootRun 
-4. Swagger UI: Try requests interactively http://localhost:8080/swagger-ui/index.html
-5. Postman Collection: Example requests, includes JWT token automation
+2. Start infrastructure(PostgreSQL + Redis):
+
+   `docker compose up -d`
+3. Make sure `application.yml` is correctly defined for your environment
+3. Run the application:
+
+   `./gradlew bootRun`
+4. Swagger UI - Try requests interactively 
+
+6. http://localhost:8080/swagger-ui/index.html
+5. Postman Collection - example requests with JWT automation
 
 ### Postman Collection
 - Import the collection: `postman/Family Meal Mate API.postman_collection.json`
@@ -51,11 +66,21 @@ FamilyMealMate is a demo backend application to manage shared household data suc
 - Unit tests for pure utility components (e.g. join ID generation, ShoppingItemAggregator)
 - Focus on integration tests to validate real behavior rather than mocking internal state
 
+## Scalability
+- Stateless architecture enabling horizontal scaling behind a load balancer
+- Caching: Master data is cached using Redis to reduce DB queries
+- Frequently queried columns (e.g., Household.joinId, User.email, MealPlan.weekStart + household) are indexed via unique constraints or composite indexes to ensure fast lookups and enforce data integrity
+- N+1 query problems have been addressed using entity graphs and batching
+- Endpoints returning potentially large collections (e.g., recipe lists) support pagination to reduce memory usage and improve response times
+
+Future scalability considerations: expensive operations (e.g., sending emails) could be performed asynchronously; application metrics could be added to monitor performance in production
+
+
 ## Future Improvements
 - Angular frontend
 - Email based Household invitations
 - Store recipe images
-- Expand recipe search & filtering: By tags, dietary constraints, ingredients, etc.
+- Expand recipe search & filtering with dietary constraints
 - Admin interface: Master data CRUD endpoints
 - Incident handling: Let users send feedback / error report, Admins can query and resolve them
 

@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.security;
 
-import com.farkas.familymealmate.model.entity.UserEntity;
+import com.farkas.familymealmate.model.entity.household.UserEntity;
 import com.farkas.familymealmate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +16,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByEmail(username)
+        UserEntity user = userRepository.getFullEntityByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
         return new CustomUserDetails(user);

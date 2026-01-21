@@ -1,6 +1,8 @@
-package com.farkas.familymealmate.model.entity;
+package com.farkas.familymealmate.model.entity.shoppinglist;
 
 import com.farkas.familymealmate.model.common.HouseholdOwned;
+import com.farkas.familymealmate.model.entity.DirtyAggregateRoot;
+import com.farkas.familymealmate.model.entity.household.HouseholdEntity;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,13 +15,19 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "shopping_list")
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class ShoppingListEntity extends BaseEntity implements HouseholdOwned {
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
+public class ShoppingListEntity extends DirtyAggregateRoot implements HouseholdOwned {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_shopping_list")
+    @SequenceGenerator(name = "seq_shopping_list", sequenceName = "seq_shopping_list", allocationSize = 1)
+    @EqualsAndHashCode.Include
+    private Long id;
 
     @Version
     private Long version;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "household_id", nullable = false)
     private HouseholdEntity household;
 

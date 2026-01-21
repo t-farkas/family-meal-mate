@@ -22,4 +22,8 @@
     <include file="/db/changelog/changes/15-remove-category-from-shopping-item.xml"/>
     <include file="/db/changelog/changes/16-add-version-to-shared-resources.xml"/>
     <include file="/db/changelog/changes/17-migrate-measurements.xml"/>
+    <include file="/db/changelog/changes/18-add-indexes.xml"/>
+    <include file="/db/changelog/changes/19-add-non-null-constraint-instructions-step-number.xml"/>
+    <include file="/db/changelog/changes/20-migrate-to-id-generation-sequence.xml"/>
+    <include file="/db/changelog/changes/21-id-generation-sequence-tests.xml"/>
 </databaseChangeLog>

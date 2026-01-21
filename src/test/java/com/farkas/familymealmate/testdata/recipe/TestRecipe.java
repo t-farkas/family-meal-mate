@@ -2,14 +2,17 @@ package com.farkas.familymealmate.testdata.recipe;
 
 import com.farkas.familymealmate.model.dto.recipe.RecipeCreateRequest;
 import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientCreateRequestDto;
-import com.farkas.familymealmate.model.entity.RecipeEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeIngredientEntity;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public record TestRecipe(
         Long id,
         String title,
-        List<String> notes,
+        Set<String> notes,
         List<String> instructions,
         List<TestRecipeIngredient> ingredients
 ) {
@@ -53,5 +56,11 @@ public record TestRecipe(
                 .instructions(instructions)
                 .ingredients(ingredientList)
                 .build();
+    }
+
+    public List<RecipeIngredientEntity> getRecipeIngredients(){
+        return ingredients.stream()
+                .map(TestRecipeIngredient::getRecipeIngredientEntity)
+                .collect(Collectors.toList());
     }
 }

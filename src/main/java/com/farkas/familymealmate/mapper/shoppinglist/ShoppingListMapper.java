@@ -1,7 +1,7 @@
-package com.farkas.familymealmate.mapper;
+package com.farkas.familymealmate.mapper.shoppinglist;
 
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingListDto;
-import com.farkas.familymealmate.model.entity.ShoppingListEntity;
+import com.farkas.familymealmate.model.entity.shoppinglist.ShoppingListEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

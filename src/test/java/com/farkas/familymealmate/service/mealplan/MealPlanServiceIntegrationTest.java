@@ -1,7 +1,7 @@
 package com.farkas.familymealmate.service.mealplan;
 
-import com.farkas.familymealmate.model.entity.MealPlanEntity;
-import com.farkas.familymealmate.model.entity.UserEntity;
+import com.farkas.familymealmate.model.entity.mealplan.MealPlanEntity;
+import com.farkas.familymealmate.model.entity.household.UserEntity;
 import com.farkas.familymealmate.repository.MealPlanRepository;
 import com.farkas.familymealmate.service.MealPlanService;
 import com.farkas.familymealmate.testdata.user.TestUserFactory;

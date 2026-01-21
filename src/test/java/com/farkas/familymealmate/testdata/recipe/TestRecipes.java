@@ -1,13 +1,14 @@
 package com.farkas.familymealmate.testdata.recipe;
 
 import java.util.List;
+import java.util.Set;
 
 public class TestRecipes {
 
     public static final TestRecipe CHICKEN_STIR_FRY = new TestRecipe(
             1L,
             "Chicken Stir Fry",
-            List.of("A lovely Chicken Stir Fry"),
+            Set.of("A lovely Chicken Stir Fry"),
             List.of(
                     "Cut chicken into strips",
                     "Stir fry with vegetables",
@@ -24,7 +25,7 @@ public class TestRecipes {
     public static final TestRecipe SPAGHETTI_BOLOGNESE = new TestRecipe(
             2L,
             "Spaghetti Bolognese",
-            List.of("Best Spaghetti Bolognese"),
+            Set.of("Best Spaghetti Bolognese"),
             List.of(
                     "Brown the beef",
                     "Add tomatoes and simmer",
@@ -41,7 +42,7 @@ public class TestRecipes {
     public static final TestRecipe VEGETABLE_OMELETTE = new TestRecipe(
             3L,
             "Vegetable Omelette",
-            List.of("Omelette Omelette"),
+            Set.of("Omelette Omelette"),
             List.of(
                     "Beat eggs",
                     "Cook vegetables",
@@ -57,7 +58,7 @@ public class TestRecipes {
     public static final TestRecipe OVERNIGHT_OATS = new TestRecipe(
             4L,
             "Overnight Oats",
-            List.of("Tasty Overnight Oats"),
+            Set.of("Tasty Overnight Oats"),
             List.of(
                     "Mix ingredients",
                     "Let soak overnight",
@@ -72,7 +73,7 @@ public class TestRecipes {
     public static final TestRecipe PANCAKES = new TestRecipe(
             5L,
             "Simple Pancakes",
-            List.of("Quick and Easy Pancakes"),
+            Set.of("Quick and Easy Pancakes"),
             List.of(
                     "Mix dry ingredients",
                     "Add wet ingredients",
@@ -88,7 +89,7 @@ public class TestRecipes {
     public static final TestRecipe VEGGIE_BOWL = new TestRecipe(
             6L,
             "Tomato Broccoli Bowl",
-            List.of("Light vegetable bowl with rice"),
+            Set.of("Light vegetable bowl with rice"),
             List.of(
                     "Chop vegetables",
                     "Cook rice",

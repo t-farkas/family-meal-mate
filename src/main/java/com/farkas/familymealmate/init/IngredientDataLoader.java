@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.init;
 
-import com.farkas.familymealmate.model.entity.IngredientEntity;
+import com.farkas.familymealmate.model.entity.masterdata.IngredientEntity;
 import com.farkas.familymealmate.model.enums.AllergyType;
 import com.farkas.familymealmate.model.enums.IngredientCategory;
 import com.farkas.familymealmate.repository.IngredientRepository;
@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +26,7 @@ public class IngredientDataLoader implements ApplicationRunner {
     private final IngredientRepository ingredientRepository;
 
     @Override
+    @Transactional
     public void run(ApplicationArguments args) {
         if (ingredientRepository.count() == 0) {
             loadIngredients();

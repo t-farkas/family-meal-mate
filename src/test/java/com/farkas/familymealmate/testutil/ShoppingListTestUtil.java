@@ -1,7 +1,7 @@
 package com.farkas.familymealmate.testutil;
 
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingItemDto;
-import com.farkas.familymealmate.model.entity.ShoppingItemEntity;
+import com.farkas.familymealmate.model.entity.shoppinglist.ShoppingItemEntity;
 import com.farkas.familymealmate.model.enums.Measurement;
 
 import java.util.List;

@@ -6,7 +6,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FamilyMemberListDto {
+public class FamilyMemberDto {
     private Long id;
     private String name;
 }

@@ -2,8 +2,8 @@ package com.farkas.familymealmate.service.mealplan;
 
 import com.farkas.familymealmate.exception.ServiceException;
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
-import com.farkas.familymealmate.model.entity.RecipeEntity;
-import com.farkas.familymealmate.model.entity.UserEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeEntity;
+import com.farkas.familymealmate.model.entity.household.UserEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.model.enums.MealType;

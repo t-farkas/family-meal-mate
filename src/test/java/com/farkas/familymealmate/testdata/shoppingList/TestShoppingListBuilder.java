@@ -2,9 +2,9 @@ package com.farkas.familymealmate.testdata.shoppingList;
 
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingItemUpdateRequest;
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingListUpdateRequest;
-import com.farkas.familymealmate.model.entity.IngredientEntity;
-import com.farkas.familymealmate.model.entity.ShoppingItemEntity;
-import com.farkas.familymealmate.model.entity.ShoppingListEntity;
+import com.farkas.familymealmate.model.entity.masterdata.IngredientEntity;
+import com.farkas.familymealmate.model.entity.shoppinglist.ShoppingItemEntity;
+import com.farkas.familymealmate.model.entity.shoppinglist.ShoppingListEntity;
 import com.farkas.familymealmate.testdata.recipe.TestRecipe;
 
 import java.util.ArrayList;

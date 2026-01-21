@@ -1,6 +1,7 @@
 package com.farkas.familymealmate.repository;
 
-import com.farkas.familymealmate.model.entity.ShoppingListEntity;
+import com.farkas.familymealmate.model.entity.shoppinglist.ShoppingListEntity;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +11,11 @@ import java.util.Optional;
 public interface ShoppingListRepository extends JpaRepository<ShoppingListEntity, Long> {
 
     Optional<ShoppingListEntity> findByHouseholdId(Long householdId);
+
+    @EntityGraph(attributePaths = "shoppingItems")
+    Optional<ShoppingListEntity> findWithShoppingItemsByHouseholdId(Long householdId);
+
+    @EntityGraph(attributePaths = {"shoppingItems", "shoppingItems.ingredient"})
+    Optional<ShoppingListEntity> findWithShoppingItemsAndIngredientsByHouseholdId(Long householdId);
 
 }

@@ -7,9 +7,6 @@ import java.util.Set;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 public class RecipeFilterRequest {
 
     private String name;

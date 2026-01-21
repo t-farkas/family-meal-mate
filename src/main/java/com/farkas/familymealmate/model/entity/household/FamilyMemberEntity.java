@@ -1,5 +1,7 @@
-package com.farkas.familymealmate.model.entity;
+package com.farkas.familymealmate.model.entity.household;
 
+import com.farkas.familymealmate.model.common.HouseholdOwned;
+import com.farkas.familymealmate.model.entity.BaseEntity;
 import com.farkas.familymealmate.model.enums.AllergyType;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
@@ -14,8 +16,14 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "family_member")
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class FamilyMemberEntity extends BaseEntity {
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
+public class FamilyMemberEntity extends BaseEntity implements HouseholdOwned {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_family_member")
+    @SequenceGenerator(name = "seq_family_member", sequenceName = "seq_family_member", allocationSize = 1)
+    @EqualsAndHashCode.Include
+    private Long id;
 
     @Column(name = "name")
     private String name;

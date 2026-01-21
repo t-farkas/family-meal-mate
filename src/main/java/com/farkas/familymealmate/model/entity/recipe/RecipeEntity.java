@@ -1,6 +1,10 @@
-package com.farkas.familymealmate.model.entity;
+package com.farkas.familymealmate.model.entity.recipe;
 
 import com.farkas.familymealmate.model.common.HouseholdOwned;
+import com.farkas.familymealmate.model.entity.BaseEntity;
+import com.farkas.familymealmate.model.entity.masterdata.TagEntity;
+import com.farkas.familymealmate.model.entity.household.FamilyMemberEntity;
+import com.farkas.familymealmate.model.entity.household.HouseholdEntity;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,21 +19,28 @@ import java.util.Set;
 @Table(name = "recipe")
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class RecipeEntity extends BaseEntity implements HouseholdOwned {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_recipe")
+    @SequenceGenerator(name = "seq_recipe", sequenceName = "seq_recipe", allocationSize = 1)
+    @EqualsAndHashCode.Include
+    private Long id;
 
     private String title;
     private String description;
     private Integer totalTime;
     private Integer serves;
 
-    @ElementCollection
+    @ElementCollection(fetch =  FetchType.LAZY)
     @Column(name = "instruction")
+    @OrderColumn(name = "step_number")
     private List<String> instructions;
 
-    @ElementCollection
+    @ElementCollection(fetch =  FetchType.LAZY)
     @Column(name = "note")
-    private List<String> notes;
+    private Set<String> notes;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private HouseholdEntity household;
@@ -44,7 +55,11 @@ public class RecipeEntity extends BaseEntity implements HouseholdOwned {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<TagEntity> tags;
 
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "recipe",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<RecipeIngredientEntity> ingredients;
 
     public List<String> getInstructions() {
@@ -54,9 +69,9 @@ public class RecipeEntity extends BaseEntity implements HouseholdOwned {
         return instructions;
     }
 
-    public List<String> getNotes() {
+    public Set<String> getNotes() {
         if (notes == null) {
-            instructions = new ArrayList<>();
+            notes = new HashSet<>();
         }
         return notes;
     }

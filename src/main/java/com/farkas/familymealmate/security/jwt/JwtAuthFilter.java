@@ -83,6 +83,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private void authenticate(HttpServletRequest request, HttpServletResponse response, String email, String token) throws IOException {
         UserDetails userDetails = customUserDetailService.loadUserByUsername(email);
+        logger.info("Authenticated user: " + userDetails.getUsername());
 
         if (jwtService.isTokenValid(token, userDetails.getUsername())) {
             UsernamePasswordAuthenticationToken authToken =

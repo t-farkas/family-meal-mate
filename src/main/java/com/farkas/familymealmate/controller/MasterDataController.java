@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,14 +25,14 @@ public class MasterDataController {
     @GetMapping("/tags")
     public ResponseEntity<List<TagDto>> getTags() {
 
-        List<TagDto> tags = masterDataService.getTags();
+        List<TagDto> tags = new ArrayList<>(masterDataService.getTags().values());
         return ResponseEntity.ok(tags);
     }
 
     @GetMapping("/ingredients")
     public ResponseEntity<List<IngredientDto>> getIngredients() {
 
-        List<IngredientDto> ingredients = masterDataService.getIngredients();
+        List<IngredientDto> ingredients = new ArrayList<>(masterDataService.getIngredients().values());
         return ResponseEntity.ok(ingredients);
     }
 

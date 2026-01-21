@@ -1,6 +1,13 @@
 package com.farkas.familymealmate.repository.specification;
 
-import com.farkas.familymealmate.model.entity.*;
+import com.farkas.familymealmate.model.entity.household.HouseholdEntity_;
+import com.farkas.familymealmate.model.entity.masterdata.IngredientEntity_;
+import com.farkas.familymealmate.model.entity.masterdata.TagEntity_;
+import com.farkas.familymealmate.model.entity.recipe.RecipeEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeEntity_;
+import com.farkas.familymealmate.model.entity.recipe.RecipeIngredientEntity;
+import com.farkas.familymealmate.model.entity.masterdata.TagEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeIngredientEntity_;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;

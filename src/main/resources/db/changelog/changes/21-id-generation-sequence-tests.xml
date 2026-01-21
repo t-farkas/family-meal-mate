@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="create-sequences-h2" author="t-farkas" dbms="h2">
+        <createSequence sequenceName="seq_family_member" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="seq_household" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="seq_ingredient" startValue="1" incrementBy="100"/>
+        <createSequence sequenceName="seq_meal_plan" startValue="1" incrementBy="2"/>
+        <createSequence sequenceName="seq_meal_slot" startValue="1" incrementBy="40"/>
+        <createSequence sequenceName="seq_recipe" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="seq_recipe_ingredient" startValue="1" incrementBy="20"/>
+        <createSequence sequenceName="seq_shopping_item" startValue="1" incrementBy="40"/>
+        <createSequence sequenceName="seq_shopping_list" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="seq_tag" startValue="1" incrementBy="100"/>
+        <createSequence sequenceName="seq_user" startValue="1" incrementBy="100"/>
+    </changeSet>
+
+</databaseChangeLog>

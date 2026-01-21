@@ -7,8 +7,7 @@ import com.farkas.familymealmate.model.dto.recipe.RecipeFilterRequest;
 import com.farkas.familymealmate.model.dto.recipe.RecipeListDto;
 import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientCreateRequestDto;
 import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientDto;
-import com.farkas.familymealmate.model.entity.HouseholdEntity;
-import com.farkas.familymealmate.model.entity.UserEntity;
+import com.farkas.familymealmate.model.entity.household.UserEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.testdata.recipe.TestRecipe;
 import com.farkas.familymealmate.testdata.recipe.TestRecipes;
@@ -71,10 +70,6 @@ public class RecipeServiceIntegrationTest {
         userFactory.authenticate(user);
         RecipeDetailsDto recipeDetailsDto = recipeService.create(TestRecipes.OVERNIGHT_OATS.createRequest());
 
-        String recipeHouseholdName = recipeDetailsDto.getHousehold().getName();
-        String currentUserHouseholdName = user.getFamilyMember().getHousehold().getName();
-
-        assertThat(recipeHouseholdName).isEqualTo(currentUserHouseholdName);
         Long recipeCreatedById = recipeDetailsDto.getCreatedBy().getId();
         Long currentUserId = user.getFamilyMember().getId();
 
@@ -86,14 +81,9 @@ public class RecipeServiceIntegrationTest {
         UserEntity user1 = createHouseholdAndRecipes(TestUsers.BERTHA, TestRecipes.OVERNIGHT_OATS, TestRecipes.SPAGHETTI_BOLOGNESE);
         createHouseholdAndRecipes(TestUsers.JOHN, TestRecipes.SPAGHETTI_BOLOGNESE);
 
-        HouseholdEntity household = user1.getFamilyMember().getHousehold();
-
         userFactory.authenticate(user1);
         List<RecipeListDto> recipes = recipeService.list(new RecipeFilterRequest()).getContent();
-        recipes.forEach(recipe -> {
-            RecipeDetailsDto recipeDetailsDto = recipeService.get(recipe.getId());
-            assertThat(recipeDetailsDto.getHousehold().getName()).isEqualTo(household.getName());
-        });
+        recipes.forEach(recipe -> assertThat(recipe.getCreatedBy().getName()).isEqualTo(TestUsers.BERTHA.name()));
     }
 
     @Test

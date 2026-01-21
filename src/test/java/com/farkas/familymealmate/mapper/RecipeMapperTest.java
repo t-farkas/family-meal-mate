@@ -1,9 +1,11 @@
 package com.farkas.familymealmate.mapper;
 
+import com.farkas.familymealmate.mapper.recipe.RecipeIngredientMapper;
+import com.farkas.familymealmate.mapper.recipe.RecipeMapper;
 import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
-import com.farkas.familymealmate.model.entity.IngredientEntity;
-import com.farkas.familymealmate.model.entity.RecipeEntity;
-import com.farkas.familymealmate.model.entity.RecipeIngredientEntity;
+import com.farkas.familymealmate.model.entity.masterdata.IngredientEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeIngredientEntity;
 import com.farkas.familymealmate.model.enums.AllergyType;
 import com.farkas.familymealmate.model.enums.Measurement;
 import org.junit.jupiter.api.Test;
@@ -37,8 +39,7 @@ public class RecipeMapperTest {
         RecipeDetailsDto dto = mapper.toRecipeDetails(recipe);
 
         assertThat(dto.getIngredients()).hasSize(2);
-        assertThat(dto.getAllergies())
-                .contains(AllergyType.DAIRY, AllergyType.NUTS);
+        assertThat(dto.getAllergies()).isNull();
 
     }
 

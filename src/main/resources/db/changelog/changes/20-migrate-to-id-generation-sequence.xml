@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+        <changeSet id="family_member-sequence" author="t-farkas" dbms="postgresql" >
+            <createSequence sequenceName="seq_family_member" incrementBy="1"/>
+            <sql>ALTER TABLE family_member ALTER COLUMN id DROP IDENTITY;</sql>
+            <sql>SELECT setval('seq_family_member', COALESCE((SELECT MAX(id) FROM family_member),1), false);</sql>
+            <addDefaultValue tableName="family_member" columnName="id" defaultValueSequenceNext="seq_family_member"/>
+        </changeSet>
+
+        <changeSet id="household-sequence" author="t-farkas" dbms="postgresql">
+            <createSequence sequenceName="seq_household" incrementBy="1"/>
+            <sql>ALTER TABLE household ALTER COLUMN id DROP IDENTITY;</sql>
+            <sql>SELECT setval('seq_household', COALESCE((SELECT MAX(id) FROM household),1), false);</sql>
+            <addDefaultValue tableName="household" columnName="id" defaultValueSequenceNext="seq_household"/>
+        </changeSet>
+
+        <changeSet id="ingredient-sequence" author="t-farkas" dbms="postgresql">
+            <createSequence sequenceName="seq_ingredient" incrementBy="100"/>
+            <sql>ALTER TABLE ingredient ALTER COLUMN id DROP IDENTITY;</sql>
+            <sql>SELECT setval('seq_ingredient', COALESCE((SELECT MAX(id) FROM ingredient),1), false);</sql>
+            <addDefaultValue tableName="ingredient" columnName="id" defaultValueSequenceNext="seq_ingredient"/>
+        </changeSet>
+
+        <changeSet id="meal_plan-sequence" author="t-farkas" dbms="postgresql">
+            <createSequence sequenceName="seq_meal_plan" incrementBy="2"/>
+            <sql>ALTER TABLE meal_plan ALTER COLUMN id DROP IDENTITY;</sql>
+            <sql>SELECT setval('seq_meal_plan', COALESCE((SELECT MAX(id) FROM meal_plan),1), false);</sql>
+            <addDefaultValue tableName="meal_plan" columnName="id" defaultValueSequenceNext="seq_meal_plan"/>
+        </changeSet>
+
+        <changeSet id="meal_slot-sequence" author="t-farkas" dbms="postgresql">
+            <createSequence sequenceName="seq_meal_slot" incrementBy="40"/>
+            <sql>ALTER TABLE meal_slot ALTER COLUMN id DROP IDENTITY;</sql>
+            <sql>SELECT setval('seq_meal_slot', COALESCE((SELECT MAX(id) FROM meal_slot),1), false);</sql>
+            <addDefaultValue tableName="meal_slot" columnName="id" defaultValueSequenceNext="seq_meal_slot"/>
+        </changeSet>
+
+        <changeSet id="recipe-sequence" author="t-farkas" dbms="postgresql">
+            <createSequence sequenceName="seq_recipe" incrementBy="1"/>
+            <sql>ALTER TABLE recipe ALTER COLUMN id DROP IDENTITY;</sql>
+            <sql>SELECT setval('seq_recipe', COALESCE((SELECT MAX(id) FROM recipe),1), false);</sql>
+            <addDefaultValue tableName="recipe" columnName="id" defaultValueSequenceNext="seq_recipe"/>
+        </changeSet>
+
+        <changeSet id="recipe_ingredient-sequence" author="t-farkas" dbms="postgresql">
+            <createSequence sequenceName="seq_recipe_ingredient" incrementBy="20"/>
+            <sql>ALTER TABLE recipe_ingredient ALTER COLUMN id DROP IDENTITY;</sql>
+            <sql>SELECT setval('seq_recipe_ingredient', COALESCE((SELECT MAX(id) FROM recipe_ingredient),1), false);</sql>
+            <addDefaultValue tableName="recipe_ingredient" columnName="id" defaultValueSequenceNext="seq_recipe_ingredient"/>
+        </changeSet>
+
+        <changeSet id="shopping_item-sequence" author="t-farkas" dbms="postgresql">
+            <createSequence sequenceName="seq_shopping_item" incrementBy="40"/>
+            <sql>ALTER TABLE shopping_item ALTER COLUMN id DROP IDENTITY;</sql>
+            <sql>SELECT setval('seq_shopping_item', COALESCE((SELECT MAX(id) FROM shopping_item),1), false);</sql>
+            <addDefaultValue tableName="shopping_item" columnName="id" defaultValueSequenceNext="seq_shopping_item"/>
+        </changeSet>
+
+        <changeSet id="shopping_list-sequence" author="t-farkas" dbms="postgresql">
+            <createSequence sequenceName="seq_shopping_list" incrementBy="1"/>
+            <sql>ALTER TABLE shopping_list ALTER COLUMN id DROP IDENTITY;</sql>
+            <sql>SELECT setval('seq_shopping_list', COALESCE((SELECT MAX(id) FROM shopping_list),1), false);</sql>
+            <addDefaultValue tableName="shopping_list" columnName="id" defaultValueSequenceNext="seq_shopping_list"/>
+        </changeSet>
+
+        <changeSet id="tag-sequence" author="t-farkas" dbms="postgresql">
+            <createSequence sequenceName="seq_tag" incrementBy="100"/>
+            <sql>ALTER TABLE tag ALTER COLUMN id DROP IDENTITY;</sql>
+            <sql>SELECT setval('seq_tag', COALESCE((SELECT MAX(id) FROM tag),1), false);</sql>
+            <addDefaultValue tableName="tag" columnName="id" defaultValueSequenceNext="seq_tag"/>
+        </changeSet>
+
+        <changeSet id="user-sequence" author="t-farkas" dbms="postgresql">
+            <createSequence sequenceName="seq_user" incrementBy="1"/>
+            <sql>ALTER TABLE users ALTER COLUMN id DROP IDENTITY;</sql>
+            <sql>SELECT setval('seq_user', COALESCE((SELECT MAX(id) FROM users),1), false);</sql>
+            <addDefaultValue tableName="users" columnName="id" defaultValueSequenceNext="seq_user"/>
+        </changeSet>
+
+</databaseChangeLog>

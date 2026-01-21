@@ -28,7 +28,7 @@ public class RecipeCreateRequest {
     @NotEmpty(message = "{recipe.ingredients.notempty}")
     private List<@Valid RecipeIngredientCreateRequestDto> ingredients;
 
-    private List<String> notes;
+    private Set<String> notes;
     private Set<Long> tagIds;
 
 }

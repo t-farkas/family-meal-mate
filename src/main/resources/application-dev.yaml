@@ -1,0 +1,57 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/familymealmate
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        order_inserts: true
+        order_updates: true
+        order_deletes: true
+        jdbc:
+          batch_size: 50
+          batch_versioned_data: true
+  liquibase:
+    change-log: classpath:db/changelog/changelog-master.xml
+    enabled: true
+    contexts: POSTGRES
+  cache:
+    type: redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+logging:
+  level:
+    org.hibernate.orm.jdbc.batch: TRACE
+
+springdoc:
+  swagger-ui:
+    operations-sorter: method
+
+open-api:
+  version: 1.0
+  title: Family Meal Mate API
+  description: >
+    REST API for managing households, family members, recipes, meal plans, 
+    and shopping lists. Users can register, create households, add members, 
+    plan meals, and generate shopping lists.
+
+jwt:
+  secret: S7$gV^9p4w!D@q2Jm#Tz8H%lR3uE&c1Y*K6nW0bF$P5sA9rQd
+  expiration: 86400000
+
+mealplan:
+  max-favourites: 5

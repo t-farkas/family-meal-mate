@@ -2,7 +2,7 @@ package com.farkas.familymealmate.service;
 
 import com.farkas.familymealmate.exception.ServiceException;
 import com.farkas.familymealmate.model.dto.familymember.FamilyMemberDetailsDto;
-import com.farkas.familymealmate.model.entity.UserEntity;
+import com.farkas.familymealmate.model.entity.household.UserEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.testdata.familymember.TestFamilyMembers;
 import com.farkas.familymealmate.testdata.user.TestUserFactory;

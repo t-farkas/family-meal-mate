@@ -1,17 +1,17 @@
 package com.farkas.familymealmate.service.impl;
 
 import com.farkas.familymealmate.exception.ServiceException;
-import com.farkas.familymealmate.mapper.MealPlanMapper;
+import com.farkas.familymealmate.mapper.mealplan.MealPlanMapper;
 import com.farkas.familymealmate.model.dto.template.TemplateCreateRequest;
 import com.farkas.familymealmate.model.dto.template.TemplateDto;
-import com.farkas.familymealmate.model.entity.HouseholdEntity;
-import com.farkas.familymealmate.model.entity.MealPlanEntity;
-import com.farkas.familymealmate.model.entity.MealSlotEntity;
+import com.farkas.familymealmate.model.entity.household.HouseholdEntity;
+import com.farkas.familymealmate.model.entity.mealplan.MealPlanEntity;
+import com.farkas.familymealmate.model.entity.mealplan.MealSlotEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.model.enums.HouseholdOwnedResourceType;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.repository.MealPlanRepository;
-import com.farkas.familymealmate.security.CurrentUserService;
+import com.farkas.familymealmate.security.CurrentUserHelper;
 import com.farkas.familymealmate.security.annotation.CheckHouseholdAccess;
 import com.farkas.familymealmate.service.TemplateService;
 import com.farkas.familymealmate.util.MealPlanDateUtils;
@@ -29,7 +29,6 @@ import java.util.List;
 @Transactional
 public class TemplateServiceImpl implements TemplateService {
 
-    private final CurrentUserService currentUserService;
     private final MealPlanRepository mealPlanRepository;
     private final MealPlanMapper mealPlanMapper;
 
@@ -38,7 +37,7 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public TemplateDto createTemplate(TemplateCreateRequest request) {
-        HouseholdEntity household = currentUserService.getCurrentHousehold();
+        HouseholdEntity household = CurrentUserHelper.getCurrentHousehold();
         checkTemplateCount(household);
         MealPlanEntity template = createTemplate(household, request);
 
@@ -60,7 +59,7 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public List<TemplateDto> listTemplates() {
-        HouseholdEntity household = currentUserService.getCurrentHousehold();
+        HouseholdEntity household = CurrentUserHelper.getCurrentHousehold();
         List<MealPlanEntity> favourites = mealPlanRepository.findAllByHouseholdIdAndTemplate(household.getId(), true);
         return mealPlanMapper.toTemplateDtoList(favourites);
     }
@@ -118,13 +117,13 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     private MealPlanEntity getMealPlanEntity(HouseholdEntity currentHousehold, LocalDate weekStart) {
-        return mealPlanRepository.findByHouseholdIdAndWeekStart(currentHousehold.getId(), weekStart)
+        return mealPlanRepository.findWithMealSlotsAndRecipesByHouseholdIdAndWeekStart(currentHousehold.getId(), weekStart)
                 .orElseThrow(() -> new ServiceException(ErrorCode.MEAL_PLAN_NOT_FOUND.format("current"), ErrorCode.MEAL_PLAN_NOT_FOUND));
     }
 
     private MealPlanEntity save(MealPlanEntity template) {
         try {
-            return mealPlanRepository.save(template);
+            return mealPlanRepository.saveAndFlush(template);
         } catch (DataIntegrityViolationException e) {
             throw new ServiceException(
                     ErrorCode.TEMPLATE_NAME_ALREADY_EXISTS.format(template.getTemplateName()),

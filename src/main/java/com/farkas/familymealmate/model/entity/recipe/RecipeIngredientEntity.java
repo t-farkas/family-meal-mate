@@ -1,5 +1,7 @@
-package com.farkas.familymealmate.model.entity;
+package com.farkas.familymealmate.model.entity.recipe;
 
+import com.farkas.familymealmate.model.entity.BaseEntity;
+import com.farkas.familymealmate.model.entity.masterdata.IngredientEntity;
 import com.farkas.familymealmate.model.enums.Measurement;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,8 +12,14 @@ import java.math.BigDecimal;
 @Setter
 @Entity(name = "RecipeIngredient")
 @Table(name = "recipe_ingredient")
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class RecipeIngredientEntity extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_recipe_ingredient")
+    @SequenceGenerator(name = "seq_recipe_ingredient", sequenceName = "seq_recipe_ingredient", allocationSize = 20)
+    @EqualsAndHashCode.Include
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id", nullable = false)

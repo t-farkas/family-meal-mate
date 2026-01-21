@@ -1,6 +1,10 @@
 package com.farkas.familymealmate.repository;
 
-import com.farkas.familymealmate.model.entity.*;
+import com.farkas.familymealmate.model.entity.household.HouseholdEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeIngredientEntity;
+import com.farkas.familymealmate.model.entity.masterdata.IngredientEntity;
+import com.farkas.familymealmate.model.entity.masterdata.TagEntity;
 import com.farkas.familymealmate.model.enums.IngredientCategory;
 import com.farkas.familymealmate.model.enums.Measurement;
 import com.farkas.familymealmate.repository.specification.RecipeSpecificationBuilder;

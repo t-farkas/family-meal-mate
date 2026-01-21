@@ -8,12 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @MappedSuperclass
-public class BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
-    private Long id;
+public abstract class BaseEntity {
 
     @Column(updatable = false)
     private LocalDateTime createdAt;

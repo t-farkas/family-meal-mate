@@ -2,10 +2,7 @@ package com.farkas.familymealmate.controller;
 
 import com.farkas.familymealmate.model.dto.BaseResponse;
 import com.farkas.familymealmate.model.dto.PagingResponse;
-import com.farkas.familymealmate.model.dto.recipe.RecipeCreateRequest;
-import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
-import com.farkas.familymealmate.model.dto.recipe.RecipeFilterRequest;
-import com.farkas.familymealmate.model.dto.recipe.RecipeListDto;
+import com.farkas.familymealmate.model.dto.recipe.*;
 import com.farkas.familymealmate.service.RecipeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

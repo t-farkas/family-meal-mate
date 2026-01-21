@@ -1,7 +1,7 @@
 package com.farkas.familymealmate.scheduling;
 
-import com.farkas.familymealmate.model.entity.HouseholdEntity;
-import com.farkas.familymealmate.model.entity.MealPlanEntity;
+import com.farkas.familymealmate.model.entity.household.HouseholdEntity;
+import com.farkas.familymealmate.model.entity.mealplan.MealPlanEntity;
 import com.farkas.familymealmate.repository.HouseholdRepository;
 import com.farkas.familymealmate.repository.MealPlanRepository;
 import com.farkas.familymealmate.util.JoinIdGenerator;
