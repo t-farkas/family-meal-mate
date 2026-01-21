@@ -1,7 +1,7 @@
 package com.farkas.familymealmate.testdata.mealplan;
 
 import com.farkas.familymealmate.model.dto.mealplan.MealPlanUpdateRequest;
-import com.farkas.familymealmate.model.entity.RecipeEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeEntity;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.model.enums.MealType;
 import com.farkas.familymealmate.testdata.recipe.TestRecipe;

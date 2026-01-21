@@ -1,5 +1,7 @@
-package com.farkas.familymealmate.model.entity;
+package com.farkas.familymealmate.model.entity.mealplan;
 
+import com.farkas.familymealmate.model.entity.BaseEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeEntity;
 import com.farkas.familymealmate.model.enums.MealType;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;

@@ -1,5 +1,6 @@
-package com.farkas.familymealmate.model.entity;
+package com.farkas.familymealmate.model.entity.household;
 
+import com.farkas.familymealmate.model.entity.BaseEntity;
 import com.farkas.familymealmate.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;

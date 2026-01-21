@@ -2,7 +2,7 @@ package com.farkas.familymealmate.mapper.household;
 
 import com.farkas.familymealmate.model.dto.household.HouseholdDetailsDto;
 import com.farkas.familymealmate.model.dto.household.HouseholdDto;
-import com.farkas.familymealmate.model.entity.HouseholdEntity;
+import com.farkas.familymealmate.model.entity.household.HouseholdEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;

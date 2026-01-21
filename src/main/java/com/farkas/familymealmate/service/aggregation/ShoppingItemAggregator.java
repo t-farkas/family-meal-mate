@@ -1,7 +1,7 @@
 package com.farkas.familymealmate.service.aggregation;
 
 import com.farkas.familymealmate.model.common.AggregationKey;
-import com.farkas.familymealmate.model.entity.ShoppingItemEntity;
+import com.farkas.familymealmate.model.entity.shoppinglist.ShoppingItemEntity;
 import com.farkas.familymealmate.util.AggregationUtil;
 
 import java.util.ArrayList;

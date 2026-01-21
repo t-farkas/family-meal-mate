@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.security;
 
-import com.farkas.familymealmate.model.entity.UserEntity;
+import com.farkas.familymealmate.model.entity.household.UserEntity;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

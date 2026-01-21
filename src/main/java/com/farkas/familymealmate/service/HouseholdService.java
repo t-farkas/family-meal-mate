@@ -1,7 +1,7 @@
 package com.farkas.familymealmate.service;
 
 import com.farkas.familymealmate.model.dto.household.HouseholdDetailsDto;
-import com.farkas.familymealmate.model.entity.HouseholdEntity;
+import com.farkas.familymealmate.model.entity.household.HouseholdEntity;
 
 public interface HouseholdService {
 

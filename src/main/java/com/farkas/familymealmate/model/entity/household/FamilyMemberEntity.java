@@ -1,6 +1,7 @@
-package com.farkas.familymealmate.model.entity;
+package com.farkas.familymealmate.model.entity.household;
 
 import com.farkas.familymealmate.model.common.HouseholdOwned;
+import com.farkas.familymealmate.model.entity.BaseEntity;
 import com.farkas.familymealmate.model.enums.AllergyType;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;

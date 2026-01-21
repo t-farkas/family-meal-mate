@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.repository;
 
-import com.farkas.familymealmate.model.entity.MealPlanEntity;
+import com.farkas.familymealmate.model.entity.mealplan.MealPlanEntity;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.repository;
 
-import com.farkas.familymealmate.model.entity.HouseholdEntity;
+import com.farkas.familymealmate.model.entity.household.HouseholdEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

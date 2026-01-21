@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.init;
 
-import com.farkas.familymealmate.model.entity.TagEntity;
+import com.farkas.familymealmate.model.entity.masterdata.TagEntity;
 import com.farkas.familymealmate.repository.TagRepository;
 import com.farkas.familymealmate.util.CsvReaderUtil;
 import lombok.RequiredArgsConstructor;

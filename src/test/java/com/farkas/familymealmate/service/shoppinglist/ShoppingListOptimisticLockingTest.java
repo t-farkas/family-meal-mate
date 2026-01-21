@@ -2,7 +2,7 @@ package com.farkas.familymealmate.service.shoppinglist;
 
 import com.farkas.familymealmate.exception.ServiceException;
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingListUpdateRequest;
-import com.farkas.familymealmate.model.entity.UserEntity;
+import com.farkas.familymealmate.model.entity.household.UserEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.service.ShoppingListService;
 import com.farkas.familymealmate.testdata.recipe.TestRecipes;

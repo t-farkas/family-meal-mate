@@ -3,7 +3,7 @@ package com.farkas.familymealmate.mapper.recipe;
 import com.farkas.familymealmate.model.dto.recipe.RecipeCreateRequest;
 import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
 import com.farkas.familymealmate.model.dto.recipe.RecipeListDto;
-import com.farkas.familymealmate.model.entity.RecipeEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;

@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.service.mealplan;
 
-import com.farkas.familymealmate.model.entity.ShoppingItemEntity;
+import com.farkas.familymealmate.model.entity.shoppinglist.ShoppingItemEntity;
 import com.farkas.familymealmate.model.enums.Measurement;
 import com.farkas.familymealmate.service.aggregation.ShoppingItemAggregator;
 import com.farkas.familymealmate.testdata.recipe.TestRecipe;

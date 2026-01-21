@@ -1,6 +1,8 @@
-package com.farkas.familymealmate.model.entity;
+package com.farkas.familymealmate.model.entity.shoppinglist;
 
 import com.farkas.familymealmate.model.common.HouseholdOwned;
+import com.farkas.familymealmate.model.entity.DirtyAggregateRoot;
+import com.farkas.familymealmate.model.entity.household.HouseholdEntity;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

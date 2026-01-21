@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.repository;
 
-import com.farkas.familymealmate.model.entity.ShoppingListEntity;
+import com.farkas.familymealmate.model.entity.shoppinglist.ShoppingListEntity;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

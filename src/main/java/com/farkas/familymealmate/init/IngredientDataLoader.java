@@ -1,6 +1,6 @@
 package com.farkas.familymealmate.init;
 
-import com.farkas.familymealmate.model.entity.IngredientEntity;
+import com.farkas.familymealmate.model.entity.masterdata.IngredientEntity;
 import com.farkas.familymealmate.model.enums.AllergyType;
 import com.farkas.familymealmate.model.enums.IngredientCategory;
 import com.farkas.familymealmate.repository.IngredientRepository;

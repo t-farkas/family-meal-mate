@@ -2,7 +2,7 @@ package com.farkas.familymealmate.testdata.recipe;
 
 import com.farkas.familymealmate.model.dto.recipe.RecipeCreateRequest;
 import com.farkas.familymealmate.model.dto.recipe.ingredient.RecipeIngredientCreateRequestDto;
-import com.farkas.familymealmate.model.entity.RecipeEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeEntity;
 
 import java.util.List;
 import java.util.Set;

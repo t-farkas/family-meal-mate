@@ -1,5 +1,7 @@
-package com.farkas.familymealmate.model.entity;
+package com.farkas.familymealmate.model.entity.shoppinglist;
 
+import com.farkas.familymealmate.model.entity.BaseEntity;
+import com.farkas.familymealmate.model.entity.masterdata.IngredientEntity;
 import com.farkas.familymealmate.model.enums.Measurement;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;

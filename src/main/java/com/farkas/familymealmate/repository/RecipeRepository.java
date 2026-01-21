@@ -1,7 +1,7 @@
 package com.farkas.familymealmate.repository;
 
-import com.farkas.familymealmate.model.entity.RecipeEntity;
-import com.farkas.familymealmate.model.entity.TagEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeEntity;
+import com.farkas.familymealmate.model.entity.masterdata.TagEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

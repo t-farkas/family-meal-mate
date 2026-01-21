@@ -1,5 +1,6 @@
-package com.farkas.familymealmate.model.entity;
+package com.farkas.familymealmate.model.entity.household;
 
+import com.farkas.familymealmate.model.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

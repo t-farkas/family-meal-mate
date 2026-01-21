@@ -1,7 +1,7 @@
 package com.farkas.familymealmate.testdata.recipe;
 
 import com.farkas.familymealmate.model.dto.recipe.RecipeDetailsDto;
-import com.farkas.familymealmate.model.entity.RecipeEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeEntity;
 import com.farkas.familymealmate.repository.RecipeRepository;
 import com.farkas.familymealmate.service.RecipeService;
 import org.springframework.stereotype.Component;

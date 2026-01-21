@@ -1,5 +1,6 @@
-package com.farkas.familymealmate.model.entity;
+package com.farkas.familymealmate.model.entity.masterdata;
 
+import com.farkas.familymealmate.model.entity.BaseEntity;
 import com.farkas.familymealmate.model.enums.AllergyType;
 import com.farkas.familymealmate.model.enums.IngredientCategory;
 import jakarta.persistence.*;

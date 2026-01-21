@@ -1,8 +1,8 @@
 package com.farkas.familymealmate.security;
 
-import com.farkas.familymealmate.model.entity.FamilyMemberEntity;
-import com.farkas.familymealmate.model.entity.HouseholdEntity;
-import com.farkas.familymealmate.model.entity.UserEntity;
+import com.farkas.familymealmate.model.entity.household.FamilyMemberEntity;
+import com.farkas.familymealmate.model.entity.household.HouseholdEntity;
+import com.farkas.familymealmate.model.entity.household.UserEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class CurrentUserHelper {

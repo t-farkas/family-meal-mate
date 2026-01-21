@@ -1,7 +1,7 @@
 package com.farkas.familymealmate.mapper.mealplan;
 
 import com.farkas.familymealmate.model.dto.mealplan.MealSlotDetailsDto;
-import com.farkas.familymealmate.model.entity.MealSlotEntity;
+import com.farkas.familymealmate.model.entity.mealplan.MealSlotEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
