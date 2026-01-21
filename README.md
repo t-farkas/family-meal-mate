@@ -69,14 +69,18 @@ FamilyMealMate is a demo backend application to manage shared household data suc
 ## Scalability
 - Stateless architecture enabling horizontal scaling behind a load balancer
 - Caching: Master data is cached using Redis to reduce DB queries
-- Frequently queried columns (e.g., Household.joinId, User.email, MealPlan.weekStart + household) are indexed via unique constraints or composite indexes to ensure fast lookups and enforce data integrity.
+- Frequently queried columns (e.g., Household.joinId, User.email, MealPlan.weekStart + household) are indexed via unique constraints or composite indexes to ensure fast lookups and enforce data integrity
+- N+1 query problems have been addressed using entity graphs and batching
+- Endpoints returning potentially large collections (e.g., recipe lists) support pagination to reduce memory usage and improve response times
+
+Future scalability considerations: expensive operations (e.g., sending emails) could be performed asynchronously; application metrics could be added to monitor performance in production
 
 
 ## Future Improvements
 - Angular frontend
 - Email based Household invitations
 - Store recipe images
-- Expand recipe search & filtering: By tags, dietary constraints, ingredients, etc.
+- Expand recipe search & filtering with dietary constraints
 - Admin interface: Master data CRUD endpoints
 - Incident handling: Let users send feedback / error report, Admins can query and resolve them
 
