@@ -15,4 +15,7 @@ public interface ShoppingListRepository extends JpaRepository<ShoppingListEntity
     @EntityGraph(attributePaths = "shoppingItems")
     Optional<ShoppingListEntity> findWithShoppingItemsByHouseholdId(Long householdId);
 
+    @EntityGraph(attributePaths = {"shoppingItems", "shoppingItems.ingredient"})
+    Optional<ShoppingListEntity> findWithShoppingItemsAndIngredientsByHouseholdId(Long householdId);
+
 }

@@ -55,7 +55,11 @@ public class RecipeEntity extends BaseEntity implements HouseholdOwned {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<TagEntity> tags;
 
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "recipe",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<RecipeIngredientEntity> ingredients;
 
     public List<String> getInstructions() {

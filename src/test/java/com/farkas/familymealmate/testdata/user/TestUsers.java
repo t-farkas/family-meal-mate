@@ -5,6 +5,7 @@ import java.time.LocalDate;
 public class TestUsers {
 
     public static final TestUser TIM = new TestUser(
+            1L,
             "tim@example.com",
             "secret",
             "Tim",
@@ -12,6 +13,7 @@ public class TestUsers {
     );
 
     public static final TestUser BERTHA = new TestUser(
+            2L,
             "bertha@example.com",
             "hush-hush",
             "Bertha",
@@ -19,6 +21,7 @@ public class TestUsers {
     );
 
     public static final TestUser JOHN = new TestUser(
+            3L,
             "john@example.com",
             "password",
             "John",

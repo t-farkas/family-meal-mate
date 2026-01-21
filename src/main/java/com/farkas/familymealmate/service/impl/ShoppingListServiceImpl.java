@@ -7,21 +7,25 @@ import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingItemUpdateReques
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingListDto;
 import com.farkas.familymealmate.model.dto.shoppinglist.ShoppingListUpdateRequest;
 import com.farkas.familymealmate.model.entity.household.HouseholdEntity;
+import com.farkas.familymealmate.model.entity.masterdata.IngredientEntity;
 import com.farkas.familymealmate.model.entity.mealplan.MealPlanEntity;
 import com.farkas.familymealmate.model.entity.recipe.RecipeIngredientEntity;
-import com.farkas.familymealmate.model.entity.masterdata.IngredientEntity;
 import com.farkas.familymealmate.model.entity.shoppinglist.ShoppingItemEntity;
 import com.farkas.familymealmate.model.entity.shoppinglist.ShoppingListEntity;
 import com.farkas.familymealmate.model.enums.ErrorCode;
 import com.farkas.familymealmate.model.enums.MealPlanWeek;
 import com.farkas.familymealmate.repository.IngredientRepository;
+import com.farkas.familymealmate.repository.RecipeRepository;
 import com.farkas.familymealmate.repository.ShoppingListRepository;
 import com.farkas.familymealmate.security.CurrentUserHelper;
 import com.farkas.familymealmate.service.MealPlanService;
 import com.farkas.familymealmate.service.ShoppingListService;
 import com.farkas.familymealmate.service.aggregation.ShoppingItemAggregator;
 import com.farkas.familymealmate.util.AggregationUtil;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,12 +37,17 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class ShoppingListServiceImpl implements ShoppingListService {
 
     private final ShoppingListRepository shoppingListRepository;
     private final IngredientRepository ingredientRepository;
+    private final RecipeRepository recipeRepository;
     private final MealPlanService mealPlanService;
     private final ShoppingListMapper mapper;
+
+    @Value("${shoppinglist.max-aggregation-retries:3}")
+    private int maxRetries;
 
     @Override
     public void create(HouseholdEntity household) {
@@ -54,7 +63,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
     @Override
     public ShoppingListDto get() {
         Long householdId = CurrentUserHelper.getCurrentHousehold().getId();
-        ShoppingListEntity shoppingList = getShoppingListWithItems(householdId);
+        ShoppingListEntity shoppingList = getShoppingListWithItemsAndIngredients(householdId);
 
         return mapper.toDto(shoppingList);
     }
@@ -70,7 +79,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         try {
             shoppingList.markDirty();
             shoppingListRepository.save(shoppingList);
-            return mapper.toDto(getShoppingListWithItems(householdId));
+            return mapper.toDto(getShoppingListWithItemsAndIngredients(householdId));
         } catch (ObjectOptimisticLockingFailureException exception) {
             throw new ServiceException(ErrorCode.SHOPPING_LIST_VERSION_MISMATCH);
         }
@@ -78,21 +87,33 @@ public class ShoppingListServiceImpl implements ShoppingListService {
 
     @Override
     public ShoppingListDto addMealPlan(MealPlanWeek week) {
-        Long householdId = CurrentUserHelper.getCurrentHousehold().getId();
 
-        ShoppingListEntity shoppingList = getShoppingListWithItems(householdId);
-        MealPlanEntity mealPlan = mealPlanService.getFullEntity(week);
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            Long householdId = CurrentUserHelper.getCurrentHousehold().getId();
 
-        List<ShoppingItemEntity> allItems = mergeShoppingListWithMealPlan(mealPlan, shoppingList);
-        List<ShoppingItemEntity> aggregated = ShoppingItemAggregator.aggregate(allItems);
+            ShoppingListEntity shoppingList = getShoppingListWithItemsAndIngredients(householdId);
+            MealPlanEntity mealPlan = mealPlanService.getFullEntity(week);
 
-        aggregated.forEach(item -> item.setShoppingList(shoppingList));
+            List<ShoppingItemEntity> allItems = mergeShoppingListWithMealPlan(mealPlan, shoppingList);
+            List<ShoppingItemEntity> aggregated = ShoppingItemAggregator.aggregate(allItems);
 
-        shoppingList.getShoppingItems().clear();
-        shoppingList.getShoppingItems().addAll(aggregated);
+            aggregated.forEach(item -> item.setShoppingList(shoppingList));
 
-        ShoppingListEntity savedShoppingList = shoppingListRepository.save(shoppingList);
-        return mapper.toDto(savedShoppingList);
+            shoppingList.getShoppingItems().clear();
+            shoppingList.getShoppingItems().addAll(aggregated);
+
+            try {
+                shoppingList.markDirty();
+                shoppingListRepository.save(shoppingList);
+                return mapper.toDto(getShoppingListWithItemsAndIngredients(householdId));
+            } catch (OptimisticLockException exception) {
+                if (attempt == maxRetries) {
+                    throw new ServiceException(ErrorCode.SHOPPING_LIST_VERSION_MISMATCH);
+                }
+                log.info("Optimistic lock conflict, retrying attempt {}/{}", attempt, maxRetries);
+            }
+        }
+        throw new ServiceException(ErrorCode.SHOPPING_LIST_VERSION_MISMATCH);
     }
 
     @Override
@@ -116,13 +137,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
     }
 
     private List<ShoppingItemEntity> mapShoppingItems(ShoppingListEntity shoppingList, ShoppingListUpdateRequest updateRequest) {
-        Set<Long> ingredientIds = updateRequest.getShoppingItems().stream()
-                .filter(this::isIngredientBased)
-                .map(ShoppingItemUpdateRequest::getIngredientId)
-                .collect(Collectors.toSet());
-
-        Map<Long, IngredientEntity> ingredientById = ingredientRepository.findAllById(ingredientIds).stream()
-                .collect(Collectors.toMap(IngredientEntity::getId, Function.identity()));
+        Map<Long, IngredientEntity> ingredientById = getIngredientMap(updateRequest);
 
 
         List<ShoppingItemEntity> itemsToSave = updateRequest.getShoppingItems().stream()
@@ -130,6 +145,16 @@ public class ShoppingListServiceImpl implements ShoppingListService {
                 .collect(Collectors.toList());
 
         return ShoppingItemAggregator.aggregate(itemsToSave);
+    }
+
+    private Map<Long, IngredientEntity> getIngredientMap(ShoppingListUpdateRequest updateRequest) {
+        Set<Long> ingredientIds = updateRequest.getShoppingItems().stream()
+                .filter(this::isIngredientBased)
+                .map(ShoppingItemUpdateRequest::getIngredientId)
+                .collect(Collectors.toSet());
+
+        return ingredientRepository.findAllById(ingredientIds).stream()
+                .collect(Collectors.toMap(IngredientEntity::getId, Function.identity()));
     }
 
     private ShoppingItemEntity createShoppingItem(Map<Long, IngredientEntity> ingredientById, ShoppingListEntity shoppingListEntity, ShoppingItemUpdateRequest item) {
@@ -167,8 +192,9 @@ public class ShoppingListServiceImpl implements ShoppingListService {
     }
 
     private List<ShoppingItemEntity> mergeShoppingListWithMealPlan(MealPlanEntity mealPlan, ShoppingListEntity shoppingList) {
-        List<ShoppingItemEntity> itemsToAdd = mealPlan.getMealSlots().stream()
-                .flatMap(slot -> slot.getRecipe().getIngredients().stream())
+        List<RecipeIngredientEntity> ingredientsByRecipeIdIn = getMealPlanIngredients(mealPlan);
+
+        List<ShoppingItemEntity> itemsToAdd = ingredientsByRecipeIdIn.stream()
                 .map(this::mapRecipeIngredient)
                 .toList();
 
@@ -177,8 +203,21 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         return allItems;
     }
 
+    private List<RecipeIngredientEntity> getMealPlanIngredients(MealPlanEntity mealPlan) {
+        Set<Long> recipeIds = mealPlan.getMealSlots().stream()
+                .map(slot -> slot.getRecipe().getId())
+                .collect(Collectors.toSet());
+
+        return recipeRepository.findAllRecipeIngredientByRecipeId(recipeIds);
+    }
+
     private ShoppingListEntity getShoppingListReference(Long householdId) {
         return shoppingListRepository.findByHouseholdId(householdId)
+                .orElseThrow(() -> new ServiceException(ErrorCode.SHOPPING_LIST_NOT_FOUND));
+    }
+
+    private ShoppingListEntity getShoppingListWithItemsAndIngredients(Long householdId) {
+        return shoppingListRepository.findWithShoppingItemsAndIngredientsByHouseholdId(householdId)
                 .orElseThrow(() -> new ServiceException(ErrorCode.SHOPPING_LIST_NOT_FOUND));
     }
 

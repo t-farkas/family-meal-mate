@@ -31,3 +31,5 @@ jwt:
 
 mealplan:
   max-favourites: 5
+shoppinglist:
+  max-aggregation-retries: 3

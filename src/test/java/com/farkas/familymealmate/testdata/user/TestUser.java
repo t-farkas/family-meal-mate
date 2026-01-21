@@ -3,10 +3,14 @@ package com.farkas.familymealmate.testdata.user;
 import com.farkas.familymealmate.model.dto.auth.LoginRequest;
 import com.farkas.familymealmate.model.dto.auth.RegisterRequest;
 import com.farkas.familymealmate.model.dto.familymember.FamilyMemberCreateRequest;
+import com.farkas.familymealmate.model.entity.household.FamilyMemberEntity;
+import com.farkas.familymealmate.model.entity.household.HouseholdEntity;
+import com.farkas.familymealmate.model.entity.household.UserEntity;
 
 import java.time.LocalDate;
 
 public record TestUser(
+        Long id,
         String email,
         String password,
         String name,
@@ -43,6 +47,31 @@ public record TestUser(
                                 .dateOfBirth(dateOfBirth)
                                 .build())
                 .build();
+    }
+
+    public UserEntity getEntity() {
+        UserEntity user = new UserEntity();
+        user.setId(id);
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setFamilyMember(getFamilyMember());
+        user.getFamilyMember().setHousehold(getHousehold());
+        return user;
+    }
+
+    private FamilyMemberEntity getFamilyMember() {
+        FamilyMemberEntity familyMember = new FamilyMemberEntity();
+        familyMember.setName(name);
+        familyMember.setId(id);
+        familyMember.setDateOfBirth(dateOfBirth);
+        return familyMember;
+    }
+
+    private HouseholdEntity getHousehold() {
+        HouseholdEntity household = new HouseholdEntity();
+        household.setId(id);
+        household.setName(name + "'s household");
+        return household;
     }
 
 

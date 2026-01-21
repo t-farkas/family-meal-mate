@@ -78,7 +78,7 @@ public class MealPlanServiceImpl implements MealPlanService {
         try {
             mealPlan.markDirty();
             mealPlanRepository.save(mealPlan);
-            return mealPlanMapper.toDto(getFullEntity(updateRequest.week()));
+            return mealPlanMapper.toDto(getMealPlanEntityWithMealSlotsAndRecipes(household, weekStart));
         } catch (ObjectOptimisticLockingFailureException exception) {
             throw new ServiceException(ErrorCode.MEAL_PLAN_VERSION_MISMATCH);
         }

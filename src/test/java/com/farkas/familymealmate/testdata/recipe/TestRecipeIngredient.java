@@ -1,5 +1,6 @@
 package com.farkas.familymealmate.testdata.recipe;
 
+import com.farkas.familymealmate.model.entity.recipe.RecipeIngredientEntity;
 import com.farkas.familymealmate.model.enums.IngredientCategory;
 import com.farkas.familymealmate.model.enums.Measurement;
 
@@ -12,4 +13,12 @@ public record TestRecipeIngredient(
         Measurement measurement,
         IngredientCategory category
 ) {
+
+    public RecipeIngredientEntity getRecipeIngredientEntity() {
+        RecipeIngredientEntity recipeIngredientEntity = new RecipeIngredientEntity();
+        recipeIngredientEntity.setId(ingredientId);
+        recipeIngredientEntity.setMeasurement(measurement);
+        recipeIngredientEntity.setQuantity(quantity);
+        return recipeIngredientEntity;
+    }
 }

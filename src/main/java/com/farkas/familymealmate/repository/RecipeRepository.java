@@ -1,7 +1,8 @@
 package com.farkas.familymealmate.repository;
 
-import com.farkas.familymealmate.model.entity.recipe.RecipeEntity;
 import com.farkas.familymealmate.model.entity.masterdata.TagEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeEntity;
+import com.farkas.familymealmate.model.entity.recipe.RecipeIngredientEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -39,5 +40,13 @@ public interface RecipeRepository extends JpaRepository<RecipeEntity, Long>, Jpa
     Page<RecipeEntity> findAll(@NonNull Specification<RecipeEntity> spec, @NonNull Pageable pageable);
 
     List<RecipeEntity> findAllByIdInAndHouseholdId(Set<Long> ids, Long householdId);
+
+    @Query("""
+            SELECT ri
+            FROM Recipe r
+            JOIN r.ingredients ri
+            JOIN FETCH ri.ingredient i
+            WHERE r.id IN :recipeIds""")
+    List<RecipeIngredientEntity> findAllRecipeIngredientByRecipeId(Set<Long> recipeIds);
 
 }
