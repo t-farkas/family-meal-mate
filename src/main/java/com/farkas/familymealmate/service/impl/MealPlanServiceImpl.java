@@ -23,8 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -76,18 +76,34 @@ public class MealPlanServiceImpl implements MealPlanService {
         updateMealSlots(updateRequest, mealPlan, recipesById);
 
         try {
-            MealPlanEntity saved = mealPlanRepository.save(mealPlan);
-            return mealPlanMapper.toDto(saved);
+            mealPlan.markDirty();
+            mealPlanRepository.save(mealPlan);
+            return mealPlanMapper.toDto(getFullEntity(updateRequest.week()));
         } catch (ObjectOptimisticLockingFailureException exception) {
             throw new ServiceException(ErrorCode.MEAL_PLAN_VERSION_MISMATCH);
         }
     }
 
+    @Override
+    public MealPlanEntity getFullEntity(MealPlanWeek week) {
+        HouseholdEntity household = CurrentUserHelper.getCurrentHousehold();
+        LocalDate weekStart = getWeekStart(week);
+        return getMealPlanEntityWithMealSlotsAndRecipes(household, weekStart);
+    }
+
+    @Override
+    public VersionDto getVersion(MealPlanWeek week) {
+        HouseholdEntity household = CurrentUserHelper.getCurrentHousehold();
+        LocalDate weekStart = getWeekStart(week);
+
+        MealPlanEntity mealPlan = getMealPlanEntity(household, weekStart);
+        return new VersionDto(mealPlan.getVersion());
+    }
+
     private Map<Long, RecipeEntity> getRecipesByIdMap(MealPlanUpdateRequest updateRequest, HouseholdEntity household) {
-        List<Long> recipeIdList = updateRequest.mealSlots().stream()
+        Set<Long> recipeIdList = updateRequest.mealSlots().stream()
                 .map(MealSlotUpdateRequest::recipeId)
-                .distinct()
-                .toList();
+                .collect(Collectors.toSet());
 
         return recipeRepository.findAllByIdInAndHouseholdId(recipeIdList, household.getId())
                 .stream()
@@ -118,22 +134,6 @@ public class MealPlanServiceImpl implements MealPlanService {
             throw new ServiceException(ErrorCode.RECIPE_NOT_FOUND.format(recipeId), ErrorCode.RECIPE_NOT_FOUND);
         }
         return recipeEntity;
-    }
-
-    @Override
-    public MealPlanEntity getFullEntity(MealPlanWeek week) {
-        HouseholdEntity household = CurrentUserHelper.getCurrentHousehold();
-        LocalDate weekStart = getWeekStart(week);
-        return getMealPlanEntityWithMealSlotsAndRecipes(household, weekStart);
-    }
-
-    @Override
-    public VersionDto getVersion(MealPlanWeek week) {
-        HouseholdEntity household = CurrentUserHelper.getCurrentHousehold();
-        LocalDate weekStart = getWeekStart(week);
-
-        MealPlanEntity mealPlan = getMealPlanEntity(household, weekStart);
-        return new VersionDto(mealPlan.getVersion());
     }
 
     private LocalDate getWeekStart(MealPlanWeek week) {

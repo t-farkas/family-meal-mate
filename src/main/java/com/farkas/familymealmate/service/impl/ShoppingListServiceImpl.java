@@ -21,9 +21,8 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,7 +49,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
     @Override
     public ShoppingListDto get() {
         Long householdId = CurrentUserHelper.getCurrentHousehold().getId();
-        ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
+        ShoppingListEntity shoppingList = getShoppingListWithItems(householdId);
 
         return mapper.toDto(shoppingList);
     }
@@ -58,33 +57,25 @@ public class ShoppingListServiceImpl implements ShoppingListService {
     @Override
     public ShoppingListDto update(ShoppingListUpdateRequest updateRequest) {
         Long householdId = CurrentUserHelper.getCurrentHousehold().getId();
-        ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
+        ShoppingListEntity shoppingList = getShoppingListWithItems(householdId);
+        versionCheck(shoppingList, updateRequest);
 
-        ShoppingListEntity edited = getEditedShoppingList(updateRequest, shoppingList);
+        updateShoppingList(updateRequest, shoppingList);
 
         try {
-            ShoppingListEntity saved = shoppingListRepository.save(edited);
-            return mapper.toDto(saved);
+            shoppingList.markDirty();
+            shoppingListRepository.save(shoppingList);
+            return mapper.toDto(getShoppingListWithItems(householdId));
         } catch (ObjectOptimisticLockingFailureException exception) {
             throw new ServiceException(ErrorCode.SHOPPING_LIST_VERSION_MISMATCH);
         }
-    }
-
-    private ShoppingListEntity getEditedShoppingList(ShoppingListUpdateRequest updateRequest, ShoppingListEntity shoppingList) {
-        ShoppingListEntity edited = new ShoppingListEntity();
-        edited.setId(shoppingList.getId());
-        edited.setNote(updateRequest.getNote());
-        edited.setVersion(updateRequest.getVersion());
-        edited.setHousehold(shoppingList.getHousehold());
-        edited.getShoppingItems().addAll(mapShoppingItems(edited, updateRequest));
-        return edited;
     }
 
     @Override
     public ShoppingListDto addMealPlan(MealPlanWeek week) {
         Long householdId = CurrentUserHelper.getCurrentHousehold().getId();
 
-        ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
+        ShoppingListEntity shoppingList = getShoppingListWithItems(householdId);
         MealPlanEntity mealPlan = mealPlanService.getFullEntity(week);
 
         List<ShoppingItemEntity> allItems = mergeShoppingListWithMealPlan(mealPlan, shoppingList);
@@ -102,42 +93,48 @@ public class ShoppingListServiceImpl implements ShoppingListService {
     @Override
     public VersionDto getVersion() {
         Long householdId = CurrentUserHelper.getCurrentHousehold().getId();
-        ShoppingListEntity shoppingList = getShoppingListEntity(householdId);
+        ShoppingListEntity shoppingList = getShoppingListReference(householdId);
         return new VersionDto(shoppingList.getVersion());
     }
 
-    private List<ShoppingItemEntity> mergeShoppingListWithMealPlan(MealPlanEntity mealPlan, ShoppingListEntity shoppingList) {
-        List<ShoppingItemEntity> itemsToAdd = mealPlan.getMealSlots().stream()
-                .flatMap(slot -> slot.getRecipe().getIngredients().stream())
-                .map(this::mapRecipeIngredient)
-                .toList();
-
-        List<ShoppingItemEntity> allItems = new ArrayList<>(shoppingList.getShoppingItems());
-        allItems.addAll(itemsToAdd);
-        return allItems;
+    private void versionCheck(ShoppingListEntity shoppingList, ShoppingListUpdateRequest updateRequest) {
+        if (!shoppingList.getVersion().equals(updateRequest.getVersion())) {
+            throw new ServiceException(ErrorCode.SHOPPING_LIST_VERSION_MISMATCH);
+        }
     }
 
-    private ShoppingListEntity getShoppingListEntity(Long householdId) {
-        return shoppingListRepository.findByHouseholdId(householdId)
-                .orElseThrow(() -> new ServiceException(ErrorCode.SHOPPING_LIST_NOT_FOUND));
+    private void updateShoppingList(ShoppingListUpdateRequest updateRequest, ShoppingListEntity shoppingList) {
+
+        shoppingList.setNote(updateRequest.getNote());
+        shoppingList.getShoppingItems().clear();
+        shoppingList.getShoppingItems().addAll(mapShoppingItems(shoppingList, updateRequest));
     }
 
     private List<ShoppingItemEntity> mapShoppingItems(ShoppingListEntity shoppingList, ShoppingListUpdateRequest updateRequest) {
+        Set<Long> ingredientIds = updateRequest.getShoppingItems().stream()
+                .filter(this::isIngredientBased)
+                .map(ShoppingItemUpdateRequest::getIngredientId)
+                .collect(Collectors.toSet());
+
+        Map<Long, IngredientEntity> ingredientById = ingredientRepository.findAllById(ingredientIds).stream()
+                .collect(Collectors.toMap(IngredientEntity::getId, Function.identity()));
+
+
         List<ShoppingItemEntity> itemsToSave = updateRequest.getShoppingItems().stream()
-                .map(item -> createEntity(shoppingList, item))
+                .map(item -> createShoppingItem(ingredientById, shoppingList, item))
                 .collect(Collectors.toList());
 
         return ShoppingItemAggregator.aggregate(itemsToSave);
     }
 
-    private ShoppingItemEntity createEntity(ShoppingListEntity shoppingListEntity, ShoppingItemUpdateRequest item) {
+    private ShoppingItemEntity createShoppingItem(Map<Long, IngredientEntity> ingredientById, ShoppingListEntity shoppingListEntity, ShoppingItemUpdateRequest item) {
         ShoppingItemEntity entity = new ShoppingItemEntity();
         entity.setNote(item.getNote());
         entity.setShoppingList(shoppingListEntity);
         entity.setChecked(item.isChecked());
 
         if (isIngredientBased(item)) {
-            entity.setIngredient(getIngredient(item.getIngredientId()));
+            entity.setIngredient(getIngredient(ingredientById, item.getIngredientId()));
             entity.setQuantity(item.getQuantity());
             entity.setMeasurement(item.getMeasurement());
         } else if (isFreeTextItem(item)) {
@@ -156,9 +153,33 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         return item.getIngredientId() == null && item.getName() != null && !item.getName().isBlank();
     }
 
-    private IngredientEntity getIngredient(Long ingredientId) {
-        return ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new ServiceException(ErrorCode.INGREDIENT_NOT_FOUND.format(ingredientId), ErrorCode.INGREDIENT_NOT_FOUND));
+    private IngredientEntity getIngredient(Map<Long, IngredientEntity> ingredientById, Long ingredientId) {
+        IngredientEntity ingredientEntity = ingredientById.get(ingredientId);
+        if (ingredientEntity == null) {
+            throw new ServiceException(ErrorCode.INGREDIENT_NOT_FOUND.format(ingredientId), ErrorCode.INGREDIENT_NOT_FOUND);
+        }
+        return ingredientEntity;
+    }
+
+    private List<ShoppingItemEntity> mergeShoppingListWithMealPlan(MealPlanEntity mealPlan, ShoppingListEntity shoppingList) {
+        List<ShoppingItemEntity> itemsToAdd = mealPlan.getMealSlots().stream()
+                .flatMap(slot -> slot.getRecipe().getIngredients().stream())
+                .map(this::mapRecipeIngredient)
+                .toList();
+
+        List<ShoppingItemEntity> allItems = new ArrayList<>(shoppingList.getShoppingItems());
+        allItems.addAll(itemsToAdd);
+        return allItems;
+    }
+
+    private ShoppingListEntity getShoppingListReference(Long householdId) {
+        return shoppingListRepository.findByHouseholdId(householdId)
+                .orElseThrow(() -> new ServiceException(ErrorCode.SHOPPING_LIST_NOT_FOUND));
+    }
+
+    private ShoppingListEntity getShoppingListWithItems(Long householdId) {
+        return shoppingListRepository.findWithShoppingItemsByHouseholdId(householdId)
+                .orElseThrow(() -> new ServiceException(ErrorCode.SHOPPING_LIST_NOT_FOUND));
     }
 
     private ShoppingItemEntity mapRecipeIngredient(RecipeIngredientEntity recipeIngredient) {

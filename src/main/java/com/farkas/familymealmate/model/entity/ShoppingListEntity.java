@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "shopping_list")
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
-public class ShoppingListEntity extends BaseEntity implements HouseholdOwned {
+public class ShoppingListEntity extends DirtyAggregateRoot implements HouseholdOwned {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_shopping_list")
@@ -25,7 +25,7 @@ public class ShoppingListEntity extends BaseEntity implements HouseholdOwned {
     @Version
     private Long version;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "household_id", nullable = false)
     private HouseholdEntity household;
 

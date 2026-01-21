@@ -15,7 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "meal_plan")
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
-public class MealPlanEntity extends BaseEntity implements HouseholdOwned {
+public class MealPlanEntity extends DirtyAggregateRoot implements HouseholdOwned {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_meal_plan")
@@ -35,15 +35,14 @@ public class MealPlanEntity extends BaseEntity implements HouseholdOwned {
     @Column(name = "template_name", length = 100)
     private String templateName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "household_id", nullable = false)
     private HouseholdEntity household;
 
-    @OneToMany(
+    @OneToMany(mappedBy = "mealPlan",
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    @JoinColumn(name = "meal_plan_id")
     private List<MealSlotEntity> mealSlots;
 
     public List<MealSlotEntity> getMealSlots() {
