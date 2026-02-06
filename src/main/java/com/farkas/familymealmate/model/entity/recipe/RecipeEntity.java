@@ -6,7 +6,6 @@ import com.farkas.familymealmate.model.entity.masterdata.TagEntity;
 import com.farkas.familymealmate.model.entity.household.FamilyMemberEntity;
 import com.farkas.familymealmate.model.entity.household.HouseholdEntity;
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,13 +18,11 @@ import java.util.Set;
 @Table(name = "recipe")
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class RecipeEntity extends BaseEntity implements HouseholdOwned {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_recipe")
     @SequenceGenerator(name = "seq_recipe", sequenceName = "seq_recipe", allocationSize = 1)
-    @EqualsAndHashCode.Include
     private Long id;
 
     private String title;

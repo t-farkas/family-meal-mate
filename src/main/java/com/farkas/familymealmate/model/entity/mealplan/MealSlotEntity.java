@@ -4,7 +4,6 @@ import com.farkas.familymealmate.model.entity.BaseEntity;
 import com.farkas.familymealmate.model.entity.recipe.RecipeEntity;
 import com.farkas.familymealmate.model.enums.MealType;
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,13 +13,11 @@ import java.time.DayOfWeek;
 @Setter
 @Entity
 @Table(name = "meal_slot")
-@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class MealSlotEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_meal_slot")
     @SequenceGenerator(name = "seq_meal_slot", sequenceName = "seq_meal_slot", allocationSize = 40)
-    @EqualsAndHashCode.Include
     private Long id;
 
     private String note;

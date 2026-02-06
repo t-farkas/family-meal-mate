@@ -4,7 +4,6 @@ import com.farkas.familymealmate.model.entity.BaseEntity;
 import com.farkas.familymealmate.model.entity.masterdata.IngredientEntity;
 import com.farkas.familymealmate.model.enums.Measurement;
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,13 +13,11 @@ import java.math.BigDecimal;
 @Setter
 @Entity
 @Table(name = "shopping_item")
-@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class ShoppingItemEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_shopping_item")
     @SequenceGenerator(name = "seq_shopping_item", sequenceName = "seq_shopping_item", allocationSize = 40)
-    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

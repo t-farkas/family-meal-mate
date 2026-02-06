@@ -2,24 +2,22 @@ package com.farkas.familymealmate.model.entity.household;
 
 import com.farkas.familymealmate.model.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
 @Setter
 @Entity
-@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 @Table(name = "household")
 public class HouseholdEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_household")
     @SequenceGenerator(name = "seq_household", sequenceName = "seq_household", allocationSize = 1)
-    @EqualsAndHashCode.Include
     private Long id;
 
     String joinId;
@@ -33,5 +31,17 @@ public class HouseholdEntity extends BaseEntity {
             members = new HashSet<>();
         }
         return members;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof HouseholdEntity that)) return false;
+        return Objects.equals(joinId, that.joinId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(joinId);
     }
 }

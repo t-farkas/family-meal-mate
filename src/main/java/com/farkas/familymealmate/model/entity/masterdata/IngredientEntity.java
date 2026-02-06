@@ -4,24 +4,22 @@ import com.farkas.familymealmate.model.entity.BaseEntity;
 import com.farkas.familymealmate.model.enums.AllergyType;
 import com.farkas.familymealmate.model.enums.IngredientCategory;
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
 @Setter
 @Entity(name = "Ingredient")
 @Table(name = "ingredient")
-@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class IngredientEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_ingredient")
     @SequenceGenerator(name = "seq_ingredient", sequenceName = "seq_ingredient", allocationSize = 100)
-    @EqualsAndHashCode.Include
     private Long id;
 
 
@@ -43,5 +41,17 @@ public class IngredientEntity extends BaseEntity {
             allergies = new HashSet<>();
         }
         return allergies;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof IngredientEntity that)) return false;
+        return Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
     }
 }
